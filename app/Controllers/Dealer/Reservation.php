@@ -1,0 +1,98 @@
+<?php
+
+namespace App\Controllers\dealer;
+
+use App\Controllers\BaseController;
+use App\Models\UserModel;
+use App\Models\CommonModel;
+use App\Models\VehicleModel;
+use App\Models\BranchModel;
+
+/**
+ * End session controller
+ */
+class Reservation extends BaseController {
+
+	protected $userModel;
+	protected $commonModel;
+	protected $vehicleModel;
+	protected $branchModel;
+
+	public function __construct() {
+		$this->userModel = new UserModel();
+		$this->commonModel = new CommonModel();
+		$this->vehicleModel = new VehicleModel();
+		$this->branchModel  = new BranchModel();
+	}
+
+	public function index() {
+		$data = array();
+		echo view('dealer/vehicles/list-reserved-vehicles.php', $data);
+	}
+
+
+	public function getReservedVehicles() {
+		$limit = $this->request->getVar('limit');
+		$offset = $this->request->getVar('start');
+		$dealerId = session()->get('userId');
+
+		$branches = $this->branchModel->where('dealer_id', $dealerId)->findAll();
+
+		$dealerReservedVehiclesHtml = '';
+
+		foreach ($branches as $branch) {
+
+			$reservedVehicles = $this->vehicleModel->getReservedVehiclesByBranch($branch['id'], $limit, $offset);
+
+			foreach ($reservedVehicles as $reservedVehicle) {
+				$dealerReservedVehiclesHtml .= '
+				<div class="col-md-6 col-lg-4 reserved-vehicle-card-' . $reservedVehicle['id'] . '">
+					<div class="card card-box mb-3 position-relative">
+						<img class="card-img-top vehicle-image" src="' . WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'vehicle_thumbnails/' . $reservedVehicle['thumbnail_url'] . '" alt="' . $reservedVehicle['unique_id'] . '" />
+						<div class="card-body">
+							<h5 class="card-title weight-500">' . $reservedVehicle['cmp_name'] . ' ' . $reservedVehicle['model_name'] . ' <br/>(' . $reservedVehicle['branchName'] . ')</h5>
+							<p class="card-text"></p>
+							<div class="d-flex vehicle-overview">
+								<div class="overview-badge">
+									<h6>Year</h6>
+									<h5>' . $reservedVehicle['manufacture_year'] . '</h5>
+								</div>
+								<div class="overview-badge">
+									<h6>Driven</h6>
+									<h5>' . $reservedVehicle['kms_driven'] . '</h5>
+								</div>
+								<div class="overview-badge">
+									<h6>Fuel Type</h6>
+									<h5>' . $reservedVehicle['fuel_type'] . '</h5>
+								</div>
+								<div class="overview-badge">
+									<h6>Owner</h6>
+									<h5>' . ordinal($reservedVehicle['owner']) . '</h5>
+								</div>
+								<!-- Add other overview badges based on your data -->
+								<div class="wishlist">
+									<i class="icofont-heart"></i>
+								</div>
+							</div>
+							<a href="promote.html" class="btn btn-primary mt-3 btn-block">Promote</a>
+							<div class="option-btn">
+								<div class="dropdown">
+									<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+										<i class="dw dw-more"></i>
+									</a>
+									<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+										<a class="dropdown-item" href="' . base_url() . 'dealer/single-vehicle-info/' . $reservedVehicle['id'] . '"><i class="dw dw-eye"></i> View</a>
+										<a class="dropdown-item" href="' . base_url() . 'dealer/edit-vehicle/' . $reservedVehicle['id'] . '"><i class="dw dw-edit2"></i> Edit</a>
+										<a class="dropdown-item sa-params delete-vehicle" data-vehicle-id="' . $reservedVehicle['id'] . '" href="#"><i class="dw dw-delete-3"></i> Delete</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>';
+			}
+		}
+
+		echo $dealerReservedVehiclesHtml;
+	}
+}
