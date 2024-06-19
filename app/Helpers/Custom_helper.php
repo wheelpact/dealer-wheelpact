@@ -33,15 +33,25 @@ if (!function_exists('ordinal')) {
 // }
 
 if (!function_exists('sendEmail')) {
-    function sendEmail($subject, $message, $sender, $receiver) {
+    function sendEmail($to, $toName, $subject, $message, $fromEmail = null, $fromName = null) {
         $email = \Config\Services::email();
 
-        $email->setTo($receiver);
-        $email->setFrom('Wheelpact', $sender);
+        if ($fromEmail && $fromName) {
+            $email->setFrom($fromEmail, $fromName);
+        } else {
+            $email->setFrom(FROM_EMAIL, FROME_NAME);
+        }
+
+        $email->setTo($to, $toName);
         $email->setSubject($subject);
         $email->setMessage($message);
+        $email->setMailType('html');
 
-        return $email->send();
+        if ($email->send()) {
+            return true;
+        } else {
+            return $email->printDebugger(['headers']);
+        }
     }
 }
 
@@ -87,4 +97,3 @@ function compressAndResizeImage($source, $destination, $quality = 70, $newWidth 
     $image->resize($newWidth, $newHeight, true, 'height')
         ->save($destination, $quality);
 }
-

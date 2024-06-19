@@ -11,15 +11,35 @@
 						<img src="<?php echo base_url(); ?>/assets/vendors/images/banner-img.png" alt="">
 					</div>
 					<div class="col-md-8">
-						<h4 class="font-20 weight-500 mb-10 text-capitalize">
-							Welcome back <div class="weight-600 font-30 text-blue">
-								<?php echo $mainBranch['name']; ?>, <span><?php echo $mainBranch['city'] . ', ' . $mainBranch['state']; ?></span>
-							</div>
-						</h4>
-						<p class="font-18 max-width-600">
-							<?php echo $mainBranch['short_description']; ?>
-						</p>
+
+						<?php if ($mainBranch) { ?>
+							<h4 class="font-20 weight-500 mb-10 text-capitalize">
+								Welcome <div class="weight-600 font-30 text-blue">
+									<?php
+									echo isset($mainBranch['name']) && !empty($mainBranch['name']) ? $mainBranch['name'] : 'Branch Name';
+									?>,
+									<span>
+										<?php
+										echo (isset($mainBranch['city']) && !empty($mainBranch['city']) ? $mainBranch['city'] : 'City') . ', ' .
+											(isset($mainBranch['state']) && !empty($mainBranch['state']) ? $mainBranch['state'] : 'State');
+										?>
+									</span>
+								</div>
+							</h4>
+							<p class="font-18 max-width-600">
+								<?php echo isset($mainBranch['short_description']) && !empty($mainBranch['short_description']) ? $mainBranch['short_description'] : ''; ?>
+							</p>
+						<?php } else { ?>
+							<h4 class="font-20 weight-500 mb-10 text-capitalize">
+								Welcome <div class="weight-600 font-30 text-blue">
+									<?php
+									echo isset($userData['username']) && !empty($userData['username']) ? $userData['username'] : ' User';
+									?>,
+								</div>
+							</h4>
+						<?php } ?>
 					</div>
+
 				</div>
 			</div>
 			<div class="row">

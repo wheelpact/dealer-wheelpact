@@ -181,3 +181,6 @@ define('UPLOAD_IMG_WIDTH','1024');
 define('UPLOAD_IMG_HEIGHT','800');
 
 define('DEFAULT_IMG', '../default-img.png');
+
+define('FROM_EMAIL', 'no-reply@wheelpact.com');
+define('FROME_NAME', 'wheelpact.com');

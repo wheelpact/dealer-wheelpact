@@ -18,17 +18,28 @@ class Dashboard extends BaseController {
 	}
 
 	public function index() {
-		//$db = \Config\Database::connect();
-		//$model = new UserModel();
 		$session = session();
-		$data['username'] = $session->get('user_name');
 		$data['session'] = \Config\Services::session();
+		$data['userData'] = $session->get();
 
-		$dealerId = session()->get('userId');
-		$data['mainBranchData'] = $this->branchModel->getAllBranchByDealerId($dealerId, '0', '0', '0', '0', '0', '0');
-		$data['mainBranch'] = $data['mainBranchData'][0];
-		
-		echo view('dealer/dashboard/index', $data);
+		try {
+			$dealerId = session()->get('userId');
+			if (is_null($dealerId)) {
+				throw new \Exception("User ID not found in session.");
+			}
+
+			$data['mainBranchData'] = $this->branchModel->getAllBranchByDealerId($dealerId, '0', '0', '0', '0', '0', '0');
+			if (empty($data['mainBranchData'])) {
+				$data['mainBranch'] = null;
+			} else {
+				$data['mainBranch'] = $data['mainBranchData'][0];
+			}
+
+			echo view('dealer/dashboard/index', $data);
+		} catch (\Exception $e) {
+			log_message('error', $e->getMessage());
+			return $this->response->setStatusCode(500)->setBody('An error occurred: ' . $e->getMessage());
+		}
 	}
 
 	public function one() {

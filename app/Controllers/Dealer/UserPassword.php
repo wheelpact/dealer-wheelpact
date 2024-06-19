@@ -239,18 +239,20 @@ class UserPassword extends BaseController {
 			}
 
 			/* Generate and store a reset token in the database */
-			$resetToken = bin2hex(random_bytes(16));
+			$user['resetToken'] = bin2hex(random_bytes(16));
 			$expirationTime = date('Y-m-d H:i:s', strtotime('+1 hour'));
-			$this->userModel->update($user['id'], ['reset_token' => $resetToken, 'token_expiration' => $expirationTime]);
+			$this->userModel->update($user['id'], ['reset_token' => $user['resetToken'], 'token_expiration' => $expirationTime]);
 
 			/* Send reset link to the user's email using the helper method */
+			$to = $email;
+			$toName = $user['name'];
 			$subject = 'Password Reset Link';
-			$message = "Click the following link to reset your password: " . site_url("dealer/reset-password/{$resetToken}");
-			$sender = 'no-replay@wheelpact.com'; // Replace with the actual sender's email address
-			$receiver = $email;
+			$user['resetLink'] = site_url("dealer/reset-password/" . $user['resetToken'] . "");
+			$body = view('dealer/email_templates/password-reset-dealer', ['dealerData' => $user]);
 
 			/* Send reset link to the user's email */
-			if (sendEmail($subject, $message, $sender, $receiver)) {
+			$mailResult = sendEmail($to, $toName, $subject, $body);
+			if ($mailResult) {
 				return $this->response->setJSON(['status' => 'success', 'message' => 'Reset link sent to your email.']);
 			} else {
 				return $this->response->setJSON(['status' => 'error', 'message' => 'Failed to send the reset link.']);
@@ -307,10 +309,10 @@ class UserPassword extends BaseController {
 			$dealerId = session()->get('userId');
 			// get user details
 			$userData = $this->userModel->where('id', $dealerId)->first();
-		
+
 			// Validate old password		
 			$oldPwdCheck = $this->userModel->chkUserCredentials($userData['email'], $oldPassword);
-		
+
 			if ($oldPwdCheck) {
 				$updatePass = $this->userModel->updatePassword($dealerId, password_hash($newPassword, PASSWORD_BCRYPT));
 			} else {
