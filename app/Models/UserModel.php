@@ -63,8 +63,49 @@ class UserModel extends Model {
 
         return $this->first();
     }
-    
+
     public function updateData($id, $data) {
         return $this->update($id, $data);
+    }
+
+    public function getPlanDetailsBYId($dealerId) {
+        $builder = $this->db->table('transactionsrazorpay as trp');
+        $builder->select('trp.id as transactionId, trp.planId as activePlan, trp.orderId, trp. dealerUserId, trp.amount, trp.currency, trp.receipt, trp.orderNotes, trp.payment_status, trp.razorpay_payment_id, trp.razorpay_order_id, trp.razorpay_signature, ds.vehicle_type as allowedVehicleListing, ds.start_dt, ds.end_dt, ds.type, pl.planName, pl.planDesc, pl.monthly_price, pl.vehicle_type as planVehicleType, pl.max_vehicle_listing_per_month, pl.free_inventory_promotions, pl.free_showroom_promotions');
+        $builder->join('plans as pl', 'pl.id = trp.planId', 'left');
+        $builder->join('dealer_subscription as ds', ' ds.transactionsrazorpay_id = trp.id', 'left');
+        $builder->where('trp.dealerUserId', $dealerId);
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
+
+    public function updatePlanPreference($data) {
+        $this->db->table(' dealer_subscription')
+            ->set(['vehicle_type' => $data['vehicle_type']])
+            ->where('dealerId', $data['dealer_id'])
+            ->where('transactionsrazorpay_id ', $data['transaction_id'])
+            ->where('planId', $data['activePlan'])
+            ->update();
+        if ($this->db->affectedRows() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function saveLoginLog($data) {
+        $this->db->table('loginLogs')->insert($data);
+    }
+
+    public function updateloginLogs($id, $data) {
+        $this->db->table('loginLogs')
+            ->set(['logoutTime' => $data['logoutTime']])
+            ->where('id', $id)
+            ->update();
+
+        if ($this->db->affectedRows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

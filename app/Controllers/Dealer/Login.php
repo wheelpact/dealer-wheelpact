@@ -44,6 +44,10 @@ class Login extends BaseController {
 				];
 
 				$session->set($ses_data);
+
+				/* save login logs */
+				$this->logLoginAttempt();
+			
 				return redirect()->to('./dealer/dashboard');
 			} else {
 				$session->setFlashdata('msg', 'Invalid Username / Password');
@@ -56,5 +60,21 @@ class Login extends BaseController {
 			$session->setFlashdata('msg', 'An error occurred during login. Please try again.');
 			return redirect()->to('./dealer/login');
 		}
+	}
+
+	private function logLoginAttempt() {
+		$UserModel = new \App\Models\UserModel();
+		$UserModel->saveLoginLog([
+			'userId' => session()->get('userId'),
+			'userRole' => '2',
+			'loginTime' => date('Y-m-d H:i:s'),
+			'ipAddress' => $this->request->getIPAddress(),
+			'userAgent' => $this->request->getUserAgent()->__toString(),
+			'sessionVar' => json_encode(session()->get())
+		]);
+
+		// Store the ID of the log entry in the session
+		$sessionLogId = $UserModel->db->insertID();
+		session()->set('login_log_id', $sessionLogId);
 	}
 }

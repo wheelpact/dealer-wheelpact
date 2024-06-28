@@ -28,6 +28,8 @@ class UserPassword extends BaseController {
 
 		$dealerDetails = $this->userModel->getDealerDetailsById($dealerId);
 
+		$planDetails = $this->userModel->getPlanDetailsBYId($dealerId);
+
 		if ($dealerDetails) {
 			$data['countryList'] = $this->commonModel->get_all_country_data();
 		} else {
@@ -35,7 +37,8 @@ class UserPassword extends BaseController {
 		}
 
 		$data['userData'] = $dealerDetails;
-
+		$data['planData'] = $planDetails[0];
+		//echo "<pre>"; print_r($data['planData']); die;
 		echo view('dealer/auth/profile.php', $data);
 	}
 

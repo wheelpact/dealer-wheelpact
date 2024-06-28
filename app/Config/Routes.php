@@ -37,6 +37,8 @@ $routes->get('/', 'Dealer\Login::index');
 $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($routes) {
 
     $routes->get('dashboard', 'Dashboard::index', ['filter' => 'auth']);
+    $routes->match(['get', 'post'], 'updatePlanPreference', 'Dashboard::updatePlanPreference', ['filter' => 'auth']);
+
     $routes->match(['get', 'post'], 'forgot-password', 'UserPassword::index');
     $routes->match(['get', 'post'], 'send-reset-password-link', 'UserPassword::sendPwdResetLink');
     $routes->match(['get', 'post'], 'logout', 'Logout::index');
@@ -46,14 +48,13 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->match(['get', 'post'], 'update-profile-details', 'UserPassword::update_profile_details', ['filter' => 'auth']);
 
 
-
     $routes->get('list-vehicles', 'Vehicles::index', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'add-vehicle', 'Vehicles::add_vehicle', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'save-new-vehicle', 'Vehicles::save_new_vehicle');
     $routes->match(['get', 'post'], 'edit-vehicle/(:num)', 'Vehicles::edit_vehicle/$1', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'single-vehicle-info/(:num)', 'Vehicles::single_vehicle_info/$1', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'promote-vehicle/(:num)', 'Vehicles::promote_vehicle/$1', ['filter' => 'auth']);
-    
+
     $routes->match(['get', 'post'], 'update-vehicle', 'Vehicles::update_vehicle', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'upload-exterior-main-vehicle-images', 'Vehicles::upload_exterior_main_vehicle_images');
     $routes->match(['get', 'post'], 'upload-thumbnail', 'Vehicles::upload_thumbnail');
@@ -77,7 +78,7 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->match(['get', 'post'], 'edit-update-branch-details', 'Branches::edit_update_branch_details');
     $routes->match(['get', 'post'], 'single-branch-info/(:num)', 'Branches::single_branch_info/$1', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'branch-review/(:num)', 'Branches::load_branch_reviews/$1', ['filter' => 'auth']);
-        
+
     $routes->get('list-reserved-vehicles', 'Reservation::index', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'getReseredVehicles/(:num)/(:num)/(:num)/(:num)', 'Reservation::getReservedVehicles/$1/$2/$3/$4', ['filter' => 'auth']);
 

@@ -89,6 +89,9 @@ echo view('dealer/includes/_sidebar');
                                     <li class="nav-item">
                                         <a class="nav-link" data-toggle="tab" href="#change-password" role="tab">Update Password</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#tasks" role="tab">Active Plan</a>
+                                    </li>
                                 </ul>
                                 <div class="tab-content">
                                     <!-- Setting Tab start -->
@@ -206,7 +209,8 @@ echo view('dealer/includes/_sidebar');
                                         </div>
                                     </div>
                                     <!-- Setting Tab End -->
-                                    <!-- Timeline Tab start -->
+
+                                    <!-- Change Password Tab start -->
                                     <div class="tab-pane fade" id="change-password" role="tabpanel">
                                         <div class="pd-20">
                                             <div class="container pd-0">
@@ -247,6 +251,60 @@ echo view('dealer/includes/_sidebar');
                                         </div>
                                         <!-- Timeline Tab End -->
                                     </div>
+
+                                    <!-- Tasks Tab start -->
+                                    <div class="tab-pane fade" id="tasks" role="tabpanel">
+                                        <div class="pd-20 profile-task-wrap">
+                                            <div class="container pd-0">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" colspan=2>Plan Details</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row">Plan Name</th>
+                                                            <td scope="row"><?php echo $planData['planName'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Plan Desc</th>
+                                                            <td scope="row"><?php echo $planData['planDesc'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Order Receipt</th>
+                                                            <td scope="row"><?php echo $planData['receipt'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Plan Valid till</th>
+                                                            <td scope="row"><?php echo $planData['end_dt'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Allowed Vehicle Listing</th>
+                                                            <!-- if planId 1=>Free Or planId 2=> basic-->
+                                                            <?php if ($planData['activePlan'] == '1' || $planData['activePlan'] == '2') { ?>
+                                                                <td scope="row">
+                                                                    <?php
+                                                                    if ($planData['allowedVehicleListing'] == 0) {
+                                                                        echo '<a href='.base_url('/dealer/dashboard').'>Click Here</a>';
+                                                                    } else {
+                                                                        echo isset(VEHICLE_TYPE[$planData['allowedVehicleListing']]) ? VEHICLE_TYPE[$planData['allowedVehicleListing']] : '';
+                                                                    }
+                                                                    ?>
+                                                                </td>
+                                                            <?php } else { ?>
+                                                                <td scope="row">
+                                                                    <?php echo VEHICLE_TYPE['3']; ?>
+                                                                </td>
+                                                            <?php } ?>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Tasks Tab End -->
                                 </div>
                             </div>
                         </div>

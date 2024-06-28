@@ -69,7 +69,7 @@ echo view('dealer/includes/_sidebar');
                                     <select class="custom-select vehicle-type formInput" data-tabid="step1" name="vehicle_type" placeholder="Please choose Vehicle Type.">
                                         <option value="0">Choose...</option>
                                         <?php foreach (VEHICLE_TYPE as $id => $type) : ?>
-                                            <?php if ($id != 3) : ?>
+                                            <?php if (($planData['allowedVehicleListing'] == 0 || $planData['allowedVehicleListing'] == $id) && $id != 2) : ?>
                                                 <option value="<?= $id ?>"><?= $type ?></option>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
@@ -691,6 +691,6 @@ echo view('dealer/includes/_sidebar');
     <script>
         $(document).ready(function() {
             /* on page load trigger to load brands of cars & bikes both in select option filter */
-            $('.custom-select.vehicle-type').trigger('change');
+            //$('.custom-select.vehicle-type').trigger('change');
         });
     </script>

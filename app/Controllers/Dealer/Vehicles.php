@@ -20,12 +20,22 @@ class Vehicles extends BaseController {
 	protected $commonModel;
 	protected $vehicleImagesModel;
 
+	protected $dealerId;
+	protected $planDetails;
+
 	public function __construct() {
 		$this->commonModel = new CommonModel();
 		$this->branchModel  = new BranchModel();
 		$this->userModel  = new UserModel();
 		$this->vehicleModel = new VehicleModel();
 		$this->vehicleImagesModel = new VehicleImagesModel();
+
+		/* // Retrieve dealer ID from session */
+		$this->dealerId = session()->get('userId');
+
+		/* // Retrieve plan details of logged user */
+		$planDetails = $this->userModel->getPlanDetailsBYId($this->dealerId);
+		$this->planDetails = $planDetails[0];
 	}
 
 	public function index() {
@@ -101,10 +111,11 @@ class Vehicles extends BaseController {
 
 	public function add_vehicle() {
 
-		$dealerId = session()->get('userId');
+		//$dealerId = session()->get('userId');
+		$dealerId = $this->dealerId;
 
 		$data['showroomList'] = $this->vehicleModel->getShowroomList($dealerId);
-		$data['cmpList'] = $this->vehicleModel->getDistinctBrands();
+		/*data['cmpList'] = $this->vehicleModel->getDistinctBrands();*/
 
 		$data['fuelTypeList'] = $this->commonModel->get_fuel_types();
 		$data['fuelVariantList'] = $this->commonModel->get_fuel_variants();
@@ -113,6 +124,10 @@ class Vehicles extends BaseController {
 
 		$data['colorList'] = $this->commonModel->get_vehicle_colors();
 		$data['stateList'] = $this->commonModel->get_country_states(101);
+
+		/* get plan details */
+		$data['planData'] = $this->planDetails;
+
 		echo view('dealer/vehicles/add-vehicle', $data);
 	}
 
@@ -341,10 +356,6 @@ class Vehicles extends BaseController {
 
 		$data['vehicleDetails'] =  $this->vehicleModel->getVehicleDetails($vehicleId);
 
-		// echo "<pre>";
-		// print_r($data);
-		// die;
-
 		/*$data['vehicleImagesDetails'] = $this->vehicleModel->getVehicleImagesDetails($vehicleId);*/
 		$data['vehicleImagesDetailsArray'] = $this->vehicleModel->getVehicleImagesDetails($vehicleId);
 
@@ -522,6 +533,9 @@ class Vehicles extends BaseController {
 			$data['vehicleRegRtoList'] = $this->commonModel->get_registered_state_rto($data['vehicleDetails']['registered_state_id']);
 		}
 		$data['bodyTypeList'] = $this->commonModel->get_vehicle_body_types();
+
+		/* get plan details */
+		$data['planData'] = $this->planDetails;
 
 		echo view('dealer/vehicles/edit-vehicle', $data);
 	}
