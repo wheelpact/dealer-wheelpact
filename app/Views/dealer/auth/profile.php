@@ -298,6 +298,22 @@ echo view('dealer/includes/_sidebar');
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>
+                                                        <tr>
+                                                            <th scope="row">Maximum Vehicle Listing</th>
+                                                            <td scope="row"><?php echo $planData['max_vehicle_listing_per_month'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Free Inventory Promotions</th>
+                                                            <td scope="row"><?php echo $planData['free_inventory_promotions'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Free Showroom Promotions</th>
+                                                            <td scope="row"><?php echo $planData['free_showroom_promotions'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Showroom Branch Listing</th>
+                                                            <td scope="row"><?php echo $planData['max_showroom_branches'] ?></td>
+                                                        </tr>
                                                     </tbody>
                                                 </table>
 

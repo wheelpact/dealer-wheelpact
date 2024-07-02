@@ -444,28 +444,19 @@ $(document).ready(function () {
 			confirmButtonText: 'Yes, delete it!'
 		}).then((result) => {
 			if (result.isConfirmed) {
-				// User clicked the confirm button
-
-				// Make an Ajax request to delete the vehicle
 				$.ajax({
 					url: base_url + 'dealer/deleteVehicle/' + vehicleId,
 					type: 'POST',
 					dataType: 'json',
 					success: function (response) {
 						if (response.status === 'success') {
-							// Vehicle deleted successfully
 							showSuccessAlert('Vehicle deleted successfully');
-
-							// remove the deleted vehicle from the list
 							$('.vehicle-card-' + vehicleId).remove();
-
 						} else {
-							// Failed to delete vehicle
 							showErrorAlert('Failed to delete vehicle');
 						}
 					},
 					error: function () {
-						// Ajax request failed
 						showErrorAlert('Error in Ajax request');
 					}
 				});
@@ -473,7 +464,6 @@ $(document).ready(function () {
 		});
 	});
 	/* list vehicle page script end */
-
 
 	/* list braches page script start */
 	$('.custom-select.country').change(function () {
@@ -508,7 +498,6 @@ $(document).ready(function () {
 				state_id: selectedState
 			},
 			success: function (response) {
-				// Replace the content of models dropdown with the new options
 				$('.custom-select.city').html(response);
 			}
 		});
@@ -533,19 +522,13 @@ $(document).ready(function () {
 					dataType: 'json',
 					success: function (response) {
 						if (response.status === 'success') {
-							// Vehicle deleted successfully
 							showSuccessAlert('Branch Removed successfully');
-
-							// remove the deleted vehicle from the list
-							$('.branch-card-' + branchId).remove();
-
 						} else {
-							// Failed to delete vehicle
+							$('.branch-card-' + branchId).remove();
 							showErrorAlert('Failed to delete vehicle');
 						}
 					},
 					error: function () {
-						// Ajax request failed
 						showErrorAlert('Error in Ajax request');
 					}
 				});
@@ -625,7 +608,7 @@ $(document).ready(function () {
 
 	});
 
-	var maxFields = 10; /* Change this to your desired maximum number of fields */
+	var maxFields = 10;
 	var currentFields = 1;
 	/* services + */
 	$('#extend-branch-service').click(function (e) {
@@ -668,7 +651,6 @@ $(document).ready(function () {
 	/* deliverable images + */
 
 	/* list braches page script end */
-
 
 	/* // multistep form validation start */
 	var currentStep = 0;
@@ -819,10 +801,8 @@ $(document).ready(function () {
 			showWarningToast("Kindly Add Vehicle Information, Then add Thumbnail.");
 			return false;
 		}
-		// Get the file input element
 		var fileInput = $('#thumbnailImage')[0];
 
-		// Check if a file was selected
 		if (fileInput.files.length > 0) {
 			var formData = new FormData();
 			formData.append('thumbnailImage', fileInput.files[0]);
@@ -842,7 +822,6 @@ $(document).ready(function () {
 				success: function (response) {
 					if (response.status === 'success') {
 						showSuccessAlert(response.message);
-						//$('#thumbnailPreviewContainer').html('<img src="' + response.thumbnail_url + '" alt="Thumbnail" />');
 						$('.replaceThumbnailImg').attr('src', response.thumbnail_url);
 					} else {
 						showErrorAlert(response.message);
@@ -974,8 +953,6 @@ $(document).ready(function () {
 					contentType: false,
 					xhr: function () {
 						var xhr = new window.XMLHttpRequest();
-
-						// Track upload progress
 						xhr.upload.addEventListener('progress', function (evt) {
 							if (evt.lengthComputable) {
 								var percentComplete = (evt.loaded / evt.total) * 100;
@@ -1082,20 +1059,15 @@ $(document).ready(function () {
 	/* Update Vehicle Image */
 	$('.updateVehiceImg').on('click', function () {
 
-		// Get the value of the data-pickFormfield attribute
 		var formField = $(this).data('pickformfield');
-
-		// Find the input file field based on the data-pickFormfield value
 		var inputFile = $('#' + formField);
 
-		// Check if a file is selected
 		if (inputFile.prop('files').length > 0) {
 			var formData = new FormData();
 			formData.append('newVehicleImg', inputFile.prop('files')[0]);
 			formData.append('vehicleId', $(".vehicleId").val());
 			formData.append('colName', formField);
 
-			// AJAX request to upload and update image
 			$.ajax({
 				type: 'POST',
 				url: base_url + '/dealer/update-vehicle-image',
@@ -1120,7 +1092,6 @@ $(document).ready(function () {
 				}
 			});
 		} else {
-			// Handle case where no file is selected
 			showWarningToast('No File Selected');
 		}
 	});
@@ -1182,7 +1153,6 @@ $(document).ready(function () {
 
 	/* lazy loading skeleton shimmer effect end */
 
-
 	/* review modal start */
 	$(document).on('click', '.view-reviews-link', function (event) {
 		event.preventDefault();
@@ -1222,6 +1192,46 @@ $(document).ready(function () {
 	$(".getPaymentmentAmt").click(function () {
 		var silverPlanChecked = $("input[name='custom-radio']:checked").val();
 		$('#planValue').text(silverPlanChecked);
+	});
+
+	$("#updatePlanPreference").submit(function (event) {
+		event.preventDefault();
+
+		var action_page = $(this).attr("action");
+		var formData = new FormData(this);
+		Swal.fire({
+			title: 'Are you sure?',
+			text: 'You wont be able to revert these changes!',
+			icon: 'info',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, Proceed!'
+		}).then((result) => {
+			$("#updatePlanPreference :submit").prop("disabled", true);
+			if (result.isConfirmed) {
+				$.ajax({
+					url: action_page,
+					type: "POST",
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function (response) {
+						if (response.status === "success") {
+							showSuccessAlert(response.message);
+							setTimeout(function () {
+								location.reload();
+							}, 3000);
+						} else {
+							showErrorAlert(response.message);
+						}
+					},
+					error: function (xhr, status, error) {
+						console.log("An error occurred:", error);
+					},
+				});
+			}
+		});
 	});
 
 });

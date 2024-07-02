@@ -68,8 +68,12 @@ echo view('dealer/includes/_sidebar');
                                     <label>Vehicle Type<span class="required">*</span></label>
                                     <select class="custom-select vehicle-type formInput" data-tabid="step1" name="vehicle_type" placeholder="Please choose Vehicle Type.">
                                         <option value="0">Choose...</option>
-                                        <?php foreach (VEHICLE_TYPE as $id => $type) : ?>
-                                            <?php if (($planData['allowedVehicleListing'] == 0 || $planData['allowedVehicleListing'] == $id) && $id != 2) : ?>
+                                        <?php
+                                        $showOption1 = ($planData['allowedVehicleListing'] == 1 || $planData['allowedVehicleListing'] != 2);
+                                        $showOption2 = ($planData['allowedVehicleListing'] == 2 || $planData['allowedVehicleListing'] != 1);
+
+                                        foreach (VEHICLE_TYPE as $id => $type) : ?>
+                                            <?php if (($id == 1 && $showOption1) || ($id == 2 && $showOption2)) : ?>
                                                 <option value="<?= $id ?>"><?= $type ?></option>
                                             <?php endif; ?>
                                         <?php endforeach; ?>

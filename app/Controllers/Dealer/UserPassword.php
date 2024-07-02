@@ -38,25 +38,15 @@ class UserPassword extends BaseController {
 
 		$data['userData'] = $dealerDetails;
 		$data['planData'] = $planDetails[0];
-		//echo "<pre>"; print_r($data['planData']); die;
 		echo view('dealer/auth/profile.php', $data);
 	}
 
 	public function update_profile_details() {
-		// echo "<pre>";
-		// print_r($this->request->getPost());
-		// die;
 		try {
 			/* form validation start */
 			$validation = \Config\Services::validation();
 
 			$fieldsToValidate = [
-				// 'profile_image' => [
-				// 	'rules' => 'required',
-				// 	'errors' => [
-				// 		'required' => 'Please choose an image for profile',
-				// 	],
-				// ],
 				'email' => [
 					'rules' => 'required|valid_email|is_unique[users.email,id,{user_id}]',
 					'errors' => [
@@ -102,12 +92,6 @@ class UserPassword extends BaseController {
 						'required' => 'Enter Residential Address.'
 					],
 				],
-				// 'addr_permanent' => [
-				// 	'rules' => 'required',
-				// 	'errors' => [
-				// 		'required' => 'Enter Permanent Address.'
-				// 	],
-				// ],
 				'chooseCountry' => [
 					'rules' => 'required|not_equals[0]',
 					'errors' => [
@@ -134,21 +118,17 @@ class UserPassword extends BaseController {
 			];
 
 			foreach ($fieldsToValidate as $fieldName => $rules) {
-				$validation->reset(); // Reset validation rules for each field
+				$validation->reset();
 				$validation->setRules([$fieldName => $rules]);
 
 				if (!$validation->withRequest($this->request)->run()) {
 					$errors = $validation->getErrors();
-
-					// Convert the errors to HTML format
 					$errorString = '';
 					foreach ($errors as $field => $error) {
 						$errorString .= $error;
 					}
-
-					// Return the errors as a JSON response
-					return $this->response->setJSON(['status' => 'error', 'message' => $errorString, 'field' => $fieldName]);
 				}
+				return $this->response->setJSON(['status' => 'error', 'message' => $errorString, 'field' => $fieldName]);
 			}
 
 			/* form validation ends */
@@ -180,14 +160,11 @@ class UserPassword extends BaseController {
 				$newName = $file->getRandomName();
 				try {
 					$file->move($destinationPath . 'user_profile_img', $newName);
-					//echo 'File moved successfully.';
 				} catch (\Exception $e) {
 					return $this->response->setJSON(['errors' => true, 'message' => 'Error in Updating Profile Imabe.']);
 				}
 				$formData['profile_image'] = $newName;
 			}
-
-			// Update the data into the database table
 			$result = $this->userModel->updateData($dealerId, $formData);
 
 			if ($result) {
@@ -196,11 +173,8 @@ class UserPassword extends BaseController {
 				return $this->response->setJSON(['errors' => true, 'message' => 'Error in Updating data.']);
 			}
 		} catch (\Exception $e) {
-			// Error handling and logging
 			$logger = \Config\Services::logger();
 			$logger->error('Error occurred while updating Details: ' . $e->getMessage());
-
-			// Throw or handle the exception as needed
 			throw $e;
 		}
 	}
@@ -304,16 +278,13 @@ class UserPassword extends BaseController {
 		} else {
 			/* Password updated from profile page */
 
-			// Get input data
 			$oldPassword = $this->request->getPost('old_password');
 			$newPassword = $this->request->getPost('new_pwd');
 			$confirmPassword = $this->request->getPost('confirm_password');
 
 			$dealerId = session()->get('userId');
-			// get user details
 			$userData = $this->userModel->where('id', $dealerId)->first();
 
-			// Validate old password		
 			$oldPwdCheck = $this->userModel->chkUserCredentials($userData['email'], $oldPassword);
 
 			if ($oldPwdCheck) {

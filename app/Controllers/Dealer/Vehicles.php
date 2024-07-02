@@ -86,7 +86,7 @@ class Vehicles extends BaseController {
                                     <i class="icofont-heart"></i>
                                 </div>
                             </div>
-							<h5 class="card-title mt-3">' . $branch['name'] . '</h5> <h6 class="mb-10">' . VEHICLE_TYPE[$vehicle['vehicle_type']] . '</h6>
+			    <h5 class="card-title mt-3">' . $branch['name'] . '</h5> <h6 class="mb-10">' . VEHICLE_TYPE[$vehicle['vehicle_type']] . '</h6>
                             <a href="' . base_url() . 'dealer/promote-vehicle/' . $vehicle['id'] . '" class="btn btn-primary mt-3 btn-block">Promote</a>
                             <div class="option-btn">
                                 <div class="dropdown">
@@ -111,7 +111,6 @@ class Vehicles extends BaseController {
 
 	public function add_vehicle() {
 
-		//$dealerId = session()->get('userId');
 		$dealerId = $this->dealerId;
 
 		$data['showroomList'] = $this->vehicleModel->getShowroomList($dealerId);
@@ -127,7 +126,7 @@ class Vehicles extends BaseController {
 
 		/* get plan details */
 		$data['planData'] = $this->planDetails;
-
+		
 		echo view('dealer/vehicles/add-vehicle', $data);
 	}
 

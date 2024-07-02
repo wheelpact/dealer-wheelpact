@@ -71,7 +71,22 @@
 										<tr>
 											<th scope="row">Plan Valid till</th>
 											<td scope="row"><?php echo  date('d-m-Y', strtotime($planData['end_dt'])); ?></td>
-
+										</tr>
+										<tr>
+											<th scope="row">Maximum Vehicle Listing</th>
+											<td scope="row"><?php echo $planData['max_vehicle_listing_per_month'] ?></td>
+										</tr>
+										<tr>
+											<th scope="row">Free Inventory Promotions</th>
+											<td scope="row"><?php echo $planData['free_inventory_promotions'] ?></td>
+										</tr>
+										<tr>
+											<th scope="row">Free Showroom Promotions</th>
+											<td scope="row"><?php echo $planData['free_showroom_promotions'] ?></td>
+										</tr>
+										<tr>
+											<th scope="row">Showroom Branch Listing</th>
+											<td scope="row"><?php echo $planData['max_showroom_branches'] ?></td>
 										</tr>
 									</tbody>
 								</table>
@@ -92,7 +107,7 @@
 								<?php foreach (VEHICLE_TYPE as $id => $type) : ?>
 									<?php if (($planData['activePlan'] == 1 || $planData['activePlan'] == 2) && ($id == 1 || $id == 2) || ($planData['activePlan'] != 1 && $planData['activePlan'] != 2)) : ?>
 										<div class="custom-control custom-radio mb-5">
-											<input type="radio" id="vehicle_type_<?= $id ?>" name="vehicle_type" value="<?= $id ?>" class="custom-control-input">
+											<input type="radio" id="vehicle_type_<?= $id ?>" name="vehicle_type" value="<?= $id ?>" class="custom-control-input" required>
 											<label class="custom-control-label" for="vehicle_type_<?= $id ?>"><?= $type ?></label>
 										</div>
 									<?php endif; ?>
@@ -103,11 +118,8 @@
 							<input type="submit" class="btn btn-primary" value="Update Information">
 						</div>
 						<?= form_close() ?>
-
-						
 					</div>
 				</div>
-
 			</div>
 
 			<div class="row">

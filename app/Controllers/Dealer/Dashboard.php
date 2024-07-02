@@ -40,7 +40,6 @@ class Dashboard extends BaseController {
 			/* check for plan details if details to set allowed vehicle her can list for plan 1 & 2 i.e Free & Basic plan */
 			$planDetails = $this->userModel->getPlanDetailsBYId($dealerId);
 			$data['planData'] = $planDetails[0];
-			//echo "<pre>"; print_r($data['planData']); die;
 			if ($data['planData']['allowedVehicleListing'] == "0" && ($data['planData']['activePlan'] == '1' || $data['planData']['activePlan'] == '2')) {
 				echo view('dealer/dashboard/updateDealerPlanDetails', $data);
 				exit;
@@ -54,10 +53,21 @@ class Dashboard extends BaseController {
 	}
 
 	public function updatePlanPreference() {
-		//echo "<pre>"; print_r($this->request->getPost()); die;
 		try {
 
-			// Retrieve data from POST request
+			$validation = \Config\Services::validation();
+
+			$validation->setRules([
+				'vehicle_type' => 'required',
+			]);
+
+			// Run the validation
+			if (!$validation->withRequest($this->request)->run()) {
+				// Validation failed, return errors in JSON format
+				$errors = $validation->getErrors();
+				return $this->response->setJSON(['success' => false, 'errors' => $errors]);
+			}
+			/* // Retrieve data from POST request */
 			$data = [
 				'dealer_id' => $this->request->getPost('dealerId'),
 				'transaction_id' => $this->request->getPost('transactionId'),
@@ -65,25 +75,22 @@ class Dashboard extends BaseController {
 				'vehicle_type' => $this->request->getPost('vehicle_type'),
 			];
 
-			// Load the model and update the data in the database
+			/* // Load the model and update the data in the database */
 			$result = $this->userModel->updatePlanPreference($data);
 
-			/*echo $this->userModel->db->getLastQuery(); die;*/
-
 			if (!$result) {
-				// Return a JSON response if the update fails
 				return $this->response->setJSON([
 					'errors' => true,
 					'message' => 'Error occurred while updating data.'
 				]);
+			} else {
+				// Return the URL to be used by the jQuery success function
+				return $this->response->setJSON(['status' => 'success', 'message' => 'Information Updated Successfully.']);
 			}
-			return redirect()->to('dealer/dashboard');
 		} catch (\Exception $e) {
-			// Error handling and logging
 			$logger = \Config\Services::logger();
 			$logger->error('Error occurred while updating vehicle information: ' . $e->getMessage());
 
-			// Return a JSON response with the error message
 			return $this->response->setJSON([
 				'errors' => true,
 				'message' => 'An error occurred. Please try again later.'
