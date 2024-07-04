@@ -25,8 +25,8 @@
 							<span class="micon dw dw-car"></span><span class="mtext">Vehicles</span>
 						</a>
 						<ul class="submenu">
-							<li><a href="<?php echo base_url('dealer/add-vehicle'); ?>">Add Vehicle</a></li>
-							<li><a href="<?php echo base_url('dealer/list-vehicles'); ?>" class="<?php echo ((current_url() == base_url('dealer/list-vehicles')) || (strpos(current_url(), 'dealer/single-vehicle-info') !== false)) ? 'active' : ''; ?>">List Vehicles</a></li>
+							<li><a href="<?php echo base_url('dealer/add-vehicle'); ?>" class="<?php echo (current_url() == base_url('dealer/add-vehicle')) ? 'active' : ''; ?>">Add Vehicle</a></li>
+							<li><a href="<?php echo base_url('dealer/list-vehicles'); ?>" class="<?php echo (in_array(service('uri')->getSegment(2), ['list-vehicles', 'single-vehicle-info', 'edit-vehicle'])) ? 'active' : ''; ?>">List Vehicles</a></li>
 						</ul>
 
 					</li>
@@ -44,8 +44,8 @@
 							<span class="micon dw dw-building"></span><span class="mtext">Manage Showroom</span>
 						</a>
 						<ul class="submenu">
-							<li><a href="<?php echo base_url('dealer/add-branch'); ?>" class="dropdown-toggle no-arrow <?php echo (current_url() == base_url('dealer/add-branch')) ? 'active' : ''; ?>">Add Showroom</a></li>
-							<li><a href="<?php echo base_url('dealer/list-branches'); ?>" class="<?php echo ((current_url() == base_url('dealer/list-branches')) || (strpos(current_url(), 'dealer/single-branches-info') !== false)) ? 'active' : ''; ?>">List Showrooms</a></li>
+							<li><a href="<?php echo base_url('dealer/add-branch'); ?>" class="<?php echo (current_url() == base_url('dealer/add-branch')) ? 'active' : ''; ?>">Add Showroom</a></li>
+							<li><a href="<?php echo base_url('dealer/list-branches'); ?>" class="<?php echo (in_array(service('uri')->getSegment(2), ['list-branches', 'single-branch-info', 'edit-branch'])) ? 'active' : ''; ?>">List Showrooms</a></li>
 						</ul>
 					</li>
 					<li class="dropdown">

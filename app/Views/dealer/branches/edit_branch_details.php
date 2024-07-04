@@ -58,7 +58,7 @@ echo view('dealer/includes/_sidebar');
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="branchType">Supported Vehicle Type:</label>
-                            <select class="form-control custom-select vehicle-type col-12" name="branchSupportedVehicleType">
+                            <select class="form-control custom-select vehicle-type col-12" name="branchSupportedVehicleType" disabled readonly>
                                 <option>Select Vehicle Type</option>
                                 <?php foreach (VEHICLE_TYPE as $id => $type) : ?>
                                     <option value="<?= $id ?>" <?php echo ($id == $branchDetails['branch_supported_vehicle_type']) ? 'selected' : ''; ?>><?= $type ?></option>
@@ -102,9 +102,7 @@ echo view('dealer/includes/_sidebar');
                                     <img src="<?php echo !empty($branchDetails['branch_logo']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . "branch_logos/" . $branchDetails['branch_logo'] : NO_IMAGE_AVAILABLE; ?>" alt="">
                                     <div class="da-overlay">
                                         <div class="da-social">
-                                            <h5 class="mb-10 color-white pd-20">
-
-                                            </h5>
+                                            <h5 class="mb-10 color-white pd-20"></h5>
                                             <ul class="clearfix">
                                                 <li>
                                                     <a href="<?php echo !empty($branchDetails['branch_logo']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . "branch_logos/" . $branchDetails['branch_logo'] : NO_IMAGE_AVAILABLE; ?>" data-fancybox="images"><i class="fa fa-picture-o"></i></a>
@@ -283,7 +281,7 @@ echo view('dealer/includes/_sidebar');
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-6 col-sm-12 mb-30">
                         <div class="form-group">
                             <label for="shortDescription">Deliverable Images:</label>

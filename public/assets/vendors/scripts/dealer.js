@@ -562,9 +562,12 @@ $(document).ready(function () {
 			processData: false,
 			contentType: false,
 			dataType: "json",
+			beforeSend: function () {
+				showOverlay();
+			},
 			success: function (response) {
-				if (response.success) {
-					showSuccessAlert('Form submitted successfully!');
+				if (response.status === "success") {
+					showSuccessAlert(response.message);
 					setTimeout(function () {
 						window.location.href = base_url + response.redirect;
 					}, 4000);

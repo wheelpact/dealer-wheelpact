@@ -94,4 +94,15 @@ class BranchModel extends Model {
     public function updateData($id, $data) {
         return $this->update($id, $data);
     }
+
+    /*    // Get total branches by user ID (dealer_id) */
+    public function getBranchCountByUser($dealerId) {
+
+        $builder = $this->db->table($this->table);
+        $builder->select('COUNT(*) as branch_count');
+        $builder->where('branches.dealer_id', $dealerId);
+
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
 }

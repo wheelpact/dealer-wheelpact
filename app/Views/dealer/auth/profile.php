@@ -28,34 +28,34 @@ echo view('dealer/includes/_sidebar');
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-30">
                     <div class="pd-20 card-box height-100-p">
                         <div class="profile-photo">
-                            <img src="<?php echo !empty($userData['profile_image']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . "user_profile_img/" . $userData['profile_image'] : NO_IMAGE_AVAILABLE; ?>" alt="" class="avatar-photo">
+                            <img src="<?php echo !empty($dealerData['profile_image']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . "user_profile_img/" . $dealerData['profile_image'] : NO_IMAGE_AVAILABLE; ?>" alt="" class="avatar-photo">
                         </div>
-                        <h5 class="text-center h5 mb-0"><?php echo !empty($userData['name']) ? $userData['name'] : ''; ?></h5>
+                        <h5 class="text-center h5 mb-0"><?php echo !empty($dealerData['name']) ? $dealerData['name'] : ''; ?></h5>
                         <p class="text-center text-muted font-14"></p>
                         <div class="profile-info">
                             <h5 class="mb-20 h5 text-blue">Contact Information</h5>
                             <ul>
                                 <li>
                                     <span>Email Address:</span>
-                                    <?php echo !empty($userData['email']) ? $userData['email'] : ''; ?>
+                                    <?php echo !empty($dealerData['email']) ? $dealerData['email'] : ''; ?>
                                 </li>
                                 <li>
                                     <span>Phone Number:</span>
-                                    <?php echo !empty($userData['contact_no']) ? $userData['contact_no'] : ''; ?>
+                                    <?php echo !empty($dealerData['contact_no']) ? $dealerData['contact_no'] : ''; ?>
                                 </li>
                                 <li>
                                     <span>Country / State / City</span>
-                                    <?php echo !empty($userData['country']) ? $userData['country'] : 'NA'; ?>, &nbsp;
-                                    <?php echo !empty($userData['state']) ? $userData['state'] : 'NA'; ?>, &nbsp;
-                                    <?php echo !empty($userData['city']) ? $userData['city'] : 'NA'; ?>
+                                    <?php echo !empty($dealerData['country']) ? $dealerData['country'] : 'NA'; ?>, &nbsp;
+                                    <?php echo !empty($dealerData['state']) ? $dealerData['state'] : 'NA'; ?>, &nbsp;
+                                    <?php echo !empty($dealerData['city']) ? $dealerData['city'] : 'NA'; ?>
                                 </li>
                                 <li>
                                     <span>Resident Address:</span>
-                                    <?php echo !empty($userData['addr_residential']) ? $userData['addr_residential'] : 'NA'; ?>
+                                    <?php echo !empty($dealerData['addr_residential']) ? $dealerData['addr_residential'] : 'NA'; ?>
                                 </li>
                                 <li>
                                     <span>Permanent Address:</span>
-                                    <?php echo !empty($userData['addr_permanent']) ? $userData['addr_permanent'] : 'NA'; ?>
+                                    <?php echo !empty($dealerData['addr_permanent']) ? $dealerData['addr_permanent'] : 'NA'; ?>
                                 </li>
                             </ul>
                         </div>
@@ -63,16 +63,16 @@ echo view('dealer/includes/_sidebar');
                             <h5 class="mb-20 h5 text-blue">Social Links</h5>
                             <ul class="clearfix">
                                 <li>
-                                    <a href="<?php echo !empty($userData['social_fb_link']) ? $userData['social_fb_link'] : '#'; ?>" target="_blank" class="btn" data-bgcolor="#3b5998" data-color="#ffffff" style="color: rgb(255, 255, 255); background-color: rgb(59, 89, 152);"><i class="fa fa-facebook"></i></a>
+                                    <a href="<?php echo !empty($dealerData['social_fb_link']) ? $dealerData['social_fb_link'] : '#'; ?>" target="_blank" class="btn" data-bgcolor="#3b5998" data-color="#ffffff" style="color: rgb(255, 255, 255); background-color: rgb(59, 89, 152);"><i class="fa fa-facebook"></i></a>
                                 </li>
                                 <li>
-                                    <a href="<?php echo !empty($userData['social_twitter_link']) ? $userData['social_twitter_link'] : '#'; ?>" target="_blank" class="btn" data-bgcolor="#1da1f2" data-color="#ffffff" style="color: rgb(255, 255, 255); background-color: rgb(29, 161, 242);"><i class="fa fa-twitter"></i></a>
+                                    <a href="<?php echo !empty($dealerData['social_twitter_link']) ? $dealerData['social_twitter_link'] : '#'; ?>" target="_blank" class="btn" data-bgcolor="#1da1f2" data-color="#ffffff" style="color: rgb(255, 255, 255); background-color: rgb(29, 161, 242);"><i class="fa fa-twitter"></i></a>
                                 </li>
                                 <li>
-                                    <a href="<?php echo !empty($userData['social_linkedin_link']) ? $userData['social_linkedin_link'] : '#'; ?>" target="_blank" class="btn" data-bgcolor="#007bb5" data-color="#ffffff" style="color: rgb(255, 255, 255); background-color: rgb(0, 123, 181);"><i class="fa fa-linkedin"></i></a>
+                                    <a href="<?php echo !empty($dealerData['social_linkedin_link']) ? $dealerData['social_linkedin_link'] : '#'; ?>" target="_blank" class="btn" data-bgcolor="#007bb5" data-color="#ffffff" style="color: rgb(255, 255, 255); background-color: rgb(0, 123, 181);"><i class="fa fa-linkedin"></i></a>
                                 </li>
                                 <li>
-                                    <a href="<?php echo !empty($userData['social_skype_link']) ? $userData['social_skype_link'] : '#'; ?>" target="_blank" class="btn" data-bgcolor="#00aff0" data-color="#ffffff" style="color: rgb(255, 255, 255); background-color: rgb(0, 175, 240);"><i class="fa fa-skype"></i></a>
+                                    <a href="<?php echo !empty($dealerData['social_skype_link']) ? $dealerData['social_skype_link'] : '#'; ?>" target="_blank" class="btn" data-bgcolor="#00aff0" data-color="#ffffff" style="color: rgb(255, 255, 255); background-color: rgb(0, 175, 240);"><i class="fa fa-skype"></i></a>
                                 </li>
                             </ul>
                         </div>
@@ -90,7 +90,7 @@ echo view('dealer/includes/_sidebar');
                                         <a class="nav-link" data-toggle="tab" href="#change-password" role="tab">Update Password</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#tasks" role="tab">Active Plan</a>
+                                        <a class="nav-link" data-toggle="tab" href="#plan-details" role="tab">Active Plan</a>
                                     </li>
                                 </ul>
                                 <div class="tab-content">
@@ -253,7 +253,7 @@ echo view('dealer/includes/_sidebar');
                                     </div>
 
                                     <!-- Tasks Tab start -->
-                                    <div class="tab-pane fade" id="tasks" role="tabpanel">
+                                    <div class="tab-pane fade" id="plan-details" role="tabpanel">
                                         <div class="pd-20 profile-task-wrap">
                                             <div class="container pd-0">
                                                 <table class="table table-bordered">
@@ -286,7 +286,7 @@ echo view('dealer/includes/_sidebar');
                                                                 <td scope="row">
                                                                     <?php
                                                                     if ($planData['allowedVehicleListing'] == 0) {
-                                                                        echo '<a href='.base_url('/dealer/dashboard').'>Click Here</a>';
+                                                                        echo '<a href=' . base_url('/dealer/dashboard') . '>Click Here</a>';
                                                                     } else {
                                                                         echo isset(VEHICLE_TYPE[$planData['allowedVehicleListing']]) ? VEHICLE_TYPE[$planData['allowedVehicleListing']] : '';
                                                                     }
@@ -334,5 +334,19 @@ echo view('dealer/includes/_sidebar');
         $(document).ready(function() {
             /* on page load trigger to load brands of cars & bikes both in select option filter */
             $('.custom-select.country').trigger('change');
+
+            /* add active class to tab based in url */
+            var hash = window.location.hash;
+
+            // Activate the tab based on the hash
+            if (hash) {
+                $('.nav-tabs a[href="' + hash + '"]').tab('show');
+            }
+
+            // Handle tab change event to update URL hash
+            $('.nav-tabs a').on('shown.bs.tab', function(e) {
+                window.location.hash = e.target.hash;
+            });
+
         });
     </script>

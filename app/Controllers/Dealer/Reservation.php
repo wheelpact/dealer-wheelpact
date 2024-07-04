@@ -18,15 +18,27 @@ class Reservation extends BaseController {
 	protected $vehicleModel;
 	protected $branchModel;
 
+	protected $userSesData;
+	protected $planDetails;
+
 	public function __construct() {
 		$this->userModel = new UserModel();
 		$this->commonModel = new CommonModel();
 		$this->vehicleModel = new VehicleModel();
 		$this->branchModel  = new BranchModel();
+
+		/* // Retrieve session */
+		$this->userSesData = session()->get();
+
+		/* // Retrieve plan details of logged user */
+		$planDetails = $this->userModel->getPlanDetailsBYId(session()->get('userId'));
+		$this->planDetails = $planDetails[0];
 	}
 
 	public function index() {
 		$data = array();
+		/* get plan details */
+		$data['planData'] = $this->planDetails;
 		echo view('dealer/vehicles/list-reserved-vehicles.php', $data);
 	}
 

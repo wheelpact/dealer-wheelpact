@@ -18,28 +18,59 @@ class Branches extends BaseController {
 	protected $userModel;
 	protected $vehicleModel;
 
+	protected $userSesData;
+	protected $planDetails;
+
 	public function __construct() {
 		$this->commonModel = new CommonModel();
 		$this->branchModel  = new BranchModel();
 		$this->userModel = new UserModel();
 		$this->vehicleModel = new VehicleModel();
+
+		/* // Retrieve session */
+		$this->userSesData = session()->get();
+
+		/* // Retrieve plan details of logged user */
+		$planDetails = $this->userModel->getPlanDetailsBYId(session()->get('userId'));
+		$this->planDetails = $planDetails[0];
 	}
 
 	public function index() {
 		$data = array();
 		$data['countryList'] = $this->commonModel->get_all_country_data();
-
 		echo view('dealer/branches/list-branches', $data);
 	}
 
 	public function add_branch() {
-		$data['countryList'] = $this->commonModel->get_all_country_data();
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
+
+		/* get plan details */
+		$data['planData'] = $this->planDetails;
+
+		/* // Get total branches by user */
+		$totalBranchesRes = $this->branchModel->getBranchCountByUser($data['userData']['userId']);
+		$totalBranches = $totalBranchesRes[0]['branch_count'];
+
+		/* // Get the allowed number of branches from the user's plan */
+		$maxBranchesAllowed = $data['planData']['max_showroom_branches'];
+
+		/* // Compare the current number of branches with the allowed number */
+		if ($totalBranches < $maxBranchesAllowed) {
+			$data['countryList'] = $this->commonModel->get_all_country_data();
+		} else {
+			$data['maxBranchesAllowed'] = $maxBranchesAllowed;
+			$data['limitExceeded'] = true;
+		}
+
 		return view('dealer/branches/add_branch', $data);
 	}
 
 	public function save_branch() {
-		try {
+		$db = \Config\Database::connect();
+		$db->transStart();
 
+		try {
 			/* form validation start */
 			$validation = \Config\Services::validation();
 
@@ -133,15 +164,10 @@ class Branches extends BaseController {
 
 				if (!$validation->withRequest($this->request)->run()) {
 					$errors = $validation->getErrors();
-
-					// Convert the errors to HTML format
-					$errorString = '<div class="alert alert-danger shadow"><ul>';
+					$errorString = "";
 					foreach ($errors as $field => $error) {
-						$errorString .= '<li>' . $error . '</li>';
+						$errorString .= $error;
 					}
-					$errorString .= '</ul></div>';
-
-					// Return the errors as a JSON response
 					return $this->response->setJSON(['status' => 'error', 'message' => $errorString, 'field' => $fieldName]);
 				}
 			}
@@ -176,15 +202,20 @@ class Branches extends BaseController {
 			$uploadFolderPath = realpath($_SERVER['DOCUMENT_ROOT'] . '/../../production/');
 			$destinationPath = $uploadFolderPath . '/public/uploads/';
 
+			$branchBanner1newName = '';
+			$branchBanner2newName = '';
+			$branchBanner3newName = '';
+			$branchThumbnailnewName = '';
+			$branchLogonewName = '';
+
 			if ($branchBanner1 = $this->request->getFile('branchBanner1')) {
 				// Generate a new name for the thumbnail image to prevent name conflicts
 				$branchBanner1newName = $branchBanner1->getRandomName();
 
 				try {
 					$branchBanner1->move($destinationPath . 'branch_banners/', $branchBanner1newName);
-					echo '<br/> branch Banner1 File moved successfully.';
 				} catch (\Exception $e) {
-					echo '<br/> branch Banner1 Error moving file: ' . $e->getMessage();
+					throw new \RuntimeException('Error moving branch Banner1 file: ' . $e->getMessage());
 				}
 			}
 			if ($branchBanner2 = $this->request->getFile('branchBanner2')) {
@@ -193,9 +224,8 @@ class Branches extends BaseController {
 
 				try {
 					$branchBanner2->move($destinationPath . 'branch_banners/', $branchBanner2newName);
-					echo '<br/> branch Banner2 File moved successfully.';
 				} catch (\Exception $e) {
-					echo '<br/> branch Banner2 Error moving file: ' . $e->getMessage();
+					throw new \RuntimeException('Error moving branch Banner2 file: ' . $e->getMessage());
 				}
 			}
 			if ($branchBanner3 = $this->request->getFile('branchBanner3')) {
@@ -204,9 +234,8 @@ class Branches extends BaseController {
 
 				try {
 					$branchBanner3->move($destinationPath . 'branch_banners/', $branchBanner3newName);
-					echo '<br/> branch Banner3 File moved successfully.';
 				} catch (\Exception $e) {
-					echo '<br/> branch Banner3 Error moving file: ' . $e->getMessage();
+					throw new \RuntimeException('Error moving branch Banner3 file: ' . $e->getMessage());
 				}
 			}
 
@@ -216,9 +245,8 @@ class Branches extends BaseController {
 
 				try {
 					$branchThumbnail->move($destinationPath . 'branch_thumbnails/', $branchThumbnailnewName);
-					echo '<br/> branch Thumbnail File moved successfully.';
 				} catch (\Exception $e) {
-					echo '<br/> branch Thumbnail Error moving file: ' . $e->getMessage();
+					throw new \RuntimeException('Error moving branch Thumbnail file: ' . $e->getMessage());
 				}
 			}
 
@@ -228,9 +256,8 @@ class Branches extends BaseController {
 
 				try {
 					$branchLogo->move($destinationPath . 'branch_logos/', $branchLogonewName);
-					echo '<br/> branch logo File moved successfully.';
 				} catch (\Exception $e) {
-					echo '<br/> branch logo Error moving file: ' . $e->getMessage();
+					throw new \RuntimeException('Error moving branch Logo file: ' . $e->getMessage());
 				}
 			}
 
@@ -275,8 +302,7 @@ class Branches extends BaseController {
 			$branchLastInsertedId = $this->branchModel->getInsertID();
 
 			if (!$result) {
-				//return redirect()->back()->with('error', 'Failed to save branch');
-				return $this->response->setJSON(['status' => 'error', 'message' => 'Failed to save branch.']);
+				throw new \RuntimeException('Failed to save branch.');
 			}
 
 			/* inserting deliverableImg + */
@@ -300,9 +326,8 @@ class Branches extends BaseController {
 					if ($fileError === 0) {
 						try {
 							move_uploaded_file($fileTmpName, $filePath);
-							echo '<br/> deliverableImg - ' . $i . ' File moved successfully.';
 						} catch (\Exception $e) {
-							echo '<br/> deliverableImg Error moving file: ' . $e->getMessage();
+							throw new \RuntimeException('Error moving deliverableImg file: ' . $e->getMessage());
 						}
 
 						$data = [
@@ -312,18 +337,25 @@ class Branches extends BaseController {
 						];
 						$this->branchModel->insert_deliverablesImg($data);
 					} else {
-						echo "Error uploading file: $fileName (Error code: $fileError)<br>";
+						throw new \RuntimeException("Error uploading file: $fileName (Error code: $fileError)");
 					}
 				}
 			}
+
+			$db->transComplete();
+
+			if ($db->transStatus() === false) {
+				throw new \RuntimeException('Transaction failed.');
+			}
+
 			return $this->response->setJSON(['status' => 'success', 'redirect' => 'dealer/list-branches', 'message' => 'Branch Details Added Successfully.']);
 			/* inserting deliverableImg - */
 		} catch (\Exception $e) {
+			$db->transRollback();
 			// Error handling and logging
 			$logger = \Config\Services::logger();
 			$logger->error('Error occurred while adding dealer branch: ' . $e->getMessage());
-			return $this->response->setJSON(['status' => 'error', 'message' => 'Error occurred while adding dealer branch' . $e->getMessage()]);
-			throw $e;
+			return $this->response->setJSON(['status' => 'error', 'message' => 'Error occurred while adding dealer branch: ' . $e->getMessage()]);
 		}
 	}
 
@@ -334,6 +366,10 @@ class Branches extends BaseController {
 		$data['stateList'] = $this->commonModel->get_country_states($data['branchDetails']['country_id']);
 		$data['cityList'] = $this->commonModel->get_state_cities($data['branchDetails']['state_id']);
 		$data['branchDeliverableImgs'] = $this->branchModel->get_branch_deliverable_imgs($branchId);
+
+		/* get plan details */
+		$data['planData'] = $this->planDetails;
+
 		return view('dealer/branches/edit_branch_details', $data);
 	}
 
@@ -556,6 +592,9 @@ class Branches extends BaseController {
 		$data['branchService'] = explode(",", $data['branchDetails']['branch_services']);
 		$data['branchDeliverableImgs'] = $this->branchModel->get_branch_deliverable_imgs($branchId);
 
+		/* get plan details */
+		$data['planData'] = $this->planDetails;
+
 		return view('dealer/branches/single_branch_info', $data);
 	}
 
@@ -586,15 +625,15 @@ class Branches extends BaseController {
                                     <h6>Branch</h6>
                                     <h5>' . $branch['branch_type_label'] . '</h5>
                                 </div>
-							</div>
-							<div class="d-flex align-items-center">
-								<div class="store-rating-icon">
-									<i class="icofont-star"></i>
-								</div>
+			    </div>
+			    <div class="d-flex align-items-center">
+				<div class="store-rating-icon">
+					<i class="icofont-star"></i>
+				</div>
                                 <div class="store-rating-count">' . round($branch['branch_rating'], 1) . '</div>
-								<div class="store-reviews">
-									<a class="view-reviews-link" href="#" data-branch-id="' . $branch['id'] . '">(' . $branch['branch_review_count'] . ' Reviews)</a>
-								</div>
+				<div class="store-reviews">
+					<a class="view-reviews-link" href="#" data-branch-id="' . $branch['id'] . '">(' . $branch['branch_review_count'] . ' Reviews)</a>
+				</div>
                             </div>
                             <a href="promote.html" class="btn btn-primary mt-3 btn-block">Promote</a>
                             <div class="option-btn">

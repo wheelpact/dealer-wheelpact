@@ -16,7 +16,7 @@ class VehicleModel extends Model {
     protected $validationMessages   = [];
     protected $skipValidation       = false;
 
-    // Dates
+    /* // Dates */
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
@@ -38,6 +38,18 @@ class VehicleModel extends Model {
     /* listing the showroom / branches of a dealer */
     public function getShowroomList($dealerId) {
         $query = $this->db->query('SELECT * FROM branches where dealer_id=' . $dealerId . ' AND is_active="1";');
+        return $query->getResultArray();
+    }
+
+    public function getVehicleCountByBranch($dealerId) {
+
+        $builder = $this->db->table($this->table);
+        $builder->select('branch_id, MONTH(created_datetime) as month, YEAR(created_datetime) as year, COUNT(*) as vehicle_count');
+        $builder->join('branches', 'branches.id = vehicles.branch_id');
+        $builder->where('branches.dealer_id', $dealerId);
+        $builder->groupBy('branch_id, month, year');
+
+        $query = $builder->get();
         return $query->getResultArray();
     }
 

@@ -14,7 +14,6 @@ class UserModel extends Model {
 
     public function chkUserCredentials($email, $password) {
 
-        // Retrieve the user record based on the email
         $user = $this->select(['u.id as userId', 'u.user_code', 'u.email', 'u.role_id', 'ur.role_name', 'u.is_active', 'uc.password'])
             ->from('users as u')
             ->join('userscredentials as uc', 'u.id = uc.user_id')

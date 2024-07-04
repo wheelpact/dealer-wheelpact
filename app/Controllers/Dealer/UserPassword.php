@@ -14,9 +14,13 @@ class UserPassword extends BaseController {
 	protected $userModel;
 	protected $commonModel;
 
+	protected $userSesData;
+
 	public function __construct() {
 		$this->userModel = new UserModel();
 		$this->commonModel = new CommonModel();
+
+		$this->userSesData = session()->get();
 	}
 
 	public function index() {
@@ -24,6 +28,7 @@ class UserPassword extends BaseController {
 	}
 
 	public function dealer_profile() {
+
 		$dealerId = session()->get('userId');
 
 		$dealerDetails = $this->userModel->getDealerDetailsById($dealerId);
@@ -36,7 +41,8 @@ class UserPassword extends BaseController {
 			echo "User not found.";
 		}
 
-		$data['userData'] = $dealerDetails;
+		$data['userData'] = $this->userSesData;
+		$data['dealerData'] = $dealerDetails;		
 		$data['planData'] = $planDetails[0];
 		echo view('dealer/auth/profile.php', $data);
 	}

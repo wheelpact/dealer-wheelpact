@@ -14,15 +14,18 @@ class Dashboard extends BaseController {
 	protected $branchModel;
 	protected $userModel;
 
+	protected $userSesData;
+
 	public function __construct() {
 		$this->branchModel  = new BranchModel();
 		$this->userModel  = new UserModel();
+
+		$this->userSesData = session()->get();
 	}
 
 	public function index() {
-		$session = session();
-		$data['session'] = \Config\Services::session();
-		$data['userData'] = $session->get();
+
+		$data['userData'] = $this->userSesData;
 
 		try {
 			$dealerId = session()->get('userId');

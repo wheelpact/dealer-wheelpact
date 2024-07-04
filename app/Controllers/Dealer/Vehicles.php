@@ -21,6 +21,7 @@ class Vehicles extends BaseController {
 	protected $vehicleImagesModel;
 
 	protected $dealerId;
+	protected $userSesData;
 	protected $planDetails;
 
 	public function __construct() {
@@ -30,20 +31,24 @@ class Vehicles extends BaseController {
 		$this->vehicleModel = new VehicleModel();
 		$this->vehicleImagesModel = new VehicleImagesModel();
 
-		/* // Retrieve dealer ID from session */
-		$this->dealerId = session()->get('userId');
+		/* // Retrieve session */
+		$this->userSesData = session()->get();
 
 		/* // Retrieve plan details of logged user */
-		$planDetails = $this->userModel->getPlanDetailsBYId($this->dealerId);
+		$planDetails = $this->userModel->getPlanDetailsBYId(session()->get('userId'));
 		$this->planDetails = $planDetails[0];
 	}
 
 	public function index() {
 		$data = array();
+		/* get plan details */
+		$data['planData'] = $this->planDetails;
+
 		echo view('dealer/vehicles/list-vehicles', $data);
 	}
 
 	public function getAllVehicles($vehicleTypeId, $vehicleBrandId, $vehicleModelId, $vehicleVariantId) {
+
 		$limit = $this->request->getVar('limit');
 		$offset = $this->request->getVar('start');
 		$dealerId = session()->get('userId');
@@ -110,23 +115,40 @@ class Vehicles extends BaseController {
 	}
 
 	public function add_vehicle() {
-
-		$dealerId = $this->dealerId;
-
-		$data['showroomList'] = $this->vehicleModel->getShowroomList($dealerId);
-		/*data['cmpList'] = $this->vehicleModel->getDistinctBrands();*/
-
-		$data['fuelTypeList'] = $this->commonModel->get_fuel_types();
-		$data['fuelVariantList'] = $this->commonModel->get_fuel_variants();
-		$data['transmissionList'] = $this->commonModel->get_vehicle_transmissions();
-		$data['bodyTypeList'] = $this->commonModel->get_vehicle_body_types();
-
-		$data['colorList'] = $this->commonModel->get_vehicle_colors();
-		$data['stateList'] = $this->commonModel->get_country_states(101);
-
-		/* get plan details */
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
 		$data['planData'] = $this->planDetails;
-		
+
+		/* // Get the vehicle counts grouped by branch for the dealer */
+		$VehicleCountByBranch = $this->vehicleModel->getVehicleCountByBranch($data['userData']['userId']);
+
+		/* // Filter the array for the current month */
+		$currentMonth = date('m');
+		$currentYear = date('Y');
+		$currentMonthVehicleCounts = array_filter($VehicleCountByBranch, function ($count) use ($currentMonth, $currentYear) {
+			return $count['month'] == $currentMonth && $count['year'] == $currentYear;
+		});
+
+		/* // Calculate the total vehicle count for the current month */
+		$totalVehicleCountForCurrentMonth = array_sum(array_column($currentMonthVehicleCounts, 'vehicle_count'));
+
+		/* // Check if adding another vehicle is within the plan limits */
+		if ($totalVehicleCountForCurrentMonth < $data['planData']['max_vehicle_listing_per_month']) {
+			/* // Fetch additional data needed for adding vehicles */
+			$data['showroomList'] = $this->vehicleModel->getShowroomList($data['userData']['userId']);
+			$data['fuelTypeList'] = $this->commonModel->get_fuel_types();
+			$data['fuelVariantList'] = $this->commonModel->get_fuel_variants();
+			$data['transmissionList'] = $this->commonModel->get_vehicle_transmissions();
+			$data['bodyTypeList'] = $this->commonModel->get_vehicle_body_types();
+			$data['colorList'] = $this->commonModel->get_vehicle_colors();
+			$data['stateList'] = $this->commonModel->get_country_states(101);
+		} else {
+			/* // Display a message or handle the case where the limit is exceeded */
+			$data['totalVehicleCountForCurrentMonth'] = $totalVehicleCountForCurrentMonth;
+			$data['limitExceeded'] = true;
+		}
+
+		/* // Load the view with all necessary data */
 		echo view('dealer/vehicles/add-vehicle', $data);
 	}
 
@@ -813,6 +835,10 @@ class Vehicles extends BaseController {
 		$data['transmissionList'] = $this->commonModel->get_vehicle_transmissions();
 		$data['colorList'] = $this->commonModel->get_vehicle_colors();
 		$data['stateList'] = $this->commonModel->get_country_states(101);
+
+		/* get plan details */
+		$data['planData'] = $this->planDetails;
+
 		if (isset($data['vehicleDetails']['cmp_id']) && !empty($data['vehicleDetails']['cmp_id'])) {
 			$data['vehicleRegRtoList'] = $this->commonModel->get_registered_state_rto($data['vehicleDetails']['registered_state_id']);
 		}
