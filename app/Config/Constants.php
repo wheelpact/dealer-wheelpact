@@ -177,10 +177,31 @@ define('RAZP_TOKEN', [
     'key_secret' => '7LYkGl4uz16cUmQQG8qpAFix'
 ]);
 
-define('UPLOAD_IMG_WIDTH','1024');
-define('UPLOAD_IMG_HEIGHT','800');
+define('UPLOAD_IMG_WIDTH', '1024');
+define('UPLOAD_IMG_HEIGHT', '800');
 
 define('DEFAULT_IMG', '../default-img.png');
 
 define('FROM_EMAIL', 'no-reply@wheelpact.com');
 define('FROME_NAME', 'wheelpact.com');
+
+/* test mode details start */
+define('RZP_KEY', 'rzp_test_KH6djyMTqNWc5b');
+define('RZP_SECRET', '7LYkGl4uz16cUmQQG8qpAFix');
+/* test mode details ednd */
+
+
+$httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+
+define("SERVER_SITE_PATH", "http://" . $httpHost . '/');
+define("SERVER_ROOT_PATH_UPLOADS", SERVER_SITE_PATH . 'uploads/');
+define("SERVER_ROOT_PATH_ASSETS", SERVER_SITE_PATH . 'assets/');
+
+define('SERVER_ROOT_PATH_DEFAULTIMAGE', SERVER_SITE_PATH . 'assets/admin/src/images/default-img.png');
+
+
+/* drop dpwn value for PromotionPage */
+define('PROMTION_TYPE', [
+    1 => 'Featured',
+    2 => 'On-Sale'
+]);

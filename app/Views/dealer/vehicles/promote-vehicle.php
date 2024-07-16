@@ -1,4 +1,7 @@
 <?php
+
+use PhpParser\Node\Stmt\Foreach_;
+
 echo view('dealer/includes/_header');
 echo view('dealer/includes/_sidebar');
 ?>
@@ -23,7 +26,10 @@ echo view('dealer/includes/_sidebar');
 			</div>
 
 			<div class="row">
+
 				<div class="col-md-8">
+					<?= form_open('create-rzp-order', ['id' => 'promotionPlanProcess', 'method' => 'POST']); ?>
+					<?= csrf_field(); ?>
 					<div class="pd-20 bg-white border-radius-10 box-shadow mb-30">
 						<h4 class="text-blue h4">Select Your Promotion Package</h4>
 						<div class="promotion-points">
@@ -42,50 +48,32 @@ echo view('dealer/includes/_sidebar');
 						</div>
 						<div class="form-group col-6">
 							<label>Promote Under<span class="required">*</span></label>
-							<select class="custom-select">
-								<option>Choose...</option>
-								<option>Featured</option>
-								<option>On-Sale</option>
+							<select class="custom-select formInput" name="promotionType" id="promotionType" required>
+								<option value="">Choose...</option>
+								<?php foreach (PROMTION_TYPE as $id => $type) : ?>
+									<option value="<?= $id ?>"><?= $type ?></option>
+								<?php endforeach; ?>
 							</select>
 						</div>
 					</div>
-					<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative">
-						<h4 class="text-blue h4">Silver Plan</h4>
-						<div class="custom-control custom-radio mb-5">
-							<input checked type="radio" id="customRadio1" name="custom-radio" class="custom-control-input getPaymentmentAmt" value="49">
-							<label class="custom-control-label" for="customRadio1">Promotion Validity for 7 Days</label>
-						</div>
 
-						<div class="promotion-plan-pice">
-							<h4>₹49</h4>
-						</div>
-					</div>
+					<?php $first = true;
+					if (isset($promotionPlans) && !empty($promotionPlans)) : ?>
+						<?php foreach ($promotionPlans as $plan) : ?>
+							<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative">
+								<h4 class="text-blue h4"><?= esc($plan['promotionName']); ?></h4>
+								<div class="custom-control custom-radio mb-5">
+									<input checked type="radio" data-vehicleid="<?= esc($vehicleDetails['id']); ?>" data-promotionplanid="<?= esc($plan['id']); ?>" id="promotionCustomRadio<?= esc($plan['id']); ?>" name="promotion-amount-radio" class="custom-control-input getPaymentmentAmt" value="<?= esc($plan['promotionAmount']); ?>" <?= $first ? 'checked' : '' ?>>
+									<label class="custom-control-label" for="promotionCustomRadio<?= esc($plan['id']); ?>">Promotion Validity for <?= esc($plan['promotionDaysValidity']); ?> Days</label>
+								</div>
 
-					<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative">
-						<h4 class="text-blue h4">Gold Plan</h4>
-						<div class="custom-control custom-radio mb-5">
-							<input type="radio" id="customRadio2" name="custom-radio" class="custom-control-input getPaymentmentAmt" value="149">
-							<label class="custom-control-label" for="customRadio2">Promotion Validity for 15 Days</label>
-						</div>
-
-						<div class="promotion-plan-pice">
-							<h4>₹149</h4>
-						</div>
-					</div>
-
-					<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative">
-						<h4 class="text-blue h4">Titanium Plan</h4>
-						<div class="custom-control custom-radio mb-5">
-							<input type="radio" id="customRadio3" name="custom-radio" class="custom-control-input getPaymentmentAmt" value="249">
-							<label class="custom-control-label" for="customRadio3">Promotion Validity for 30 Days</label>
-						</div>
-
-						<div class="promotion-plan-pice">
-							<h4>₹249</h4>
-						</div>
-					</div>
+								<div class="promotion-plan-price">
+									<h4>₹<?= esc($plan['promotionAmount']); ?></h4>
+								</div>
+							</div>
+						<?php endforeach; ?>
+					<?php endif; ?>
 				</div>
-
 				<div class="col-md-4">
 					<div class="card card-box mb-3 stick-promo">
 						<img class="card-img-top vehicle-image" src="<?php echo isset($vehicleDetails['thumbnail_url']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'vehicle_thumbnails/' . $vehicleDetails['thumbnail_url'] : WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'default-img.png'; ?>" alt="<?php echo $vehicleDetails['cmp_name'] . ' ' . $vehicleDetails['cmp_model_name']; ?>" />
@@ -118,8 +106,11 @@ echo view('dealer/includes/_sidebar');
 							</div>
 							<h5 class="card-title mt-3"><?php echo $vehicleDetails['branch_name']; ?></h5>
 							<h6 class="mb-10"><?php echo VEHICLE_TYPE[$vehicleDetails['vehicle_type']]; ?></h6>
-							<a href="#" class="btn btn-primary mt-3 btn-block promotionPay">Pay ₹<span id="planValue"></span></a>
+							<button type="submit" class="btn btn-primary mt-3 btn-block promotionPlanPay">Promote</button>
 						</div>
+						<?= form_close() ?>
+						
+						<div class="promotionPayBtnScript"></div>
 					</div>
 				</div>
 			</div>
@@ -128,3 +119,8 @@ echo view('dealer/includes/_sidebar');
 		<?php echo view('dealer/includes/_footer'); ?>
 	</div>
 </div>
+<script>
+	$(document).ready(function() {
+		$("input[name='promotion-amount-radio']:checked").trigger('click');
+	});
+</script>

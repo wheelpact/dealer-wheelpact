@@ -3,6 +3,7 @@
 namespace App\Controllers\dealer;
 
 use App\Controllers\BaseController;
+
 use App\Models\BranchModel;
 use App\Models\VehicleModel;
 use App\Models\UserModel;
@@ -38,6 +39,10 @@ class Branches extends BaseController {
 	public function index() {
 		$data = array();
 		$data['countryList'] = $this->commonModel->get_all_country_data();
+
+		/* get plan details */
+		$data['planData'] = $this->planDetails;
+
 		echo view('dealer/branches/list-branches', $data);
 	}
 

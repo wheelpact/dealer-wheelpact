@@ -713,13 +713,23 @@ $(document).ready(function () {
 	updateStepIndicators(currentStep);
 
 	$(".next").click(function () {
-		if (validateStep(currentStep)) {
+		var formId = $(this).closest('form').attr('id');
+		if (formId == 'update_vehicle_form') {
 			currentStep++;
 			showStep(currentStep);
 			updateButtons();
 			updateStepIndicators(currentStep);
 			/*// Scroll to the target div */
 			$('html, body').animate({ scrollTop: $('.stepsDivForm').offset().top }, 1000);
+		} else {
+			if (validateStep(currentStep)) {
+				currentStep++;
+				showStep(currentStep);
+				updateButtons();
+				updateStepIndicators(currentStep);
+				/*// Scroll to the target div */
+				$('html, body').animate({ scrollTop: $('.stepsDivForm').offset().top }, 1000);
+			}
 		}
 	});
 
@@ -1193,10 +1203,82 @@ $(document).ready(function () {
 
 	/* promtion page */
 	$(".getPaymentmentAmt").click(function () {
-		var silverPlanChecked = $("input[name='custom-radio']:checked").val();
-		$('#planValue').text(silverPlanChecked);
+		var PlanChecked = $("input[name='promotion-amount-radio']:checked").val();
+		$('#promotionPlanValue').text(PlanChecked);
+		$("#promotionPlanProcess :submit").prop("disabled", false);
+		/* show the promote button */
+		$("#rzp-promotion-button").hide();
+		
+		/* hide the razorpay button */
+		$(".promotionPlanPay").show();
+
 	});
 
+	$("#promotionPlanProcess").submit(function (event) {
+		event.preventDefault();
+		$('.promotionPayBtnScript').html("");
+
+		$("#promotionPlanProcess :submit").text("Processing...");
+		$("#promotionPlanProcess :submit").prop("disabled", true);
+
+		// Validation for "Promote Under" dropdown
+		var promotionType = $("#promotionType").val();
+		if (!promotionType) {
+			showErrorAlert("Please select a promotion under which to promote.");
+			return;
+		}
+
+		var action_page = $(this).attr("action");
+		var formData = new FormData(this);
+
+		/* appending selected PromotionPlan Id */
+		var selectedRadio = $("input[name='promotion-amount-radio']:checked");
+		if (selectedRadio.length > 0) {
+			var promotionPlanId = selectedRadio.data("promotionplanid");
+			formData.append('promotionPlanId', promotionPlanId);
+
+			var vehicleId = selectedRadio.data("vehicleid");
+			formData.append('vehicleId', vehicleId);
+		} else {
+			showErrorAlert("Please select a plan.");
+		}
+
+		$.ajax({
+			url: action_page,
+			type: "POST",
+			data: formData,
+			processData: false,
+			contentType: false,
+			// beforeSend: function () {
+			// 	showOverlay();
+			// },
+			success: function (response) {
+				//Swal.close();
+				if (response.status === "success") {
+					//showSuccessAlert(response.message);
+					// setTimeout(function () {
+					// 	location.reload();
+					// }, 3000);
+
+					$('.promotionPayBtnScript').append(response.paymentForm);
+
+					/* hide the promote button */
+					$(".promotionPlanPay").hide();
+
+				} else {
+					$("#promotionPlanProcess :submit").text("Promote");
+					$("#promotionPlanProcess :submit").prop("disabled", false);
+					showErrorAlert(response.message);
+				}
+			},
+			error: function (xhr, status, error) {
+				console.log("An error occurred:", error);
+			},
+		});
+
+	});
+
+	/* update the Free/Basic plan vehicle category bike/car for the first time login of dealer */
 	$("#updatePlanPreference").submit(function (event) {
 		event.preventDefault();
 
@@ -1674,12 +1756,16 @@ function form_validation_messages(fieldId) {
 		case 'VehicleModel':
 			msg = 'Enter Model Name';
 			break;
-
 		/* //add company from validation end */
-		default:
-			// Default case if none of the above cases match
-			msg = 'Form Field ID not found.';
+
+		case 'promotionType':
+			msg = 'Choose Promtion Type'
 			break;
+
+		// default:
+		// 	// Default case if none of the above cases match
+		// 	msg = 'Form Field ID not found.';
+		// 	break;
 	}
 
 	return msg;

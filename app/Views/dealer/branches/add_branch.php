@@ -32,7 +32,7 @@ echo view('dealer/includes/_sidebar');
                         <div class="col-md-12 col-sm-12 mb-30">
                             <div class="pd-20 card-box">
                                 <h4 class="mb-30 h4">
-                                    You have reached your vehicle limit (<?php echo $maxBranchesAllowed; ?>) For current Month. <a href="<?php echo base_url('dealer/profile#plan-details'); ?>">Upgrade your plan</a> to add more vehicles.
+                                    You have reached your branch limit (<?php echo $maxBranchesAllowed; ?>). <a href="<?php echo base_url('dealer/profile#plan-details'); ?>">Upgrade your plan</a> to add more branch.
                                 </h4>
                             </div>
                         </div>

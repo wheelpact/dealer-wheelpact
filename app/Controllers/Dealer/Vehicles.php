@@ -8,6 +8,7 @@ use App\Models\VehicleModel;
 use App\Models\CommonModel;
 use App\Models\UserModel;
 use App\Models\VehicleImagesModel;
+use App\Models\PromotionPlanModel;
 
 /**
  * All Vehicles related methods defined in vehicles class 
@@ -19,6 +20,8 @@ class Vehicles extends BaseController {
 	protected $userModel;
 	protected $commonModel;
 	protected $vehicleImagesModel;
+	protected $promotionPlanModel;
+
 
 	protected $dealerId;
 	protected $userSesData;
@@ -30,6 +33,7 @@ class Vehicles extends BaseController {
 		$this->userModel  = new UserModel();
 		$this->vehicleModel = new VehicleModel();
 		$this->vehicleImagesModel = new VehicleImagesModel();
+		$this->promotionPlanModel = new promotionPlanModel();
 
 		/* // Retrieve session */
 		$this->userSesData = session()->get();
@@ -910,143 +914,6 @@ class Vehicles extends BaseController {
 		}
 	}
 
-	public function upload_exterior_main_vehicle_images_old() {
-		$vehicleId = $this->request->getPost('vehicleId');
-		$vehicle_type = $this->request->getPost('vehicle_type');
-
-		if (empty($vehicleId)) {
-			return $this->response->setJSON(['status' => 'error', 'message' => 'Vehicle ID Required.']);
-		}
-
-		$data = [
-			'vehicle_id' => $vehicleId,
-			'vehicle_type' => $vehicle_type
-		];
-		$message = '';
-
-		if ($vehicle_type == '1') {
-			/* cars */
-			$imageFields = [
-				/* car exterior maim images + */
-				'exterior_main_front_img',
-				'exterior_main_right_img',
-				'exterior_main_back_img',
-				'exterior_main_left_img',
-				'exterior_main_roof_img',
-				'exterior_main_bonetopen_img',
-				'exterior_main_engine_img',
-				/* car exterior maim images - */
-
-				/* car exterior diagonal image + */
-				'exterior_diagnoal_right_front_img',
-				'exterior_diagnoal_right_back_img',
-				'exterior_diagnoal_left_back_img',
-				'exterior_diagnoal_left_front_img',
-				/* car exterior diagonal image + */
-
-				/*car exterior wheel images + */
-				'exterior_wheel_right_front_img',
-				'exterior_wheel_right_back_img',
-				'exterior_wheel_left_back_img',
-				'exterior_wheel_left_front_img',
-				'exterior_wheel_spare_img',
-				/*car exterior wheel images - */
-
-				/* car exterior tyre thred images + */
-				'exterior_tyrethread_right_front_img',
-				'exterior_tyrethread_right_back_img',
-				'exterior_tyrethread_left_back_img',
-				'exterior_tyrethread_left_front_img',
-				/* car exterior tyre thred images - */
-
-				/* car exterior underbody images + */
-				'exterior_underbody_front_img',
-				'exterior_underbody_rear_img',
-				'exterior_underbody_right_img',
-				'exterior_underbody_left_img',
-				/* car exterior underbody images - */
-
-				/* car interior images + */
-				'interior_dashboard_img',
-				'interior_infotainment_system_img',
-				'interior_steering_wheel_img',
-				'interior_odometer_img',
-				'interior_gear_lever_img',
-				'interior_pedals_img',
-				'interior_front_cabin_img',
-				'interior_mid_cabin_img',
-				'interior_rear_cabin_img',
-				'interior_driver_side_door_panel_img',
-				'interior_driver_side_adjustment_img',
-				'interior_boot_inside_img',
-				'interior_boot_door_open_img',
-				/* car interior images - */
-
-				/* car other images + */
-				'others_keys_img',
-				/* car other images - */
-			];
-		} elseif ($vehicle_type == '2') {
-			/* bikes */
-			$imageFields = [
-				/* bike exterior main images + */
-				'exterior_main_front_img',
-				'exterior_main_right_img',
-				'exterior_main_back_img',
-				'exterior_main_left_img',
-				'exterior_main_tank_img',
-				'exterior_main_handlebar_img',
-				'exterior_main_headlight_img',
-				'exterior_main_tail_light_img',
-				'exterior_main_speedometer_img',
-				'exterior_main_exhaust_img',
-				'exterior_main_seat_img',
-				'exterior_main_engine_img',
-				/* bike exterior main images - */
-
-				/* bike exterior Diagonal images + */
-				'exterior_diagnoal_right_front_img',
-				'exterior_diagnoal_right_back_img',
-				'exterior_diagnoal_left_back_img',
-				'exterior_diagnoal_left_front_img',
-				/* bike exterior Diagonal images - */
-
-				/* bike exterior wheel images - */
-				'exterior_wheel_front_img',
-				'exterior_wheel_rear_img',
-				/* bike exterior wheel images - */
-
-				/* bike tyre thred images - */
-				'exterior_tyrethread_front_img',
-				'exterior_tyrethread_back_img',
-				/* bike tyre thred images - */
-
-				/* bike exterior underbody images + */
-				'exterior_underbody_front_img',
-				'exterior_underbody_rear_img',
-				/* bike exterior underbody images - */
-
-			];
-		}
-
-		foreach ($imageFields as $field) {
-			if (!empty($_FILES[$field]['name'])) {
-				$data[$field] = uploadImage($field);
-			}
-		}
-
-		$existingRecord = $this->vehicleImagesModel->where('vehicle_id', $vehicleId)->first();
-		if ($existingRecord) {
-			$this->vehicleImagesModel->update($existingRecord['id'], $data);
-			$message = 'Vehicle Exterior Images Updated Successfully';
-		} else {
-			$this->vehicleImagesModel->insert($data);
-			$message = 'Vehicle Exterior Images Added Successfully';
-		}
-
-		return $this->response->setJSON(['status' => 'success', 'message' => $message]);
-	}
-
 	public function upload_vehicle_images() {
 
 		$vehicleId = $this->request->getPost('vehicle_id');
@@ -1226,14 +1093,5 @@ class Vehicles extends BaseController {
 		}
 
 		return $this->response->setJSON(['status' => 'success', 'vehicle_form_feilds' => $vehicleFeaturesHtmlContent, 'vehicle_image_fields' => $vehicleExteriorImagesHtmlContent]);
-	}
-
-	public function promote_vehicle($vehicleId) {
-		$dealerId = session()->get('userId');
-
-		$data['vehicleDetails'] =  $this->vehicleModel->getVehicleDetails($vehicleId);
-		$data['vehicleImagesDetails'] = $this->vehicleModel->getVehicleImagesDetails($vehicleId);
-		//echo "<pre>"; print_r($data['vehicleDetails']);die;
-		echo view('dealer/vehicles/promote-vehicle', $data);
 	}
 }

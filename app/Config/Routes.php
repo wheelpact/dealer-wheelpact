@@ -53,7 +53,7 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->match(['get', 'post'], 'save-new-vehicle', 'Vehicles::save_new_vehicle');
     $routes->match(['get', 'post'], 'edit-vehicle/(:num)', 'Vehicles::edit_vehicle/$1', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'single-vehicle-info/(:num)', 'Vehicles::single_vehicle_info/$1', ['filter' => 'auth']);
-    $routes->match(['get', 'post'], 'promote-vehicle/(:num)', 'Vehicles::promote_vehicle/$1', ['filter' => 'auth']);
+    //$routes->match(['get', 'post'], 'promote-vehicle/(:num)', 'Vehicles::promote_vehicle/$1', ['filter' => 'auth']);
 
     $routes->match(['get', 'post'], 'update-vehicle', 'Vehicles::update_vehicle', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'upload-exterior-main-vehicle-images', 'Vehicles::upload_exterior_main_vehicle_images');
@@ -86,7 +86,18 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->match(['get', 'post'], 'load_cities', 'Branches::load_cities');
     $routes->match(['get', 'post'], 'getdealerbranches/(:num)/(:num)/(:num)/(:num)', 'Branches::getAllBranches/$1/$2/$3/$4', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'deleteBranch/(:num)', 'Branches::delete/$1');
+
+    $routes->match(['get', 'post'], 'promote-vehicle/(:num)', 'PromotionController::index/$1', ['filter' => 'auth']);
+    $routes->match(['get', 'post'], 'promotionPlanProcess', 'PromotionController::promotionPlanProcess', ['filter' => 'auth']);
 });
+
+/* Razorpay Routes */
+$routes->match(['get', 'post'], 'create-rzp-order', 'RazorpayController::create_rzp_order', ['filter' => 'auth']);
+$routes->match(['get', 'post'], 'payment-response', 'RazorpayController::callbackUrlRzp');
+
+$routes->match(['get', 'post'], 'payment-success', 'RazorpayController::payment_success');
+$routes->match(['get', 'post'], 'payment-canceled', 'RazorpayController::payment_canceled');
+$routes->match(['get', 'post'], 'payment-failed', 'RazorpayController::payment_failed');
 /*
  * --------------------------------------------------------------------
  * Additional Routing

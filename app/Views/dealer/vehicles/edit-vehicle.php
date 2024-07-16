@@ -219,7 +219,7 @@ echo view('dealer/includes/_sidebar');
                             <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label>Featured Status<span class="required">*</span></label>
-                                    <select class="custom-select formInput" name="featured_status" id="featured_status">
+                                    <select class="custom-select formInput" name="featured_status" id="featured_status" data-toggle="tooltip" title="Vehicle will be displayed on Showroom pages Featured Section">
                                         <option value="">Choose...</option>
                                         <?php foreach (YES_NO_OPTIONS as $id => $type) : ?>
                                             <option value="<?= $id ?>" <?php if ($vehicleDetails['featured_status'] == $id) {
@@ -414,7 +414,7 @@ echo view('dealer/includes/_sidebar');
                             <div class="col-md-6 col-lg-3">
                                 <div class="form-group">
                                     <label>On Sale Status<span class="required">*</span></label>
-                                    <select class="custom-select formInput" name="onsale_status" id="onsale_status">
+                                    <select class="custom-select formInput" name="onsale_status" id="onsale_status" data-toggle="tooltip" title="Vehicle will be displayed on Showroom pages On-Sale Section">
                                         <option value="">Choose...</option>
                                         <?php foreach (YES_NO_OPTIONS as $id => $type) : ?>
                                             <option value="<?= $id ?>" <?php if ($vehicleDetails['onsale_status'] == $id) {
