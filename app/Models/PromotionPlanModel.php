@@ -51,4 +51,13 @@ class PromotionPlanModel extends Model {
         $result = $builder->get()->getRowArray();
         return $result;
     }
+
+    public function checkVehiclePromoted($vehicleId) {
+        $builder = $this->db->table('dealer_promotion');
+        $builder->where('vehicleId', $vehicleId);
+        $builder->where('is_active', 1);
+        $builder->where('NOW() BETWEEN start_dt AND end_dt', null, false);
+        $result = $builder->get()->getRowArray();
+        return $result;
+    }
 }

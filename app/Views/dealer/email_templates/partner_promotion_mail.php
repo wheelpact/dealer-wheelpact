@@ -98,7 +98,7 @@
 <body>
     <div class="email-container">
         <div class="header email-logo">
-            <img src="<?php echo SERVER_ROOT_PATH_ASSETS; ?>web/images/logo.png">
+            <img src="<?php echo SERVER_ROOT_PATH_ASSETS; ?>/images/logo.png">
         </div>
         <div class="content">
             <h2>Dear <?php echo ucwords($partnerInfo['name']); ?>,</h2>

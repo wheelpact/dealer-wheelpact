@@ -1205,21 +1205,22 @@ $(document).ready(function () {
 	$(".getPaymentmentAmt").click(function () {
 		var PlanChecked = $("input[name='promotion-amount-radio']:checked").val();
 		$('#promotionPlanValue').text(PlanChecked);
-		$("#promotionPlanProcess :submit").prop("disabled", false);
-		/* show the promote button */
-		$("#rzp-promotion-button").hide();
 		
 		/* hide the razorpay button */
-		$(".promotionPlanPay").show();
+		$("#rzp-promotion-button").hide();
 
+		$(".promotionPlanPay").text("Promote");
+		$(".promotionPlanPay").prop("disabled", false);
+		/* show the promote button */
+		$(".promotionPlanPay").show();
 	});
 
 	$("#promotionPlanProcess").submit(function (event) {
 		event.preventDefault();
 		$('.promotionPayBtnScript').html("");
 
-		$("#promotionPlanProcess :submit").text("Processing...");
-		$("#promotionPlanProcess :submit").prop("disabled", true);
+		$(".promotionPlanPay").text("Processing...");
+		$(".promotionPlanPay").prop("disabled", true);
 
 		// Validation for "Promote Under" dropdown
 		var promotionType = $("#promotionType").val();
@@ -1249,26 +1250,21 @@ $(document).ready(function () {
 			data: formData,
 			processData: false,
 			contentType: false,
-			// beforeSend: function () {
-			// 	showOverlay();
-			// },
+			beforeSend: function () {
+				showOverlay();
+			},
 			success: function (response) {
-				//Swal.close();
+				Swal.close();
 				if (response.status === "success") {
-					//showSuccessAlert(response.message);
-					// setTimeout(function () {
-					// 	location.reload();
-					// }, 3000);
-
 					$('.promotionPayBtnScript').append(response.paymentForm);
 
 					/* hide the promote button */
 					$(".promotionPlanPay").hide();
 
 				} else {
-					$("#promotionPlanProcess :submit").text("Promote");
-					$("#promotionPlanProcess :submit").prop("disabled", false);
-					showErrorAlert(response.message);
+					$(".promotionPlanPay").text("Promote");
+					$(".promotionPlanPay").prop("disabled", false);
+					showErrorAlert(response.responseMessage);
 				}
 			},
 			error: function (xhr, status, error) {

@@ -65,6 +65,7 @@ class Vehicles extends BaseController {
 
 			$vehicles = $this->vehicleModel->getAllVehiclesByBranch($branch['id'], $limit, $offset, $vehicleTypeId, $vehicleBrandId, $vehicleModelId, $vehicleVariantId);
 
+			//echo "<pre>"; print_r($vehicles); die;
 			foreach ($vehicles as $vehicle) {
 				$dealerVehiclesHtml .= '
                 <div class="col-md-6 col-lg-4 vehicle-card-' . $vehicle['id'] . '">
@@ -95,23 +96,30 @@ class Vehicles extends BaseController {
                                     <i class="icofont-heart"></i>
                                 </div>
                             </div>
-			    <h5 class="card-title mt-3">' . $branch['name'] . '</h5> <h6 class="mb-10">' . VEHICLE_TYPE[$vehicle['vehicle_type']] . '</h6>
-                            <a href="' . base_url() . 'dealer/promote-vehicle/' . $vehicle['id'] . '" class="btn btn-primary mt-3 btn-block">Promote</a>
-                            <div class="option-btn">
-                                <div class="dropdown">
-                                    <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-                                        <i class="dw dw-more"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                        <a class="dropdown-item" href="' . base_url() . 'dealer/single-vehicle-info/' . $vehicle['id'] . '"><i class="dw dw-eye"></i> View</a>
-                                        <a class="dropdown-item" href="' . base_url() . 'dealer/edit-vehicle/' . $vehicle['id'] . '"><i class="dw dw-edit2"></i> Edit</a>
-                                        <a class="dropdown-item sa-params delete-vehicle" data-vehicle-id="' . $vehicle['id'] . '" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+							
+							<h5 class="card-title mt-3">' . $branch['name'] . '</h5> <h6 class="mb-10">' . VEHICLE_TYPE[$vehicle['vehicle_type']] . '</h6>';
+
+				if ($vehicle['is_promoted'] == 1) {
+					$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-success mt-3 btn-block">' . $vehicle['promotionUnder'] . ' - Promotion ends on: ' . date('Y-m-d', strtotime($vehicle['promotion_end_date'])) . '</a>';
+				} else {
+					$dealerVehiclesHtml .= '<a href="' . base_url() . 'dealer/promote-vehicle/' . $vehicle['id'] . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
+				}
+
+				$dealerVehiclesHtml .= '<div class="option-btn">
+                <div class="dropdown">
+                    <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                        <i class="dw dw-more"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                        <a class="dropdown-item" href="' . base_url() . 'dealer/single-vehicle-info/' . $vehicle['id'] . '"><i class="dw dw-eye"></i> View</a>
+                        <a class="dropdown-item" href="' . base_url() . 'dealer/edit-vehicle/' . $vehicle['id'] . '"><i class="dw dw-edit2"></i> Edit</a>
+                        <a class="dropdown-item sa-params delete-vehicle" data-vehicle-id="' . $vehicle['id'] . '" href="#"><i class="dw dw-delete-3"></i> Delete</a>
                     </div>
-                </div>';
+                </div>
+            </div>
+        </div>
+    </div>
+</div>';
 			}
 		}
 

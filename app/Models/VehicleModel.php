@@ -80,7 +80,8 @@ class VehicleModel extends Model {
     public function getAllVehiclesByBranch($branchId, $limit, $offset, $vehicleTypeId, $vehicleBrandId, $vehicleModelId, $vehicleVariantId) {
         $builder = $this->db->table('vehicles as v');
         $builder->select('vc.cmp_name, vcm.model_name, vcmv.name as variantName, ft.name as fuel_type, vbt.title as bodytype, vt.title as vehicletransmission, v.id, v.vehicle_type, v.unique_id, v.mileage, v.kms_driven, v.owner, v.onsale_status, v.onsale_percentage, v.registration_year,
-        st.name as statename, st.short_code, rto.rto_state_code, v.insurance_type, v.insurance_validity, v.regular_price, v.selling_price, v.thumbnail_url, v.manufacture_year');
+        st.name as statename, st.short_code, rto.rto_state_code, v.insurance_type, v.insurance_validity, v.regular_price, v.selling_price, v.thumbnail_url, v.manufacture_year, dp.promotionUnder,
+        CASE WHEN dp.end_dt >= NOW() THEN 1 ELSE 0 END as is_promoted, dp.end_dt as promotion_end_date');
         $builder->join('vehiclecompanies as vc', 'vc.id = v.cmp_id', 'left');
         $builder->join('vehiclecompaniesmodels as vcm', 'vcm.id = v.model_id', 'left');
         $builder->join('fueltypes as ft', 'v.fuel_type = ft.id', 'left');
@@ -89,9 +90,10 @@ class VehicleModel extends Model {
         $builder->join('vehiclecompaniesmodelvariants as vcmv', 'vcmv.id = v.variant_id', 'left');
         $builder->join('states as st', 'v.registered_state_id = st.id', 'left');
         $builder->join('indiarto as rto', 'v.rto = rto.id', 'left');
+        $builder->join('dealer_promotion as dp', 'dp.vehicleId = v.id AND dp.is_active = 1', 'left'); // join to check if the vehicle is promoted
         $builder->where('v.branch_id', $branchId);
         $builder->where('v.is_active', 1);
-
+    
         if ($vehicleTypeId != '0') {
             $builder->where($vehicleTypeId == 3 ? 'v.vehicle_type IN (1, 2)' : 'v.vehicle_type = ' . $vehicleTypeId);
         }
@@ -104,11 +106,12 @@ class VehicleModel extends Model {
         if ($vehicleVariantId != '0') {
             $builder->where('v.variant_id', $vehicleVariantId);
         }
-
+    
         $builder->limit($limit, $offset);
-
+    
         return $builder->get()->getResultArray();
     }
+    
 
     public function updateData($id, $data) {
         return $this->update($id, $data);

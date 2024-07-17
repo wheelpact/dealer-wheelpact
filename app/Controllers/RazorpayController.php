@@ -50,12 +50,25 @@ class RazorpayController extends BaseController {
     public function create_rzp_order() {
         try {
             $postData = $this->request->getPost();
+
+            $promotedVehicleId = $postData['vehicleId'];
+
+            // Check if vehicle is already promoted within the current date range
+            $existingPromotion = $this->PromotionPlanModel->checkVehiclePromoted($promotedVehicleId);
+            if ($existingPromotion) {
+                $response = array(
+                    'status' => 'error',
+                    'responseCode' => 400,
+                    'responseMessage' => 'This vehicle is already promoted'
+                );
+                return $this->response->setJSON($response);
+            }
+
             $amount = $postData['promotion-amount-radio'];
             /* covert in Razorpay amount */
             $amountRzp = (int) $amount * 100;
             $promotionPlanId = $postData['promotionPlanId'];
             $promotionUnder = $postData['promotionType'];
-            $promotedVehicleId = $postData['vehicleId'];
 
             $promotionPlanDetails = $this->PromotionPlanModel->getPromotionPlanById($promotionPlanId);
 
@@ -134,13 +147,16 @@ class RazorpayController extends BaseController {
                                 promotion_plan_amount: "' . $amount . '",
                                 promotion_duration: "' . $promotionPlanDetails['promotionDaysValidity'] . '"
                             },
+                            beforeSend: function () {
+                                showOverlay();
+                            },
                             success: function(data) {
                                 if(data.code == "200"){
                                     showSuccessAlert(data.message);      
                                     $("#rzp-promotion-button").hide();                         
                                     setTimeout(function () {
                                         window.location.href = data.redirectURL;
-                                    }, 9000);
+                                    }, 3000);
                                 }else{
                                     setTimeout(function () {
                                             location.reload();
@@ -174,21 +190,13 @@ class RazorpayController extends BaseController {
                 };
                 var rzp_promtion = new Razorpay(options);
                 rzp_promtion.on("payment.failed", function (response){
-                    showErrorAlert(response.error.description);
-                    /*
-                    //alert(response.error.code);
-                    //alert(response.error.source);
-                    //alert(response.error.step);
-                    //alert(response.error.reason);
-                    //alert(response.error.metadata.order_id);
-                    //alert(response.error.metadata.payment_id);
-                    */
-                    $.ajax({
+                        $.ajax({
                             url: "' . base_url() . 'payment-response",
                             type: "POST",
                             data: {
                                 razorpay_payment_id: response.error.metadata.payment_id,
                                 razorpay_order_id: response.error.metadata.order_id,
+                                error_description: response.error.description,
                                 error_code: response.error.code,
                                 error_source: response.error.source,
                                 error_step: response.error.step,
@@ -201,13 +209,13 @@ class RazorpayController extends BaseController {
                                 promotion_plan_amount: "' . $amount . '",
                                 promotion_duration: "' . $promotionPlanDetails['promotionDaysValidity'] . '"
                             },
+                            beforeSend: function () {
+                                showOverlay();
+                            },
                             success: function(data) {
                                 if(data.code == "400"){
-                                    showSuccessAlert(data.message);      
+                                    showErrorAlert(data.message);      
                                     $("#rzp-promotion-button").hide();                         
-                                    setTimeout(function () {
-                                        window.location.href = data.redirectURL;
-                                    }, 5000);
                                 }else{
                                     setTimeout(function () {
                                             location.reload();
@@ -252,7 +260,7 @@ class RazorpayController extends BaseController {
             /* // Retrieve the POST data */
             $postData = $this->request->getPost();
 
-            /* // Check if response has any error */
+            /* // Check if response has any error or payment failed */
             if (array_key_exists('error_code', $postData)) {
 
                 /*
@@ -270,7 +278,7 @@ class RazorpayController extends BaseController {
                     [promotion_plan_amount] => 149
                     [promotion_duration] => 15
                 */
-                
+
                 /* // Get created order details from razorpay_order_id to verify signature */
                 $orderDetails = $this->RazorpayModel->where('orderId',  $postData['razorpay_order_id'])->first();
 
@@ -290,21 +298,10 @@ class RazorpayController extends BaseController {
                 $response = array(
                     'code' => 400,
                     'status' => 'error',
-                    'message' => 'Payment Failed / Cancled',
+                    'message' => $postData['error_description'],
                     'redirectURL' => base_url('dealer/list-vehicles')
                 );
                 return $this->response->setJSON($response);
-
-                // $flashData = [
-                //     'id' => '',
-                //     'description' => $postData['error']['description'],
-                //     'razorpay_order_id' => $postData['razorpay_order_id']
-                // ];
-
-                // session()->setFlashdata('flashData', $flashData);
-
-                // /* // Redirect with flashdata */
-                // return redirect()->to('/payment-failed');
             } else {
                 /* // Response as success */
                 $razorpay_signature = $postData['razorpay_signature'];
@@ -347,6 +344,7 @@ class RazorpayController extends BaseController {
                         $promtionData = [
                             'transactionsrazorpay_id' => $orderDetails['id'],
                             'promotionPlanId' => $promotion_plan_id,
+                            'promotionUnder' => $promotion_under,
                             'dealerId' => $dealer_id,
                             'vehicleId' => $promoted_vehicle_id,
                             'start_dt' => date('Y-m-d H:i:s'),
@@ -359,9 +357,9 @@ class RazorpayController extends BaseController {
                             'updated_by' => '',
                             'updated_dt' => date('Y-m-d H:i:s')
                         ];
-
                         $promtionSDataInsert = $this->PromotionPlanModel->insertPromotionData($promtionData);
 
+                        /* fecth Dealer Info */
                         $partnerInfo = $this->UserModel->where('id', $dealer_id)->first();
                         /* // Fetch all active plan by id */
                         $planDetails = $this->PromotionPlanModel->where('id', $promotion_plan_id)->first();
@@ -373,27 +371,28 @@ class RazorpayController extends BaseController {
                         $viewData['vehicleDetails'] = $vehicleDetails;
                         $viewData['promtionData'] = $promtionData;
 
-                        // /* email promtional details to dealer */
-                        // /* // Load the invoice view with the data */
-                        // $html = view('web/invoice/invoice_template',);
-                        // /* // Generate the PDF */
-                        // $filename = str_replace("/", "_", $orderDetails['receipt']) . '.pdf';
-                        // $pdfPath = generatePDF($html, $filename, false);
+                        /* email promtional details to dealer */
+                        /* // Load the invoice view with the data */
+                        $html = view('dealer/invoice/promotion_invoice_template', $viewData);
+                        /* // Generate the PDF */
+                        $filename = str_replace("/", "_", $orderDetails['receipt']) . '.pdf';
+                        $pdfPath = generatePDF($html, $filename, false);
 
                         $to = $partnerInfo['email'];
                         $subject = 'Vehicle Promotion Details - Wheelpact';
                         $toName = $partnerInfo['name'];
                         $body = view('dealer/email_templates/partner_promotion_mail', $viewData);
 
-                        $mailResult = sendEmail($to, $toName, $subject, $body);
-                        // if (!$mailResult) {
-                        //     $response = array(
-                        //         'responseCode'   => 500,
-                        //         'responseMessage' => 'Error sending mail',
-                        //         'responseData' => $mailResult
-                        //     );
-                        //     return $this->response->setJSON($response);
-                        // }
+                        $mailResult = sendEmail($to, $toName, $subject, $body, $pdfPath);
+                        if (!$mailResult) {
+                            $response = array(
+                                'code'   => 500,
+                                'status' => 'error',
+                                'message' => $mailResult,
+                                'redirectURL' => base_url('dealer/list-vehicles')
+                            );
+                            return $this->response->setJSON($response);
+                        }
                         $response = array(
                             'code' => 200,
                             'status' => 'success',
@@ -422,107 +421,5 @@ class RazorpayController extends BaseController {
         }
     }
 
-    public function payment_success() {
-
-        $postData = $this->request->getPost();
-        echo "<pre>";
-        print_r($postData);
-        die;
-
-        try {
-            /* // Retrieve flashdata */
-            $flashData = session()->getFlashdata('Orderdata');
-
-            if (empty($flashData) || !isset($flashData['id']) || !isset($flashData['razorpay_order_id'])) {
-                /*
-                //throw new \Exception('Order data is missing or incomplete.');
-                // If the post is not found, show 404 error
-                */
-                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-            }
-
-            $orderDetails = $this->RazorpayModel->where('id', $flashData['id'])->where('orderid', $flashData['razorpay_order_id'])->first();
-
-            if (!$orderDetails) {
-                throw new \Exception('Order details not found.');
-            }
-
-            /* // Fetch all active plan by id */
-            $planDetails = $this->PlanModel->where('id', $orderDetails['planId'])->first();
-
-            if (!$planDetails) {
-                throw new \Exception('Plan details not found.');
-            }
-
-            $planNotes = unserialize($orderDetails['orderNotes']);
-            if (!isset($planNotes['Duration'])) {
-                throw new \Exception('Plan duration not found in order notes.');
-            }
-            $planDuration = $planNotes['Duration'];
-
-            /* // Subscription end date calculation */
-            $orderDetails['endDate'] = calculate_end_date($planDuration);
-
-            /* mail to dealer user with the details dealer portal */
-            $partnerInfo = $this->UserModel->where('id', $orderDetails['dealerUserId'])->first();
-            if (!$partnerInfo) {
-                throw new \Exception('Partner details not found.');
-            }
-            /* check if already details inserted */
-            $checkDataExists = $this->DealerSubscriptionModel->where('transactionsrazorpay_id', $orderDetails['id'])->where('dealerId', $orderDetails['dealerUserId'])->first();
-
-            if (!$checkDataExists) {
-                /* // Insert plan subscription details in dealerSubscriptions table */
-                $insertData = array(
-                    'planId' => $orderDetails['planId'],
-                    'transactionsrazorpay_id' => $orderDetails['id'],
-                    'dealerId' => $orderDetails['dealerUserId'],
-                    'start_dt' => date("Y-m-d H:i:s"),
-                    'end_dt' => $orderDetails['endDate'],
-                    'old_current' => '1',
-                    'payment_status' => $orderDetails['payment_status'],
-                );
-                $this->DealerSubscriptionModel->save($insertData);
-            }
-
-            $this->pageData['orderDetails'] = $orderDetails;
-            $this->pageData['partnerInfo'] = $partnerInfo;
-            $this->pageData['planDetails'] = $planDetails;
-            $this->pageData['planNotes'] = $planNotes;
-
-            /* // Load the invoice view with the data */
-            $html = view('web/invoice/invoice_template', $this->pageData);
-
-            /* // Generate the PDF */
-            $filename = str_replace("/", "_", $orderDetails['receipt']) . '.pdf';
-            $pdfPath = generatePDF($html, $filename, false);
-
-            $to = $partnerInfo['email'];
-            $subject = 'Welcome to WheelPact - Our New Partner!';
-            $toName = $partnerInfo['name'];
-            $body = view('web/email_templates/partner_welcome_mail', ['partner' => $partnerInfo]);
-
-            $mailResult = sendEmail($to, $toName, $subject, $body, $pdfPath);
-            if (!$mailResult) {
-                $response = array(
-                    'responseCode'   => 500,
-                    'responseMessage' => 'Error sending mail',
-                    'responseData' => $mailResult
-                );
-                return $this->response->setJSON($response);
-            }
-
-            /* // Unset partner data */
-            session()->remove('partnerData');
-            return view('web/pages/payment/success', $this->pageData);
-        } catch (\CodeIgniter\Exceptions\PageNotFoundException $e) {
-            /* // Handle other exceptions */
-            $this->pageData['message'] = $e->getMessage();
-            return redirect()->to('/invalidRequest');
-        } catch (\Exception $e) {
-            $this->pageData['message'] = $e->getMessage();
-            return redirect()->to('/page404');
-        }
-    }
     /* razor pay end */
 }

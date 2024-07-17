@@ -2,6 +2,9 @@
 
 use Config\Services;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 if (!function_exists('ordinal')) {
     function ordinal($number) {
         $ends = array('th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th');
@@ -13,24 +16,6 @@ if (!function_exists('ordinal')) {
         return $number . $abbreviation;
     }
 }
-
-// if (!function_exists('uploadImage')) {
-//     function uploadImage($fieldId) {
-//         $request = service('request');
-//         $file = $request->getFile($fieldId);
-
-//         $uploadFolderPath = realpath($_SERVER['DOCUMENT_ROOT'] . '/../../production/');
-//         $destinationPath = $uploadFolderPath . '/public/uploads/vehicle_' . $fieldId . '/';
-//         $newName = $file->getRandomName();
-//         try {
-//             $file->move($destinationPath, $newName);
-//             return $newName;
-//         } catch (\Exception $e) {
-//             echo 'Error moving file: ' . $e->getMessage();
-//             return false;
-//         }
-//     }
-// }
 
 if (!function_exists('sendEmail')) {
     function sendEmail($to, $toName, $subject, $message, $fromEmail = null, $fromName = null) {
@@ -96,8 +81,6 @@ function compressAndResizeImage($source, $destination, $quality = 70, $newWidth 
     $image->resize($newWidth, $newHeight, true, 'height')
         ->save($destination, $quality);
 }
-
-
 
 if (!function_exists('getDiscountedAmount')) {
     function getDiscountedAmount($price, $discountPercent) {
