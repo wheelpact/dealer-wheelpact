@@ -42,7 +42,7 @@ class UserPassword extends BaseController {
 		}
 
 		$data['userData'] = $this->userSesData;
-		$data['dealerData'] = $dealerDetails;		
+		$data['dealerData'] = $dealerDetails;
 		$data['planData'] = $planDetails[0];
 		echo view('dealer/auth/profile.php', $data);
 	}
@@ -53,14 +53,20 @@ class UserPassword extends BaseController {
 			$validation = \Config\Services::validation();
 
 			$fieldsToValidate = [
-				'email' => [
-					'rules' => 'required|valid_email|is_unique[users.email,id,{user_id}]',
-					'errors' => [
-						'required' => 'Please enter an email address.',
-						'valid_email' => 'Please enter a valid email address.',
-						'is_unique' => 'The email address is already in use.'
-					],
-				],
+				// 'email' => [
+				// 	'rules' => 'required|valid_email|is_unique[users.email,id,{user_id}]',
+				// 	'errors' => [
+				// 		'required' => 'Please enter an email address.',
+				// 		'valid_email' => 'Please enter a valid email address.',
+				// 		'is_unique' => 'The email address is already in use.'
+				// 	],
+				// ],
+				// 'contact_no' => [
+				// 	'rules' => 'required',
+				// 	'errors' => [
+				// 		'required' => 'Enter Contact Number.'
+				// 	],
+				// ],
 				'dealerName' => [
 					'rules' => 'required',
 					'errors' => [
@@ -85,13 +91,6 @@ class UserPassword extends BaseController {
 						'required' => 'Choose DOB'
 					],
 				],
-				'contact_no' => [
-					'rules' => 'required',
-					'errors' => [
-						'required' => 'Enter Contact Number.'
-					],
-				],
-
 				'addr_residential' => [
 					'rules' => 'required',
 					'errors' => [
@@ -119,9 +118,9 @@ class UserPassword extends BaseController {
 						'not_equals' => 'Please choose a valid city.'
 					],
 				],
-
-
 			];
+
+			$errorString = '';
 
 			foreach ($fieldsToValidate as $fieldName => $rules) {
 				$validation->reset();
@@ -129,25 +128,23 @@ class UserPassword extends BaseController {
 
 				if (!$validation->withRequest($this->request)->run()) {
 					$errors = $validation->getErrors();
-					$errorString = '';
 					foreach ($errors as $field => $error) {
 						$errorString .= $error;
 					}
+					return $this->response->setJSON(['status' => 'error', 'message' => $errorString, 'field' => $fieldName]);
 				}
-				return $this->response->setJSON(['status' => 'error', 'message' => $errorString, 'field' => $fieldName]);
 			}
 
 			/* form validation ends */
 			$dealerId = session()->get('userId');
 
+			$formattedDOB = (new \DateTime($this->request->getPost('date_of_birth')))->format('Y-m-d');
 			$formData = [
 				'name' => $this->request->getPost('dealerName'),
 				'gender' => $this->request->getPost('gender'),
-				'date_of_birth' => $this->request->getPost('date_of_birth'),
-				'contact_no' => $this->request->getPost('contact_no'),
+				'date_of_birth' => $formattedDOB,
 				'addr_residential' => $this->request->getPost('addr_residential'),
 				'addr_permanent' => $this->request->getPost('addr_permanent'),
-				'email' => $this->request->getPost('email'),
 				'zipcode' => $this->request->getPost('zipcode'),
 				'country_id' => $this->request->getPost('chooseCountry'),
 				'state_id' => $this->request->getPost('chooseState'),

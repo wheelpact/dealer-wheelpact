@@ -127,7 +127,7 @@ class RazorpayController extends BaseController {
                     "key": "' . RZP_KEY . '",
                     "amount": "' . $amountRzp . '",
                     "currency": "INR",
-                    "name": "ParastoneGlobal Pvt Limtited",
+                    "name": "PARASTONE GLOBAL PVT LTD",
                     "description": "",
                     "image": "' . SERVER_ROOT_PATH_ASSETS . 'vendors/images/logo-bg.png",
                     "order_id": "' . $razorpayOrder['id'] . '",
@@ -365,12 +365,14 @@ class RazorpayController extends BaseController {
                         $planDetails = $this->PromotionPlanModel->where('id', $promotion_plan_id)->first();
                         $vehicleDetails = $this->PromotionPlanModel->getVehicleDetails($promoted_vehicle_id);
 
+                        /* assigning logo path */
+                        $orderDetails['logo'] = SERVER_ROOT_PATH_ASSETS . '/src/images/wheelpact-logo.png';
+
                         $viewData['orderDetails'] = $orderDetails;
                         $viewData['partnerInfo'] = $partnerInfo;
                         $viewData['planDetails'] = $planDetails;
                         $viewData['vehicleDetails'] = $vehicleDetails;
                         $viewData['promtionData'] = $promtionData;
-
                         /* email promtional details to dealer */
                         /* // Load the invoice view with the data */
                         $html = view('dealer/invoice/promotion_invoice_template', $viewData);

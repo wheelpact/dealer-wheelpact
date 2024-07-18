@@ -98,13 +98,14 @@
 <body>
     <div class="email-container">
         <div class="header email-logo">
-            <img src="<?php echo SERVER_ROOT_PATH_ASSETS; ?>/images/logo.png">
+            <img src="data:image/png;base64,<?php echo $orderDetails['logo']; ?>" alt="Wheelpact Logo">
         </div>
         <div class="content">
             <h2>Dear <?php echo ucwords($partnerInfo['name']); ?>,</h2>
             <p>We are thrilled to have you join our community of trusted dealers. Your registration was successful, and your dealer account is now active. Here are the details of your registration:</p>
             <h3>Promoted Vehicle Details:</h3>
             <p><strong>Plan:</strong> <?php echo $planDetails['promotionName']; ?></p>
+            <p><strong>Promoted Under:</strong> <?php echo $promtionData['promotionUnder']; ?></p>
             <p><strong>Vehicle:</strong> <?php echo $vehicleDetails['cmp_name'] . ' ' . $vehicleDetails['cmp_model_name'] . ' ' . $vehicleDetails['variantName']; ?></p>
             <p><strong>Promoted Date:</strong> <?php echo date('d/m/Y', strtotime($promtionData['start_dt'])); ?></p>
             <p><strong>Promtion Valid Till:</strong> <?php echo date('d/m/Y', strtotime($promtionData['end_dt'])); ?></p>

@@ -18,13 +18,17 @@ if (!function_exists('ordinal')) {
 }
 
 if (!function_exists('sendEmail')) {
-    function sendEmail($to, $toName, $subject, $message, $fromEmail = null, $fromName = null) {
+    function sendEmail($to, $toName, $subject, $message, $attachmentPath = null, $fromEmail = null, $fromName = null) {
         $email = \Config\Services::email();
 
         if ($fromEmail && $fromName) {
             $email->setFrom($fromEmail, $fromName);
         } else {
             $email->setFrom(FROM_EMAIL, FROME_NAME);
+        }
+
+        if ($attachmentPath) {
+            $email->attach($attachmentPath);
         }
 
         $email->setTo($to, $toName);

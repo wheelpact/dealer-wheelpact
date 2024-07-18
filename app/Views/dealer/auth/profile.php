@@ -110,7 +110,7 @@ echo view('dealer/includes/_sidebar');
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Full Name</label>
-                                                        <input class="form-control form-control-lg" name="dealerName" id="dealerName" type="text">
+                                                        <input class="form-control form-control-lg" name="dealerName" id="dealerName" type="text" value="<?php echo !empty($dealerData['name']) ? $dealerData['name'] : ''; ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="branchType">Gender</label>
@@ -118,22 +118,25 @@ echo view('dealer/includes/_sidebar');
                                                             <option value="" selected>Select Gender</option>
                                                             <?php foreach (GENDER as $id => $type) : ?>
                                                                 <?php if ($id != 0) : ?>
-                                                                    <option value="<?= $id ?>" ?><?= $type ?></option>
+                                                                    <option value="<?= $id ?>" <?php if (!empty($dealerData['gender']) && $dealerData['gender'] == $id) { ?>selected<?php } ?>>
+                                                                        <?= $type ?>
+                                                                    </option>
                                                                 <?php endif; ?>
                                                             <?php endforeach; ?>
                                                         </select>
+
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Date of birth</label>
-                                                        <input class="form-control form-control-lg date-picker" name="date_of_birth" type="text">
+                                                        <input class="form-control form-control-lg date-picker" name="date_of_birth" type="text" value="<?php echo !empty($dealerData['date_of_birth']) ? $dealerData['date_of_birth'] : ''; ?>">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>Phone Number</label>
-                                                        <input class="form-control form-control-lg numbersOnlyCheck" minlength="9" maxlength="10" name="contact_no" type="text">
+                                                        <label>Postal Code</label>
+                                                        <input class="form-control form-control-lg numbersOnlyCheck" minlength="5" maxlength="6" name="zipcode" type="text" value="<?php echo !empty($dealerData['zipcode']) ? $dealerData['zipcode'] : ''; ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Residential Address</label>
-                                                        <textarea class="form-control addr_residential" name="addr_residential"></textarea>
+                                                        <textarea class="form-control addr_residential" name="addr_residential"><?php echo !empty($dealerData['addr_residential']) ? $dealerData['addr_residential'] : ''; ?></textarea>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Permanent Address</label>
@@ -141,7 +144,7 @@ echo view('dealer/includes/_sidebar');
                                                             <input type="checkbox" class="custom-control-input" id="copyAddress">
                                                             <label class="custom-control-label" for="copyAddress">Same As Residential Address</label>
                                                         </div>
-                                                        <textarea class="form-control addr_permanent" name="addr_permanent"></textarea>
+                                                        <textarea class="form-control addr_permanent" name="addr_permanent"><?php echo !empty($dealerData['addr_residential']) ? $dealerData['addr_residential'] : ''; ?></textarea>
                                                     </div>
                                                 </li>
 
@@ -149,18 +152,19 @@ echo view('dealer/includes/_sidebar');
                                                     <h4 class="text-blue h5 mb-20"> &nbsp;</h4>
                                                     <div class="form-group">
                                                         <label>Email</label>
-                                                        <input class="form-control form-control-lg" name="email" type="email">
+                                                        <input class="form-control form-control-lg" name="email" type="email" value="<?php echo !empty($dealerData['email']) ? $dealerData['email'] : ''; ?>" disabled readonly>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>Postal Code</label>
-                                                        <input class="form-control form-control-lg numbersOnlyCheck" minlength="5" maxlength="6" name="zipcode" type="text">
+                                                        <label>Phone Number</label>
+                                                        <input class="form-control form-control-lg numbersOnlyCheck" minlength="9" maxlength="10" name="contact_no" id="contact_no" type="text" value="<?php echo !empty($dealerData['contact_no']) ? $dealerData['contact_no'] : ''; ?>" disabled readonly>
                                                     </div>
+
                                                     <div class="form-group">
                                                         <label for="chooseCountry">Choose Country</label>
-                                                        <select class="col-12 form-control-lg custom-select country" name="chooseCountry">
+                                                        <select class="col-12 form-control-lg custom-select country" id="chooseCountry" name="chooseCountry">
                                                             <option value="">Select Country</option>
                                                             <?php foreach ($countryList as $id => $country) : ?>
-                                                                <option value="<?= $country['id'] ?>" <?= ($country['id'] == 101) ? 'selected' : '' ?>>
+                                                                <option value="<?= $country['id'] ?>" <?= ($country['id'] == $dealerData['country_id']) ? 'selected' : '' ?>>
                                                                     <?= $country['name'] ?>
                                                                 </option>
                                                             <?php endforeach; ?>
@@ -168,36 +172,36 @@ echo view('dealer/includes/_sidebar');
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="chooseState">Choose State</label>
-                                                        <select class="col-12 form-control-lg custom-select state" aria-placeholder="Select State" name="chooseState">
+                                                        <select class="col-12 form-control-lg custom-select state" aria-placeholder="Select State" id="chooseState" name="chooseState">
                                                             <option value="">State</option>
                                                         </select>
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="chooseCity">Choose City</label>
-                                                        <select class="col-12 form-control-lg custom-select city" aria-placeholder="Select City" name="chooseCity">
+                                                        <select class="col-12 form-control-lg custom-select city" aria-placeholder="Select City" id="chooseCity" name="chooseCity">
                                                             <option value="">City</option>
                                                         </select>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Facebook URL:</label>
-                                                        <input class="form-control form-control-lg" name="social_fb_link" id="social_fb_link" type="text" placeholder="Paste your link here">
+                                                        <input class="form-control form-control-lg" name="social_fb_link" id="social_fb_link" type="text" placeholder="Paste your link here" value="<?php echo !empty($dealerData['social_fb_link']) ? $dealerData['social_fb_link'] : ''; ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Twitter URL:</label>
-                                                        <input class="form-control form-control-lg" name="social_twitter_link" id="social_twitter_link" type="text" placeholder="Paste your link here">
+                                                        <input class="form-control form-control-lg" name="social_twitter_link" id="social_twitter_link" type="text" placeholder="Paste your link here" value="<?php echo !empty($dealerData['social_twitter_link']) ? $dealerData['social_twitter_link'] : ''; ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Linkedin URL:</label>
-                                                        <input class="form-control form-control-lg" name="social_linkedin_link" id="social_linkedin_link" type="text" placeholder="Paste your link here">
+                                                        <input class="form-control form-control-lg" name="social_linkedin_link" id="social_linkedin_link" type="text" placeholder="Paste your link here" value="<?php echo !empty($dealerData['social_linkedin_link']) ? $dealerData['social_linkedin_link'] : ''; ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Skype URL:</label>
-                                                        <input class="form-control form-control-lg" name="social_skype_link" id="social_skype_link" type="text" placeholder="Paste your link here">
+                                                        <input class="form-control form-control-lg" name="social_skype_link" id="social_skype_link" type="text" placeholder="Paste your link here" value="<?php echo !empty($dealerData['social_skype_link']) ? $dealerData['social_skype_link'] : ''; ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <div class="custom-control custom-checkbox mb-5">
-                                                            <input type="checkbox" class="custom-control-input" id="customCheck1-1">
-                                                            <label class="custom-control-label weight-400" for="customCheck1-1">I agree to receive notification emails</label>
+                                                            <input type="checkbox" class="custom-control-input" id="newsletterConfirm">
+                                                            <label class="custom-control-label weight-400" for="newsletterConfirm">I agree to receive notification emails</label>
                                                         </div>
                                                     </div>
                                                     <div class="form-group mb-0 text-right">
@@ -330,20 +334,57 @@ echo view('dealer/includes/_sidebar');
             <?php echo view('dealer/includes/_footer'); ?>
         </div>
     </div>
+
     <script>
         $(document).ready(function() {
+            const selectedStateId = <?php echo !empty($dealerData['state_id']) ? json_encode($dealerData['state_id']) : 'null'; ?>;
+            const selectedCityId = <?php echo !empty($dealerData['city_id']) ? json_encode($dealerData['city_id']) : 'null'; ?>;
+
+            console.log(selectedStateId + " -> " + selectedCityId);
+            /*// Show loading text */
+            $('#chooseState').after('<div id="loadingState">Loading state...</div>');
+            $('#chooseCity').after('<div id="loadingCity">Loading city...</div>');
+
             /* on page load trigger to load brands of cars & bikes both in select option filter */
             $('.custom-select.country').trigger('change');
+
+            setTimeout(function() {
+                $('#loadingState').remove();
+                /* // Set the selected state if available */
+                if (selectedStateId !== null) {
+                    const stateElement = $('#chooseState');
+                    if (stateElement.length > 0) {
+                        stateElement.val(selectedStateId);
+                        $('.custom-select.state').trigger('change');
+                    } else {
+                        console.warn('Element #chooseState not found.');
+                    }
+                }
+            }, 3000);
+
+            setTimeout(function() {
+                $('#loadingCity').remove();
+                /* // Set the selected city if available */
+                if (selectedCityId !== null) {
+                    const cityElement = $('#chooseCity');
+                    if (cityElement.length > 0) {
+                        cityElement.val(selectedCityId);
+                        $('.custom-select.city').trigger('change');
+                    } else {
+                        console.warn('Element #chooseCity not found.');
+                    }
+                }
+            }, 6000);
 
             /* add active class to tab based in url */
             var hash = window.location.hash;
 
-            // Activate the tab based on the hash
+            /* // Activate the tab based on the hash */
             if (hash) {
                 $('.nav-tabs a[href="' + hash + '"]').tab('show');
             }
 
-            // Handle tab change event to update URL hash
+            /* // Handle tab change event to update URL hash*/
             $('.nav-tabs a').on('shown.bs.tab', function(e) {
                 window.location.hash = e.target.hash;
             });

@@ -181,28 +181,49 @@
                     </tr>
 
                     <tr class="heading">
+                        <td> Particulars </td>
+                        <td></td>
+                    </tr>
+
+                    <tr class="item">
+                        <td>Plan</td>
                         <td>
-                            Description
-                        </td>
-                        <td>
-                            Amount
+                            <?php echo $planDetails['promotionName'] ?>
                         </td>
                     </tr>
 
-                    <tr class="item last">
+                    <tr class="item">
+                        <td>Promoted Under</td>
                         <td>
-                            <?php echo $planDetails['promotionName'] ?> <br />
-                            <?php echo $planDetails['promotionDetails'] ?> <br />
+                            <?php echo $promtionData['promotionUnder']; ?>
                         </td>
+                    </tr>
+
+                    <tr class="item">
+                        <td>Promoted Vehicle</td>
                         <td>
-                            <?php echo $orderDetails['amount'] . ' ' . $orderDetails['currency']; ?>
+                            <?php echo $vehicleDetails['cmp_name'] . ' ' . $vehicleDetails['cmp_model_name'] . ' ' . $vehicleDetails['variantName']; ?>
+                        </td>
+                    </tr>
+
+                    <tr class="item">
+                        <td>Promoted Date</td>
+                        <td>
+                            <?php echo date('d/m/Y', strtotime($promtionData['start_dt'])); ?>
+                        </td>
+                    </tr>
+
+                    <tr class="item">
+                        <td>Promtion Valid Till:</td>
+                        <td>
+                            <?php echo date('d/m/Y', strtotime($promtionData['end_dt'])); ?>
                         </td>
                     </tr>
 
                     <tr class="total">
-                        <td></td>
+                        <td>Total Amount</td>
                         <td>
-                            Total: <?php echo $orderDetails['amount'] . ' ' . $orderDetails['currency']; ?>
+                            <?php echo $orderDetails['amount'] . ' ' . $orderDetails['currency']; ?>
                         </td>
                     </tr>
                 </table>

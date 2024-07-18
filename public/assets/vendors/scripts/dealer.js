@@ -181,6 +181,7 @@ $(document).ready(function () {
 				} else {
 					showWarningToast(response.message);
 					$('[name="' + response.field + '"]').focus();
+					$('#' + response.field).focus();
 				}
 			},
 			error: function (xhr, status, error) {
@@ -1205,7 +1206,7 @@ $(document).ready(function () {
 	$(".getPaymentmentAmt").click(function () {
 		var PlanChecked = $("input[name='promotion-amount-radio']:checked").val();
 		$('#promotionPlanValue').text(PlanChecked);
-		
+
 		/* hide the razorpay button */
 		$("#rzp-promotion-button").hide();
 
