@@ -193,17 +193,17 @@
                     </tr>
 
                     <tr class="item">
-                        <td>Promoted Under</td>
-                        <td>
-                            <?php echo $promtionData['promotionUnder']; ?>
-                        </td>
-                    </tr>
-
-                    <tr class="item">
-                        <td>Promoted Vehicle</td>
-                        <td>
-                            <?php echo $vehicleDetails['cmp_name'] . ' ' . $vehicleDetails['cmp_model_name'] . ' ' . $vehicleDetails['variantName']; ?>
-                        </td>
+                        <?php if ($promtionData['promotionUnder'] == 'vehicle') { ?>
+                            <td>Promoted Vehicle</td>
+                            <td>
+                                <?php echo $itemDetails['cmp_name'] . ' ' . $itemDetails['cmp_model_name'] . ' ' . $itemDetails['variantName']; ?>
+                            </td>
+                        <?php } elseif ($promtionData['promotionUnder'] == 'showroom') { ?>
+                            <td>Promoted Showroom</td>
+                            <td>
+                                <?php echo $itemDetails['branchName']; ?>
+                            </td>
+                        <?php } ?>
                     </tr>
 
                     <tr class="item">

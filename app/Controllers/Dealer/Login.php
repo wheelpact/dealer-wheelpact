@@ -37,6 +37,7 @@ class Login extends BaseController {
 					'userId'   => $data['userId'],
 					'role_id'  => $data['role_id'],
 					'username' => $data['email'],
+					'dealerName' => $data['dealerName'],
 					'user_code' => $data['user_code'],
 					'email'    => $data['email'],
 					'is_active' => $data['is_active'],

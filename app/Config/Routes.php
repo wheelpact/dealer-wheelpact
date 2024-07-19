@@ -86,7 +86,8 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->match(['get', 'post'], 'getdealerbranches/(:num)/(:num)/(:num)/(:num)', 'Branches::getAllBranches/$1/$2/$3/$4', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'deleteBranch/(:num)', 'Branches::delete/$1');
 
-    $routes->match(['get', 'post'], 'promote-vehicle/(:num)', 'PromotionController::index/$1', ['filter' => 'auth']);
+    $routes->match(['get', 'post'], 'promote-vehicle/(:num)', 'PromotionController::promoteVehicle/$1', ['filter' => 'auth']);
+    $routes->match(['get', 'post'], 'promote-showroom/(:num)', 'PromotionController::promoteShowroom/$1', ['filter' => 'auth']);
     $routes->match(['get', 'post'], 'promotionPlanProcess', 'PromotionController::promotionPlanProcess', ['filter' => 'auth']);
 });
 

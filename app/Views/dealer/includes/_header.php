@@ -63,7 +63,7 @@
 						</span>
 						<span class="user-name">
 							<?php
-							echo isset($userData['username']) && !empty($userData['username']) ? $userData['username'] : ' User';
+							echo isset($userData['dealerName']) && !empty($userData['dealerName']) ? $userData['dealerName'] : ' UserDealer';
 							?>
 						</span>
 					</a>

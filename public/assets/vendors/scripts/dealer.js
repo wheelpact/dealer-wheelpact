@@ -1223,12 +1223,14 @@ $(document).ready(function () {
 		$(".promotionPlanPay").text("Processing...");
 		$(".promotionPlanPay").prop("disabled", true);
 
+		/*
 		// Validation for "Promote Under" dropdown
 		var promotionType = $("#promotionType").val();
 		if (!promotionType) {
 			showErrorAlert("Please select a promotion under which to promote.");
 			return;
 		}
+		*/
 
 		var action_page = $(this).attr("action");
 		var formData = new FormData(this);
@@ -1239,8 +1241,12 @@ $(document).ready(function () {
 			var promotionPlanId = selectedRadio.data("promotionplanid");
 			formData.append('promotionPlanId', promotionPlanId);
 
-			var vehicleId = selectedRadio.data("vehicleid");
-			formData.append('vehicleId', vehicleId);
+			var promotionUnder = selectedRadio.data("promotionunder");
+			formData.append('promotionUnder', promotionUnder);
+
+			/* itemId shall be id of vehicle or showroom, from which its initiated */ 
+			var itemId = selectedRadio.data("itemid");
+			formData.append('itemId', itemId);
 		} else {
 			showErrorAlert("Please select a plan.");
 		}
@@ -1756,7 +1762,7 @@ function form_validation_messages(fieldId) {
 		/* //add company from validation end */
 
 		case 'promotionType':
-			msg = 'Choose Promtion Type'
+			msg = 'Choose Promotion Type'
 			break;
 
 		// default:

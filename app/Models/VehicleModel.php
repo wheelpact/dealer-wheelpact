@@ -90,7 +90,7 @@ class VehicleModel extends Model {
         $builder->join('vehiclecompaniesmodelvariants as vcmv', 'vcmv.id = v.variant_id', 'left');
         $builder->join('states as st', 'v.registered_state_id = st.id', 'left');
         $builder->join('indiarto as rto', 'v.rto = rto.id', 'left');
-        $builder->join('dealer_promotion as dp', 'dp.vehicleId = v.id AND dp.is_active = 1', 'left'); // join to check if the vehicle is promoted
+        $builder->join('dealer_promotion as dp', 'dp.itemId = v.id AND dp.is_active = 1', 'left');
         $builder->where('v.branch_id', $branchId);
         $builder->where('v.is_active', 1);
     
@@ -111,7 +111,6 @@ class VehicleModel extends Model {
     
         return $builder->get()->getResultArray();
     }
-    
 
     public function updateData($id, $data) {
         return $this->update($id, $data);

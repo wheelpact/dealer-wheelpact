@@ -26,7 +26,7 @@
 						</a>
 						<ul class="submenu">
 							<li><a href="<?php echo base_url('dealer/add-vehicle'); ?>" class="<?php echo (current_url() == base_url('dealer/add-vehicle')) ? 'active' : ''; ?>">Add Vehicle</a></li>
-							<li><a href="<?php echo base_url('dealer/list-vehicles'); ?>" class="<?php echo (in_array(service('uri')->getSegment(2), ['list-vehicles', 'single-vehicle-info', 'edit-vehicle'])) ? 'active' : ''; ?>">List Vehicles</a></li>
+							<li><a href="<?php echo base_url('dealer/list-vehicles'); ?>" class="<?php echo (in_array(service('uri')->getSegment(2), ['list-vehicles', 'single-vehicle-info', 'edit-vehicle', 'promote-vehicle'])) ? 'active' : ''; ?>">List Vehicles</a></li>
 						</ul>
 
 					</li>

@@ -51,24 +51,25 @@ class RazorpayController extends BaseController {
         try {
             $postData = $this->request->getPost();
 
-            $promotedVehicleId = $postData['vehicleId'];
+            $promotedItemId = $postData['itemId'];
+            $promotionPlanId = $postData['promotionPlanId'];
+            $promotionUnder = $postData['promotionUnder'];
 
-            // Check if vehicle is already promoted within the current date range
-            $existingPromotion = $this->PromotionPlanModel->checkVehiclePromoted($promotedVehicleId);
+            /* // Check if vehicle / Showrrom is already promoted within the current date range */
+            $existingPromotion = $this->PromotionPlanModel->checkItemPromoted($promotedItemId, $promotionUnder);
+
             if ($existingPromotion) {
                 $response = array(
                     'status' => 'error',
                     'responseCode' => 400,
-                    'responseMessage' => 'This vehicle is already promoted'
+                    'responseMessage' => 'This is already promoted'
                 );
                 return $this->response->setJSON($response);
             }
 
-            $amount = $postData['promotion-amount-radio'];
             /* covert in Razorpay amount */
+            $amount = $postData['promotion-amount-radio'];
             $amountRzp = (int) $amount * 100;
-            $promotionPlanId = $postData['promotionPlanId'];
-            $promotionUnder = $postData['promotionType'];
 
             $promotionPlanDetails = $this->PromotionPlanModel->getPromotionPlanById($promotionPlanId);
 
@@ -87,16 +88,17 @@ class RazorpayController extends BaseController {
                 "partial_payment" => false,
                 "notes" => array(
                     "DealerID" => $delearData['id'],
-                    "PromotedVehicleId" => $promotedVehicleId,
+                    "promotedItemId" => $promotedItemId,
                     "PromotionPlanId" => $promotionPlanId,
                     "PromotionPlanName" => $promotionPlanDetails['promotionName'],
-                    "PromotionUnder" => PROMTION_TYPE[$promotionUnder],
+                    "PromotionUnder" => $promotionUnder,
                     "PromotionPlanAmount" => $amount,
                     "PromotionDuration" => $promotionPlanDetails['promotionDaysValidity'],
                     "DiscountInPercent" => ''
                 )
             );
 
+            /* call create order api RazorPay */
             $razorpayOrder = $this->ApiController->callRazorpayApi('orders', json_encode($orderData, JSON_NUMERIC_CHECK));
 
             if (isset($razorpayOrder['error'])) {
@@ -120,7 +122,7 @@ class RazorpayController extends BaseController {
             $prefillEmail = $delearData['email'] ?? '';
             $prefillContact = $delearData['contact_no'] ?? '';
 
-            $paymentForm = '<button type="button" id="rzp-promotion-button" class="btn btn-primary mt-3 btn-block">Pay ₹<span>' . $amount . '</span></button>
+            $paymentForm = '<button type="button" id="rzp-promotion-button" class="btn btn-success mt-3 btn-block">Pay ₹<span>' . $amount . '</span></button>
             <script src="' . base_url() . 'assets/vendors/scripts/rzp_checkout.js"></script>
             <script>
                 var options = {
@@ -140,10 +142,10 @@ class RazorpayController extends BaseController {
                                 razorpay_order_id: response.razorpay_order_id,
                                 razorpay_signature: response.razorpay_signature,
                                 dealer_id: "' . $delearData['id'] . '",
-                                promoted_vehicle_id: "' . $promotedVehicleId . '",
+                                promoted_item_id: "' . $promotedItemId . '",
                                 promotion_plan_id: "' . $promotionPlanId . '",
                                 promotion_plan_name: "' . $promotionPlanDetails['promotionName'] . '",
-                                promotion_under: "' . PROMTION_TYPE[$promotionUnder] . '",
+                                promotion_under: "' . $promotionUnder . '",
                                 promotion_plan_amount: "' . $amount . '",
                                 promotion_duration: "' . $promotionPlanDetails['promotionDaysValidity'] . '"
                             },
@@ -175,10 +177,11 @@ class RazorpayController extends BaseController {
                     },
                     "notes": {
                         "DealerID": "' . $delearData['id'] . '",
-                        "PromotedVehicleId": "' . $promotedVehicleId . '",
+                        "promotedItemId": "' . $promotedItemId . '",
                         "PromotionPlanId": "' . $promotionPlanId . '",
+                        "promotedItemId":"' . $promotedItemId . '",
                         "PromotionPlanName": "' . $promotionPlanDetails['promotionName'] . '",
-                        "PromotionUnder": "' . PROMTION_TYPE[$promotionUnder] . '",
+                        "PromotionUnder": "' . $promotionUnder . '",
                         "PromotionPlanAmount": "' . $amount . '",
                         "PromotionDuration": "' . $promotionPlanDetails['promotionDaysValidity'] . '",
                         "PromotionOrder_id": "' . $razorpayOrder['id'] . '",
@@ -202,10 +205,10 @@ class RazorpayController extends BaseController {
                                 error_step: response.error.step,
                                 error_reason: response.error.reason,
                                 dealer_id: "' . $delearData['id'] . '",
-                                promoted_vehicle_id: "' . $promotedVehicleId . '",
+                                promoted_item_id:"' . $promotedItemId . '",
                                 promotion_plan_id: "' . $promotionPlanId . '",
                                 promotion_plan_name: "' . $promotionPlanDetails['promotionName'] . '",
-                                promotion_under: "' . PROMTION_TYPE[$promotionUnder] . '",
+                                promotion_under: "' . $promotionUnder . '",
                                 promotion_plan_amount: "' . $amount . '",
                                 promotion_duration: "' . $promotionPlanDetails['promotionDaysValidity'] . '"
                             },
@@ -272,9 +275,10 @@ class RazorpayController extends BaseController {
                     [error_reason] => payment_failed
                     [dealer_id] => 7
                     [promoted_vehicle_id] => 40
+                    [promoted_item_id] => 40
                     [promotion_plan_id] => 2
                     [promotion_plan_name] => Gold Plan
-                    [promotion_under] => Featured
+                    [promotion_under] => vehicle / showroom
                     [promotion_plan_amount] => 149
                     [promotion_duration] => 15
                 */
@@ -308,7 +312,7 @@ class RazorpayController extends BaseController {
                 $razorpay_order_id = $postData['razorpay_order_id'];
                 $razorpay_payment_id = $postData['razorpay_payment_id'];
                 $dealer_id = $postData['dealer_id'];
-                $promoted_vehicle_id = $postData['promoted_vehicle_id'];
+                $promoted_item_id =  $postData['promoted_item_id'];
                 $promotion_plan_id = $postData['promotion_plan_id'];
                 $promotion_plan_name = $postData['promotion_plan_name'];
                 $promotion_under = $postData['promotion_under'];
@@ -346,7 +350,8 @@ class RazorpayController extends BaseController {
                             'promotionPlanId' => $promotion_plan_id,
                             'promotionUnder' => $promotion_under,
                             'dealerId' => $dealer_id,
-                            'vehicleId' => $promoted_vehicle_id,
+                            //'vehicleId' => $promoted_vehicle_id,
+                            'itemId' => $promoted_item_id,
                             'start_dt' => date('Y-m-d H:i:s'),
                             'end_dt' => date('Y-m-d H:i:s', strtotime('+' . $promotion_duration . ' days')),
                             'old_current' => 1,
@@ -363,16 +368,29 @@ class RazorpayController extends BaseController {
                         $partnerInfo = $this->UserModel->where('id', $dealer_id)->first();
                         /* // Fetch all active plan by id */
                         $planDetails = $this->PromotionPlanModel->where('id', $promotion_plan_id)->first();
-                        $vehicleDetails = $this->PromotionPlanModel->getVehicleDetails($promoted_vehicle_id);
+                        if ($promotion_under == 'vehicle') {
+                            $itemDetails = $this->PromotionPlanModel->getVehicleDetails($promoted_item_id);
+                        }
 
+                        if ($promotion_under == 'showroom') {
+                            $itemDetails = $this->PromotionPlanModel->getShowroomDetails($promoted_item_id);
+                        }
                         /* assigning logo path */
                         $orderDetails['logo'] = SERVER_ROOT_PATH_ASSETS . '/src/images/wheelpact-logo.png';
 
                         $viewData['orderDetails'] = $orderDetails;
                         $viewData['partnerInfo'] = $partnerInfo;
                         $viewData['planDetails'] = $planDetails;
-                        $viewData['vehicleDetails'] = $vehicleDetails;
+                        //$viewData['vehicleDetails'] = $vehicleDetails;
+                        $viewData['itemDetails'] = $itemDetails;
                         $viewData['promtionData'] = $promtionData;
+
+                        if ($promotion_under == 'vehicle') {
+                            $redirectUrl = 'dealer/list-vehicles';
+                        } elseif ($promotion_under == 'showroom') {
+                            $redirectUrl = 'dealer/list-branches';
+                        }
+
                         /* email promtional details to dealer */
                         /* // Load the invoice view with the data */
                         $html = view('dealer/invoice/promotion_invoice_template', $viewData);
@@ -381,25 +399,26 @@ class RazorpayController extends BaseController {
                         $pdfPath = generatePDF($html, $filename, false);
 
                         $to = $partnerInfo['email'];
-                        $subject = 'Vehicle Promotion Details - Wheelpact';
+                        $subject = ucfirst($promotion_under) . ' Promotion Details - Wheelpact';
                         $toName = $partnerInfo['name'];
                         $body = view('dealer/email_templates/partner_promotion_mail', $viewData);
 
                         $mailResult = sendEmail($to, $toName, $subject, $body, $pdfPath);
+
                         if (!$mailResult) {
                             $response = array(
                                 'code'   => 500,
                                 'status' => 'error',
                                 'message' => $mailResult,
-                                'redirectURL' => base_url('dealer/list-vehicles')
+                                'redirectURL' => base_url($redirectUrl)
                             );
                             return $this->response->setJSON($response);
                         }
                         $response = array(
                             'code' => 200,
                             'status' => 'success',
-                            'message' => 'Vehicle Promotion Successful',
-                            'redirectURL' => base_url('dealer/list-vehicles')
+                            'message' => 'Promotion Successful',
+                            'redirectURL' => base_url($redirectUrl)
                         );
                         return $this->response->setJSON($response);
                     }

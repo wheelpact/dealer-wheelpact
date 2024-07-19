@@ -10,7 +10,7 @@ use App\Models\VehicleModel;
 use App\Models\UserModel;
 use App\Models\CommonModel;
 use App\Models\RazorpayModel;
-
+use App\Models\BranchModel;
 
 class PromotionController extends BaseController {
 
@@ -21,10 +21,10 @@ class PromotionController extends BaseController {
     protected $userModel;
     protected $vehicleModel;
     protected $razorpayModel;
+    protected $branchModel;
 
     protected $userSesData;
     protected $planDetails;
-
 
     public function __construct() {
         $this->apiController = new ApiController();
@@ -34,7 +34,7 @@ class PromotionController extends BaseController {
         $this->userModel = new UserModel();
         $this->vehicleModel = new VehicleModel();
         $this->razorpayModel = new RazorpayModel();
-
+        $this->branchModel = new BranchModel();
 
         /* // Retrieve session */
         $this->userSesData = session()->get();
@@ -44,17 +44,32 @@ class PromotionController extends BaseController {
         $this->planDetails = $planDetails[0];
     }
 
-    public function index($vehicleId) {
+    public function promoteVehicle($vehicleId) {
 
         /*// Fetch all promotion plans */
         $data['promotionPlans'] = $this->promotionPlanModel->findAll();
 
-        /* get subcription plan details */
+        /* // Fetch user session data and plan details */
+        $data['userData'] = $this->userSesData;
         $data['planData'] = $this->planDetails;
 
         $data['vehicleDetails'] =  $this->vehicleModel->getVehicleDetails($vehicleId);
-
         $data['vehicleImagesDetails'] = $this->vehicleModel->getVehicleImagesDetails($vehicleId);
+
         echo view('dealer/vehicles/promote-vehicle', $data);
+    }
+
+    public function promoteShowroom($showroomId) {
+
+        /*// Fetch all promotion plans */
+        $data['promotionPlans'] = $this->promotionPlanModel->findAll();
+
+        /* // Fetch user session data and plan details */
+        $data['userData'] = $this->userSesData;
+        $data['planData'] = $this->planDetails;
+
+        $data['showroomDetails'] =   $this->branchModel->getStoreDetails($showroomId);
+
+        echo view('dealer/vehicles/promote-showroom', $data);
     }
 }

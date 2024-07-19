@@ -1,4 +1,7 @@
 <?php
+
+use PhpParser\Node\Stmt\Foreach_;
+
 echo view('dealer/includes/_header');
 echo view('dealer/includes/_sidebar');
 ?>
@@ -43,15 +46,6 @@ echo view('dealer/includes/_sidebar');
 								<p>Sell you vehicles faster</p>
 							</div>
 						</div>
-						<!-- <div class="form-group col-6">
-							<label>Promote Under<span class="required">*</span></label>
-							<select class="custom-select formInput" name="promotionType" id="promotionType" required>
-								<option value="">Choose...</option>
-								<?php //foreach (PROMTION_TYPE as $id => $type) : ?>
-									<option value="<?php //$id ?>"><?php //$type ?></option>
-								<?php //endforeach; ?>
-							</select>
-						</div> -->
 					</div>
 
 					<?php $first = true;
@@ -60,7 +54,7 @@ echo view('dealer/includes/_sidebar');
 							<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative">
 								<h4 class="text-blue h4"><?= esc($plan['promotionName']); ?></h4>
 								<div class="custom-control custom-radio mb-5">
-									<input checked type="radio" data-itemid="<?= esc($vehicleDetails['id']); ?>" data-promotionunder="vehicle" data-promotionplanid="<?= esc($plan['id']); ?>" id="promotionCustomRadio<?= esc($plan['id']); ?>" name="promotion-amount-radio" class="custom-control-input getPaymentmentAmt" value="<?= esc($plan['promotionAmount']); ?>" <?= $first ? 'checked' : '' ?>>
+									<input checked type="radio" data-itemid="<?= esc($showroomDetails['id']); ?>" data-promotionunder="showroom" data-promotionplanid="<?= esc($plan['id']); ?>" id="promotionCustomRadio<?= esc($plan['id']); ?>" name="promotion-amount-radio" class="custom-control-input getPaymentmentAmt" value="<?= esc($plan['promotionAmount']); ?>" <?= $first ? 'checked' : '' ?>>
 									<label class="custom-control-label" for="promotionCustomRadio<?= esc($plan['id']); ?>">Promotion Validity for <?= esc($plan['promotionDaysValidity']); ?> Days</label>
 								</div>
 
@@ -73,51 +67,42 @@ echo view('dealer/includes/_sidebar');
 				</div>
 				<div class="col-md-4">
 					<div class="card card-box mb-3 stick-promo">
-						<img class="card-img-top vehicle-image" src="<?php echo isset($vehicleDetails['thumbnail_url']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'vehicle_thumbnails/' . $vehicleDetails['thumbnail_url'] : WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'default-img.png'; ?>" alt="<?php echo $vehicleDetails['cmp_name'] . ' ' . $vehicleDetails['cmp_model_name']; ?>" />
+						<img class="card-img-top vehicle-image" src="<?php echo isset($showroomDetails['branch_thumbnail']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'branch_thumbnails/' . $showroomDetails['branch_thumbnail'] : WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'default-img.png'; ?>" alt="<?php echo $showroomDetails['name']; ?>" />
 						<div class="card-body">
-							<h5 class="card-title weight-500"><?php echo $vehicleDetails['cmp_name'] . ' ' . $vehicleDetails['cmp_model_name'] . ' ' . $vehicleDetails['variantName']; ?></h5>
-							<p class="card-text">
+							<h5 class="card-title weight-500"><?php echo $showroomDetails['name'] ?></h5>
+							<div class="showroom-location mb-2">
+								<i class="icon-copy dw dw-pin-2"></i>
+								<h6><?php echo $showroomDetails['cityName'] . ', ' . $showroomDetails['stateName']; ?></h6>
+							</div>
+							<p class="card-text"></p>
 							<div class="d-flex vehicle-overview">
 								<div class="overview-badge">
-									<h6>Year</h6>
-									<h5><?php echo $vehicleDetails['manufacture_year']; ?></h5>
-								</div>
-
-								<div class="overview-badge">
-									<h6>Driven</h6>
-									<h5><?php echo $vehicleDetails['kms_driven']; ?>Km</h5>
-								</div>
-
-								<div class="overview-badge">
-									<h6>Fuel Type</h6>
-									<h5><?php echo $vehicleDetails['fuelTypeName']; ?></h5>
-								</div>
-
-								<div class="overview-badge">
-									<h6>Owner</h6>
-									<h5><?php echo $vehicleDetails['owner']; ?></h5>
-								</div>
-								<div class="wishlist">
-									<i class="icofont-heart"></i>
+									<h6>Branch</h6>
+									<h5><?php echo $showroomDetails['branch_type_label']; ?></h5>
 								</div>
 							</div>
-							<h5 class="card-title mt-3"><?php echo $vehicleDetails['branch_name']; ?></h5>
-							<h6 class="mb-10"><?php echo VEHICLE_TYPE[$vehicleDetails['vehicle_type']]; ?></h6>
+							<div class="d-flex align-items-center">
+								<div class="store-rating-icon">
+									<i class="icofont-star"></i>
+								</div>
+								<div class="store-rating-count"><?php echo round($showroomDetails['branch_rating'], 1); ?></div>
+								<div class="store-reviews">
+									<a class="view-reviews-link" href="#" data-branch-id="' . $branch['id'] . '">(<?php echo $showroomDetails['branch_review_count']; ?> Reviews)</a>
+								</div>
+							</div>
 							<button type="submit" class="btn btn-primary mt-3 btn-block promotionPlanPay">Promote</button>
+							<?= form_close() ?>
+							<div class="promotionPayBtnScript"></div>
 						</div>
-						<?= form_close() ?>
-
-						<div class="promotionPayBtnScript"></div>
 					</div>
 				</div>
 			</div>
+			<!-- footer -->
+			<?php echo view('dealer/includes/_footer'); ?>
 		</div>
-		<!-- footer -->
-		<?php echo view('dealer/includes/_footer'); ?>
 	</div>
-</div>
-<script>
-	$(document).ready(function() {
-		$("input[name='promotion-amount-radio']:checked").trigger('click');
-	});
-</script>
+	<script>
+		$(document).ready(function() {
+			$("input[name='promotion-amount-radio']:checked").trigger('click');
+		});
+	</script>

@@ -632,16 +632,16 @@ class Branches extends BaseController {
                                 </div>
 			    </div>
 			    <div class="d-flex align-items-center">
-				<div class="store-rating-icon">
-					<i class="icofont-star"></i>
-				</div>
-                                <div class="store-rating-count">' . round($branch['branch_rating'], 1) . '</div>
+			    	<div class="store-rating-icon">
+			    		<i class="icofont-star"></i>
+			    	</div>
+                        	<div class="store-rating-count">' . round($branch['branch_rating'], 1) . '</div>
 				<div class="store-reviews">
 					<a class="view-reviews-link" href="#" data-branch-id="' . $branch['id'] . '">(' . $branch['branch_review_count'] . ' Reviews)</a>
 				</div>
-                            </div>
-                            <a href="promote.html" class="btn btn-primary mt-3 btn-block">Promote</a>
-                            <div class="option-btn">
+			    </div>
+			    <a href="' . base_url() . 'dealer/promote-showroom/' . $branch['id'] . '" class="btn btn-primary mt-3 btn-block">Promote</a>
+			    <div class="option-btn">
                                 <div class="dropdown">
                                     <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
                                         <i class="dw dw-more"></i>

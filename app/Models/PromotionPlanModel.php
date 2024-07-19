@@ -52,9 +52,55 @@ class PromotionPlanModel extends Model {
         return $result;
     }
 
+    public function getShowroomDetails($showroomId) {
+        $builder = $this->db->table('branches');
+        $builder->select('branches.*, branches.name as branchName,
+            (CASE 
+                WHEN branches.branch_type = 1 THEN "Main Branch" 
+                WHEN branches.branch_type = 2 THEN "Sub-branch" 
+                ELSE "Unknown" 
+            END) as branch_type_label, 
+            AVG(branch_ratings.rating) AS avg_rating, 
+            COUNT(DISTINCT branch_ratings.id) AS review_count, 
+            COUNT(vehicles.branch_id) AS vehicle_count, 
+            users.name as owner_name, 
+            users.email as owner_email, 
+            users.contact_no as owner_contact_no, 
+            rating_data.average_rating as branch_rating,
+            rating_data.rating_count as branch_review_count,
+            countries.name as countryName, 
+            s.name as stateName, 
+            c.name as cityName');
+        $builder->join('branch_ratings', 'branches.id = branch_ratings.branch_id', 'left');
+        $builder->join('vehicles', 'vehicles.branch_id = branches.id', 'left');
+        $builder->join('users', 'users.id = branches.dealer_id', 'left');
+        $builder->join('countries', 'countries.id = branches.country_id', 'left');
+        $builder->join('states as s', 's.id = branches.state_id', 'left');
+        $builder->join('cities as c', 'c.id = branches.city_id', 'left');
+        $builder->join(
+            '(SELECT branch_id, AVG(rating) as average_rating, COUNT(*) as rating_count 
+            FROM branch_ratings GROUP BY branch_id) as rating_data',
+            'rating_data.branch_id = branches.id',
+            'left'
+        );
+        $builder->where('branches.id', $showroomId);
+        $builder->groupBy('branches.id');
+        return $builder->get()->getRowArray();
+    }
+
     public function checkVehiclePromoted($vehicleId) {
         $builder = $this->db->table('dealer_promotion');
         $builder->where('vehicleId', $vehicleId);
+        $builder->where('is_active', 1);
+        $builder->where('NOW() BETWEEN start_dt AND end_dt', null, false);
+        $result = $builder->get()->getRowArray();
+        return $result;
+    }
+
+    public function checkItemPromoted($itemId, $promotionUnder) {
+        $builder = $this->db->table('dealer_promotion');
+        $builder->where('promotionUnder', $promotionUnder);
+        $builder->where('itemId', $itemId);
         $builder->where('is_active', 1);
         $builder->where('NOW() BETWEEN start_dt AND end_dt', null, false);
         $result = $builder->get()->getRowArray();
