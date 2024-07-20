@@ -15,9 +15,12 @@ class BranchModel extends Model {
     public function getAllBranchByDealerId($dealerId, $countryId, $stateId, $cityId, $branchType, $limit, $offset) {
 
         $builder = $this->db->table('branches as b');
-        $builder->select('b.*, s.name as state, c.name as city, CASE WHEN b.branch_type = 1 THEN "Main Branch" WHEN b.branch_type = 2 THEN "Sub-branch" ELSE "Unknown" END as branch_type_label, 
-        rating_data.average_rating as branch_rating,
-        rating_data.rating_count as branch_review_count', false);
+        $builder->select('b.*, s.name as state, c.name as city, 
+            CASE WHEN b.branch_type = 1 THEN "Main Branch" WHEN b.branch_type = 2 THEN "Sub-branch" ELSE "Unknown" END as branch_type_label, 
+            rating_data.average_rating as branch_rating,
+            rating_data.rating_count as branch_review_count,
+            dp.id as promotion_id, dp.start_dt as promotion_start_date, dp.end_dt as promotion_end_date,
+            CASE WHEN dp.end_dt >= NOW() THEN 1 ELSE 0 END as is_promoted', false);
         $builder->join('countries', 'countries.id = b.country_id', 'left');
         $builder->join('states as s', 's.id = b.state_id', 'left');
         $builder->join('cities as c', 'c.id = b.city_id', 'left');
@@ -27,6 +30,7 @@ class BranchModel extends Model {
             'rating_data.branch_id = b.id',
             'left'
         );
+        $builder->join('dealer_promotion as dp', 'dp.itemId = b.id AND dp.promotionUnder = "showroom" AND dp.is_active = 1', 'left');
         $builder->where('b.dealer_id', $dealerId);
         $builder->where('b.is_active', 1);
 
@@ -48,6 +52,7 @@ class BranchModel extends Model {
         }
 
         /* Order by branch_type with "Main Branch" first */
+        $builder->orderBy('dp.end_dt');
         $builder->orderBy('b.branch_type', 'DESC');
         $builder->groupBy('b.id', 'DESC');
 

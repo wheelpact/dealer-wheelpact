@@ -24,12 +24,12 @@ class UserModel extends Model {
             ->first();
 
         if ($user && password_verify($password, $user['password'])) {
-            // Password is correct
+            /* // Password is correct */
             unset($user['password']); // Remove the password field from the user data before returning
             return $user;
         }
 
-        // Invalid email or password
+        /* // Invalid email or password */
         return null;
     }
 

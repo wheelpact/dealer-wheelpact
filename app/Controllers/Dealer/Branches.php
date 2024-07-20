@@ -40,7 +40,8 @@ class Branches extends BaseController {
 		$data = array();
 		$data['countryList'] = $this->commonModel->get_all_country_data();
 
-		/* get plan details */
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
 		$data['planData'] = $this->planDetails;
 
 		echo view('dealer/branches/list-branches', $data);
@@ -49,8 +50,6 @@ class Branches extends BaseController {
 	public function add_branch() {
 		/* // Fetch user session data and plan details */
 		$data['userData'] = $this->userSesData;
-
-		/* get plan details */
 		$data['planData'] = $this->planDetails;
 
 		/* // Get total branches by user */
@@ -366,14 +365,15 @@ class Branches extends BaseController {
 
 	public function edit_branch_details($branchId) {
 
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
+		$data['planData'] = $this->planDetails;
+
 		$data['countryList'] = $this->commonModel->get_all_country_data();
 		$data['branchDetails'] = $this->branchModel->getStoreDetails($branchId);
 		$data['stateList'] = $this->commonModel->get_country_states($data['branchDetails']['country_id']);
 		$data['cityList'] = $this->commonModel->get_state_cities($data['branchDetails']['state_id']);
 		$data['branchDeliverableImgs'] = $this->branchModel->get_branch_deliverable_imgs($branchId);
-
-		/* get plan details */
-		$data['planData'] = $this->planDetails;
 
 		return view('dealer/branches/edit_branch_details', $data);
 	}
@@ -589,6 +589,10 @@ class Branches extends BaseController {
 
 	public function single_branch_info($branchId) {
 
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
+		$data['planData'] = $this->planDetails;
+
 		$data['countryList'] = $this->commonModel->get_all_country_data();
 		$data['branchDetails'] = $this->branchModel->getStoreDetails($branchId);
 
@@ -596,9 +600,6 @@ class Branches extends BaseController {
 		$data['cityList'] = $this->commonModel->get_state_cities($data['branchDetails']['state_id']);
 		$data['branchService'] = explode(",", $data['branchDetails']['branch_services']);
 		$data['branchDeliverableImgs'] = $this->branchModel->get_branch_deliverable_imgs($branchId);
-
-		/* get plan details */
-		$data['planData'] = $this->planDetails;
 
 		return view('dealer/branches/single_branch_info', $data);
 	}
@@ -630,306 +631,37 @@ class Branches extends BaseController {
                                     <h6>Branch</h6>
                                     <h5>' . $branch['branch_type_label'] . '</h5>
                                 </div>
-			    </div>
-			    <div class="d-flex align-items-center">
-			    	<div class="store-rating-icon">
-			    		<i class="icofont-star"></i>
-			    	</div>
-                        	<div class="store-rating-count">' . round($branch['branch_rating'], 1) . '</div>
-				<div class="store-reviews">
-					<a class="view-reviews-link" href="#" data-branch-id="' . $branch['id'] . '">(' . $branch['branch_review_count'] . ' Reviews)</a>
-				</div>
-			    </div>
-			    <a href="' . base_url() . 'dealer/promote-showroom/' . $branch['id'] . '" class="btn btn-primary mt-3 btn-block">Promote</a>
-			    <div class="option-btn">
+							</div>
+							<div class="d-flex align-items-center">
+								<div class="store-rating-icon">
+									<i class="icofont-star"></i>
+								</div>
+							<div class="store-rating-count">' . round($branch['branch_rating'], 1) . '</div>
+							<div class="store-reviews">
+								<a class="view-reviews-link" href="#" data-branch-id="' . $branch['id'] . '">(' . $branch['branch_review_count'] . ' Reviews)</a>
+							</div>
+							</div>';
+			if ($branch['is_promoted'] == 1) {
+				$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-success mt-3 btn-block"> Promotion ends on: ' . date('Y-m-d', strtotime($branch['promotion_end_date'])) . '</a>';
+			} else {
+				$dealerBranchHtml .= '<a href="' . base_url() . 'dealer/promote-showroom/' . $branch['id'] . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
+			}
+
+			$dealerBranchHtml .= '<div class="option-btn">
                                 <div class="dropdown">
                                     <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
                                         <i class="dw dw-more"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                                         <a class="dropdown-item" href="' . base_url() . 'dealer/single-branch-info/' . $branch['id'] . '"><i class="dw dw-eye"></i> View</a>
-                                        <a class="dropdown-item" href="' . base_url() . 'dealer/edit-branch/' . $branch['id'] . '"><i class="dw dw-edit2"></i> Edit</a>
-                                        <a class="dropdown-item sa-params delete-branch" data-branch-id="' . $branch['id'] . '" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>';
+                                        <a class="dropdown-item" href="' . base_url() . 'dealer/edit-branch/' . $branch['id'] . '"><i class="dw dw-edit2"></i> Edit</a>';
+			if ($branch['is_promoted'] != 1) {
+				$dealerBranchHtml .= '<a class="dropdown-item sa-params delete-branch" data-branch-id="' . $branch['id'] . '" href="#"><i class="dw dw-delete-3"></i> Delete</a>';
+			}
+			$dealerBranchHtml .= '</div></div></div></div></div></div>';
 		}
 
 		echo $dealerBranchHtml;
-	}
-
-	public function edit_vehicle($vehicleId) {
-
-		$dealerId = session()->get('userId');
-
-		$data['vehicleDetails'] =  $this->vehicleModel->getVehicleDetails($vehicleId);
-		$data['vehicleImagesDetails'] = $this->vehicleModel->getVehicleImagesDetails($vehicleId);
-
-		$data['showroomList'] = $this->vehicleModel->getShowroomList($dealerId);
-		$data['cmpList'] = $this->vehicleModel->getBrandsByVehicleType($data['vehicleDetails']['vehicle_type']);
-		$data['cmpModelList'] = $this->vehicleModel->getModelsByBrand($data['vehicleDetails']['cmp_id']);
-		$data['variantList'] = $this->vehicleModel->getVariantsByModel($data['vehicleDetails']['model_id']);
-
-		$data['fuelTypeList'] = $this->commonModel->get_fuel_types();
-		$data['fuelVariantList'] = $this->commonModel->get_fuel_variants();
-		$data['transmissionList'] = $this->commonModel->get_vehicle_transmissions();
-		$data['colorList'] = $this->commonModel->get_vehicle_colors();
-		$data['stateList'] = $this->commonModel->get_country_states(101);
-		if (isset($data['vehicleDetails']['cmp_id']) && !empty($data['vehicleDetails']['cmp_id'])) {
-			$data['vehicleRegRtoList'] = $this->commonModel->get_registered_state_rto($data['vehicleDetails']['registered_state_id']);
-		}
-		$data['bodyTypeList'] = $this->commonModel->get_vehicle_body_types();
-
-		echo view('dealer/vehicles/edit-vehicle', $data);
-	}
-
-	public function update_vehicle() {
-		$db = db_connect();
-		$db->transBegin();
-		try {
-			// Load the form validation library
-			$validation = \Config\Services::validation();
-
-			// Set validation rules for each form field
-			$validation->setRules([
-				'branch_id'         => 'required',
-				'vehicle_type'      => 'required',
-				'cmp_id'            => 'required',
-				'model_id'          => 'required',
-				'fuel_type'         => 'required',
-				'body_type'         => 'required',
-				'variant_id'        => 'required',
-				'mileage'           => 'required',
-				'kms_driven'        => 'required',
-				'owner'             => 'required',
-				'transmission_id'   => 'required',
-				'color_id'          => 'required',
-
-				'manufacture_year'      => 'required',
-				'registration_year'     => 'required',
-				'registered_state_id'   => 'required',
-				'rto'                   => 'required',
-
-				'insurance_type'      => 'required',
-				'insurance_validity'     => 'required',
-
-				'accidental_status'  => 'required',
-				'flooded_status'     => 'required',
-				'last_service_kms'   => 'required',
-				'last_service_date'  => 'required',
-
-				'regular_price'  => 'required',
-				'selling_price'  => 'required',
-				'pricing_type'   => 'required',
-			]);
-
-			// Run the validation
-			if (!$validation->withRequest($this->request)->run()) {
-				// Validation failed, return errors in JSON format
-				$errors = $validation->getErrors();
-				return $this->response->setJSON(['success' => false, 'errors' => $errors]);
-			}
-
-			// Get the form input values
-			$vehicleId      = $this->request->getPost('vehicleId');
-			$branch_id      = $this->request->getPost('branch_id');
-			$vehicle_type   = $this->request->getPost('vehicle_type');
-			$cmp_id         = $this->request->getPost('cmp_id');
-			$model_id       = $this->request->getPost('model_id');
-			$fuel_type      = $this->request->getPost('fuel_type');
-			$body_type      = $this->request->getPost('body_type');
-			$variant_id     = $this->request->getPost('variant_id');
-			$mileage        = $this->request->getPost('mileage', FILTER_UNSAFE_RAW);
-			$kms_driven     = $this->request->getPost('kms_driven', FILTER_UNSAFE_RAW);
-			$owner          = $this->request->getPost('owner');
-			$transmission_id = $this->request->getPost('transmission_id');
-			$color_id       = $this->request->getPost('color_id');
-			$featured_status    = $this->request->getPost('featured_status');
-			$search_keywords    = $this->request->getPost('search_keywords');
-			$onsale_status      = $this->request->getPost('onsale_status');
-			$onsale_percentage  = $this->request->getPost('onsale_percentage');
-
-			// Get the form input values
-			$manufacture_year       = $this->request->getPost('manufacture_year');
-			$registration_year      = $this->request->getPost('registration_year');
-			$registered_state_id    = $this->request->getPost('registered_state_id');
-			$rto                    = $this->request->getPost('rto');
-
-			// Get the form input values
-			$insurance_type         = $this->request->getPost('insurance_type');
-			$insurance_validity     = $this->request->getPost('insurance_validity');
-
-			// Get the form input values
-			$accidental_status   = $this->request->getPost('accidental_status');
-			$flooded_status      = $this->request->getPost('flooded_status');
-			$last_service_kms    = $this->request->getPost('last_service_kms');
-			$last_service_date   = $this->request->getPost('last_service_date');
-
-			// Get the form input values
-			$car_no_of_airbags              = $this->request->getPost('car_no_of_airbags');
-			$car_central_locking            = $this->request->getPost('car_central_locking');
-			$car_seat_upholstery            = $this->request->getPost('car_seat_upholstery');
-			$car_sunroof                    = $this->request->getPost('car_sunroof');
-			$car_integrated_music_system    = $this->request->getPost('car_integrated_music_system');
-			$car_rear_ac                    = $this->request->getPost('car_rear_ac');
-			$car_outside_rear_view_mirrors  = $this->request->getPost('car_outside_rear_view_mirrors');
-			$car_power_windows              = $this->request->getPost('car_power_windows');
-			$car_engine_start_stop          = $this->request->getPost('car_engine_start_stop');
-			$car_headlamps                  = $this->request->getPost('car_headlamps');
-			$car_power_steering             = $this->request->getPost('car_power_steering');
-
-			// Get the form input values
-			$bike_headlight_type            = $this->request->getPost('bike_headlight_type');
-			$bike_odometer                  = $this->request->getPost('bike_odometer');
-			$bike_drl                       = $this->request->getPost('bike_drl');
-			$bike_mobile_connectivity       = $this->request->getPost('bike_mobile_connectivity');
-			$bike_gps_navigation            = $this->request->getPost('bike_gps_navigation');
-			$bike_usb_charging_port         = $this->request->getPost('bike_usb_charging_port');
-			$bike_low_battery_indicator     = $this->request->getPost('bike_low_battery_indicator');
-			$bike_under_seat_storage        = $this->request->getPost('bike_under_seat_storage');
-			$bike_speedometer               = $this->request->getPost('bike_speedometer');
-			$bike_stand_alarm               = $this->request->getPost('bike_stand_alarm');
-			$bike_low_fuel_indicator        = $this->request->getPost('bike_low_fuel_indicator');
-			$bike_low_oil_indicator         = $this->request->getPost('bike_low_oil_indicator');
-			$bike_start_type                = $this->request->getPost('bike_start_type');
-			$bike_kill_switch               = $this->request->getPost('bike_kill_switch');
-			$bike_break_light               = $this->request->getPost('bike_break_light');
-			$bike_turn_signal_indicator     = $this->request->getPost('bike_turn_signal_indicator');
-
-			// Get the form input values
-			$regular_price = $this->request->getPost('regular_price');
-			$selling_price = $this->request->getPost('selling_price');
-			$pricing_type = $this->request->getPost('pricing_type');
-			$emi_option = $this->request->getPost('emi_option');
-			$avg_interest_rate = $this->request->getPost('avg_interest_rate');
-			$tenure_months = $this->request->getPost('tenure_months');
-			$updated_by = session()->get('userId');
-			$updated_datetime = date("Y-m-d H:i:s");
-
-			// Prepare the data to be updated
-			$formData = [
-				'branch_id'         => $branch_id,
-				'vehicle_type'      => $vehicle_type,
-				'cmp_id'            => $cmp_id,
-				'model_id'          => $model_id,
-				'fuel_type'         => $fuel_type,
-				'body_type'         => $body_type,
-				'variant_id'        => $variant_id,
-				'mileage'           => $mileage,
-				'kms_driven'        => $kms_driven,
-				'owner'             => $owner,
-				'transmission_id'   => $transmission_id,
-				'color_id'          => $color_id,
-				'featured_status'   => $featured_status,
-				'search_keywords'   => $search_keywords,
-				'onsale_status'     => $onsale_status,
-				'onsale_percentage' => $onsale_percentage,
-
-				'manufacture_year'      => $manufacture_year,
-				'registration_year'     => $registration_year,
-				'registered_state_id'   => $registered_state_id,
-				'rto'                   => $rto,
-
-				'insurance_type'      => $insurance_type,
-				'insurance_validity'  => date("Y-m-d", strtotime($insurance_validity)),
-
-				'accidental_status' => $accidental_status,
-				'flooded_status'    => $flooded_status,
-				'last_service_kms'  => $last_service_kms,
-				'last_service_date' => date("Y-m-d", strtotime($last_service_date)),
-
-				'car_no_of_airbags'             => isset($car_no_of_airbags) ? $car_no_of_airbags : '',
-				'car_central_locking'           => isset($car_central_locking) ? $car_central_locking : '',
-				'car_seat_upholstery'           => isset($car_seat_upholstery) ? $car_seat_upholstery : '',
-				'car_sunroof'                   => isset($car_sunroof) ? $car_sunroof : '',
-				'car_integrated_music_system'   => isset($car_integrated_music_system) ? $car_integrated_music_system : '',
-				'car_rear_ac'                   => isset($car_rear_ac) ? $car_rear_ac : '',
-				'car_outside_rear_view_mirrors' => isset($car_outside_rear_view_mirrors) ? $car_outside_rear_view_mirrors : '',
-				'car_power_windows'             => isset($car_power_windows) ? $car_power_windows : '',
-				'car_engine_start_stop'         => isset($car_engine_start_stop) ? $car_engine_start_stop : '',
-				'car_headlamps'                 => isset($car_headlamps) ? $car_headlamps : '',
-				'car_power_steering'            => isset($car_power_steering) ? $car_power_steering : '',
-
-				'bike_headlight_type'           => isset($bike_headlight_type) ? $bike_headlight_type : '',
-				'bike_odometer'                 => isset($bike_odometer) ? $bike_odometer : '',
-				'bike_drl'                      => isset($bike_drl) ? $bike_drl : '',
-				'bike_mobile_connectivity'      => isset($bike_mobile_connectivity) ? $bike_mobile_connectivity : '',
-				'bike_gps_navigation'           => isset($bike_gps_navigation) ? $bike_gps_navigation : '',
-				'bike_usb_charging_port'        => isset($bike_usb_charging_port) ? $bike_usb_charging_port : '',
-				'bike_low_battery_indicator'    => isset($bike_low_battery_indicator) ? $bike_low_battery_indicator : '',
-				'bike_under_seat_storage'       => isset($bike_under_seat_storage) ? $bike_under_seat_storage : '',
-				'bike_speedometer'              => isset($bike_speedometer) ? $bike_speedometer : '',
-				'bike_stand_alarm'              => isset($bike_stand_alarm) ? $bike_stand_alarm : '',
-				'bike_low_fuel_indicator'       => isset($bike_low_fuel_indicator) ? $bike_low_fuel_indicator : '',
-				'bike_low_oil_indicator'        => isset($bike_low_oil_indicator) ? $bike_low_oil_indicator : '',
-				'bike_start_type'               => isset($bike_start_type) ? $bike_start_type : '',
-				'bike_kill_switch'              => isset($bike_kill_switch) ? $bike_kill_switch : '',
-				'bike_break_light'              => isset($bike_break_light) ? $bike_break_light : '',
-				'bike_turn_signal_indicator'    => isset($bike_turn_signal_indicator) ? $bike_turn_signal_indicator : '',
-
-				'regular_price' => $regular_price,
-				'selling_price' => $selling_price,
-				'pricing_type'  => $pricing_type,
-				'emi_option' => $emi_option,
-				'avg_interest_rate' => $avg_interest_rate,
-				'tenure_months' => $tenure_months,
-				'updated_by'    => $updated_by,
-				'updated_datetime' => $updated_datetime
-			];
-
-			// Update the data into the database table
-			$result = $this->vehicleModel->updateData($vehicleId, $formData);
-
-			if (!$result) {
-				// Return a JSON response
-				return $this->response->setJSON(['errors' => true, 'message' => 'Error occurred while inserting data.']);
-			}
-
-			// Commit the transaction if all updations were successful
-			$db->transCommit();
-
-			// Return a success JSON response
-			return $this->response->setJSON(['success' => true, 'message' => 'Vehicle updated successfully.']);
-		} catch (\Exception $e) {
-			// An error occurred, rollback the transaction
-			$db->transRollback();
-
-			// Error handling and logging
-			$logger = \Config\Services::logger();
-			$logger->error('Error occurred while updating vehicle information: ' . $e->getMessage());
-
-			// Throw or handle the exception as needed
-			throw $e;
-		}
-	}
-
-	public function single_vehicle_info($vehicleId) {
-
-		$dealerId = session()->get('userId');
-
-		$data['vehicleDetails'] =  $this->vehicleModel->getVehicleDetails($vehicleId);
-		$data['vehicleImagesDetails'] = $this->vehicleModel->getVehicleImagesDetails($vehicleId);
-
-		$data['showroomList'] = $this->vehicleModel->getShowroomList($dealerId);
-		$data['cmpList'] = $this->vehicleModel->getBrandsByVehicleType($data['vehicleDetails']['vehicle_type']);
-		$data['cmpModelList'] = $this->vehicleModel->getModelsByBrand($data['vehicleDetails']['cmp_id']);
-		$data['variantList'] = $this->vehicleModel->getVariantsByModel($data['vehicleDetails']['model_id']);
-
-		$data['fuelTypeList'] = $this->commonModel->get_fuel_types();
-		$data['fuelVariantList'] = $this->commonModel->get_fuel_variants();
-		$data['transmissionList'] = $this->commonModel->get_vehicle_transmissions();
-		$data['colorList'] = $this->commonModel->get_vehicle_colors();
-		$data['stateList'] = $this->commonModel->get_country_states(101);
-		if (isset($data['vehicleDetails']['cmp_id']) && !empty($data['vehicleDetails']['cmp_id'])) {
-			$data['vehicleRegRtoList'] = $this->commonModel->get_registered_state_rto($data['vehicleDetails']['registered_state_id']);
-		}
-		$data['bodyTypeList'] = $this->commonModel->get_vehicle_body_types();
-
-
-		echo view('dealer/vehicles/single-vehicle-info', $data);
 	}
 
 	public function delete($branchId) {

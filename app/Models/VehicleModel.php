@@ -90,10 +90,10 @@ class VehicleModel extends Model {
         $builder->join('vehiclecompaniesmodelvariants as vcmv', 'vcmv.id = v.variant_id', 'left');
         $builder->join('states as st', 'v.registered_state_id = st.id', 'left');
         $builder->join('indiarto as rto', 'v.rto = rto.id', 'left');
-        $builder->join('dealer_promotion as dp', 'dp.itemId = v.id AND dp.is_active = 1', 'left');
+        $builder->join('dealer_promotion as dp', 'dp.itemId = v.id AND dp.promotionUnder = "vehicle" AND dp.is_active = 1', 'left');
         $builder->where('v.branch_id', $branchId);
         $builder->where('v.is_active', 1);
-    
+
         if ($vehicleTypeId != '0') {
             $builder->where($vehicleTypeId == 3 ? 'v.vehicle_type IN (1, 2)' : 'v.vehicle_type = ' . $vehicleTypeId);
         }
@@ -106,9 +106,11 @@ class VehicleModel extends Model {
         if ($vehicleVariantId != '0') {
             $builder->where('v.variant_id', $vehicleVariantId);
         }
-    
+
         $builder->limit($limit, $offset);
-    
+        $builder->orderBy('dp.end_dt');
+        $builder->orderBy('v.id', 'DESC');
+
         return $builder->get()->getResultArray();
     }
 

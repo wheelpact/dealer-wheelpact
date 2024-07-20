@@ -383,6 +383,9 @@ class Vehicles extends BaseController {
 	public function edit_vehicle($vehicleId) {
 
 		$dealerId = session()->get('userId');
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
+		$data['planData'] = $this->planDetails;
 
 		$data['vehicleDetails'] =  $this->vehicleModel->getVehicleDetails($vehicleId);
 
@@ -786,6 +789,9 @@ class Vehicles extends BaseController {
 	public function single_vehicle_info($vehicleId) {
 
 		$dealerId = session()->get('userId');
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
+		$data['planData'] = $this->planDetails;
 
 		$data['vehicleDetails'] =  $this->vehicleModel->getVehicleDetails($vehicleId);
 
