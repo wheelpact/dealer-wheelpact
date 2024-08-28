@@ -1206,7 +1206,7 @@ $(document).ready(function () {
 	$(".getPaymentmentAmt").click(function () {
 		var PlanChecked = $("input[name='promotion-amount-radio']:checked").val();
 		$('#promotionPlanValue').text(PlanChecked);
-
+		
 		/* hide the razorpay button */
 		$("#rzp-promotion-button").hide();
 
@@ -1764,11 +1764,10 @@ function form_validation_messages(fieldId) {
 		case 'promotionType':
 			msg = 'Choose Promotion Type'
 			break;
-
-		// default:
-		// 	// Default case if none of the above cases match
-		// 	msg = 'Form Field ID not found.';
-		// 	break;
+		default:
+			// Default case if none of the above cases match
+			msg = 'Form Field ID not found.';
+			break;
 	}
 
 	return msg;

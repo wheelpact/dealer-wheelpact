@@ -49,7 +49,7 @@
 						</ul>
 					</li>
 					<li class="dropdown">
-						<a href="<?php echo base_url('dealer/list-reserved-vehicles'); ?>" class="dropdown-toggle no-arrow">
+						<a href="<?php echo base_url('dealer/list-reserved-vehicles'); ?>" class="dropdown-toggle no-arrow <?php echo (in_array(service('uri')->getSegment(2), ['list-reserved-vehicles'])) ? 'active' : ''; ?>">
 							<span class="micon dw dw-calendar-6"></span><span class="mtext">Reservations</span>
 						</a>
 					</li>
