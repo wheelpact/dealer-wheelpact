@@ -295,7 +295,6 @@ class RazorpayController extends BaseController {
                     'payment_response' => serialize($postData),
                     'updated_dt' => date("Y-m-d H:i:s")
                 );
-
                 /* // Insert response to the razorpay transaction table */
                 $orderInsert = $this->RazorpayModel->update($orderDetails['id'], $orderInsertData);
 
@@ -331,6 +330,7 @@ class RazorpayController extends BaseController {
 
                 /* // Verify payment signature */
                 if ($generated_signature == $razorpay_signature) {
+
                     $orderInsertData = array(
                         'payment_response' => serialize($this->request->getPost()),
                         'razorpay_payment_id' => $razorpay_payment_id,
@@ -350,7 +350,6 @@ class RazorpayController extends BaseController {
                             'promotionPlanId' => $promotion_plan_id,
                             'promotionUnder' => $promotion_under,
                             'dealerId' => $dealer_id,
-                            //'vehicleId' => $promoted_vehicle_id,
                             'itemId' => $promoted_item_id,
                             'start_dt' => date('Y-m-d H:i:s'),
                             'end_dt' => date('Y-m-d H:i:s', strtotime('+' . $promotion_duration . ' days')),
@@ -375,13 +374,12 @@ class RazorpayController extends BaseController {
                         if ($promotion_under == 'showroom') {
                             $itemDetails = $this->PromotionPlanModel->getShowroomDetails($promoted_item_id);
                         }
-                        /* assigning logo path */
+                        /* Assigning logo path */
                         $orderDetails['logo'] = SERVER_ROOT_PATH_ASSETS . '/src/images/wheelpact-logo.png';
 
                         $viewData['orderDetails'] = $orderDetails;
                         $viewData['partnerInfo'] = $partnerInfo;
                         $viewData['planDetails'] = $planDetails;
-                        //$viewData['vehicleDetails'] = $vehicleDetails;
                         $viewData['itemDetails'] = $itemDetails;
                         $viewData['promtionData'] = $promtionData;
 

@@ -23,6 +23,7 @@ class RazorpayModel extends Model {
         'payment_response',
         'razorpay_payment_id',
         'razorpay_order_id',
+        'payment_details',
         'razorpay_signature',
         'transactionFor',
         'created_dt',

@@ -53,7 +53,7 @@ echo view('dealer/includes/_sidebar');
                             <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label>Choose Showroom<span class="required">*</span></label>
-                                    <select class="custom-select formInput" name="branch_id" id="branch_id" placeholder="Please choose dealer branch." disabled readonly>
+                                    <select class="custom-select formInput" name="branch_id" id="branch_id" placeholder="Please choose dealer branch." readonly>
                                         <option value="">Choose...</option>
                                         <?php
                                         if (isset($showroomList) && !empty($showroomList)) {
@@ -70,7 +70,7 @@ echo view('dealer/includes/_sidebar');
                             <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label>Vehicle Type<span class="required">*</span></label>
-                                    <select class="custom-select vehicle-type formInput cmpCat" data-tabid="step1" name="vehicle_type" id="vehicle_type" placeholder="Please choose Vehicle Type." disabled readonly>
+                                    <select class="custom-select vehicle-type formInput cmpCat" data-tabid="step1" name="vehicle_type" id="vehicle_type" placeholder="Please choose Vehicle Type." readonly>
                                         <option value="">Choose...</option>
                                         <?php foreach (VEHICLE_TYPE as $id => $type) : ?>
                                             <option value="<?= $id ?>" <?php echo ($id == $vehicleDetails['vehicle_type']) ? 'selected' : ''; ?>><?= $type ?></option>
@@ -483,6 +483,12 @@ echo view('dealer/includes/_sidebar');
                                 <div class="form-group">
                                     <label>Tenure in Months<span class="required">*</span></label>
                                     <input type="text" placeholder="0" min="0" maxlength="2" value="<?php echo isset($vehicleDetails['tenure_months']) ? $vehicleDetails['tenure_months'] : ''; ?>" class="form-control formInput numbersOnlyCheck" name="tenure_months" id="tenure_months">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Reservation Amount<span class="required">*</span></label>
+                                    <input type="text" placeholder="0" min="0" maxlength="5" value="<?php echo isset($vehicleDetails['reservation_amt']) ? $vehicleDetails['reservation_amt'] : ''; ?>" class="form-control formInput numbersOnlyCheck" name="reservation_amt" id="reservation_amt" data-toggle="tooltip" title="Vehicle reservation/test drive booking amount">
                                 </div>
                             </div>
                         </div>

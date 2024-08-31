@@ -81,7 +81,7 @@ echo view('dealer/includes/_sidebar');
                                 <div class="col-md-6 col-lg-4">
                                     <div class="form-group">
                                         <label>Vehicle Type<span class="required">*</span></label>
-                                        <select class="custom-select vehicle-type formInput" data-tabid="step1" name="vehicle_type" placeholder="Please choose Vehicle Type.">
+                                        <select class="custom-select vehicle-type formInput" data-tabid="step1" name="vehicle_type" id="vehicle_type" placeholder="Please choose Vehicle Type.">
                                             <option value="0">Choose...</option>
                                             <?php
                                             $showOption1 = ($planData['allowedVehicleListing'] == 1 || $planData['allowedVehicleListing'] != 2);
@@ -452,15 +452,21 @@ echo view('dealer/includes/_sidebar');
                                 <div class="col-md-6 col-lg-3">
                                     <div class="form-group">
                                         <label>Average Interest Rate<span class="required">*</span></label>
-                                        <input type="text" placeholder="%" step="0.01" min="0" max="100" maxlength="4" value="<?php echo isset($vehicleDetails['avg_interest_rate']) ? $vehicleDetails['avg_interest_rate'] : ''; ?>" class="form-control formInput numbersOnlyCheck" name="avg_interest_rate" id="avg_interest_rate">
+                                        <input type="text" placeholder="%" step="0.01" min="0" max="100" maxlength="4" class="form-control formInput numbersOnlyCheck" name="avg_interest_rate" id="avg_interest_rate">
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-lg-3">
                                     <div class="form-group">
                                         <label>Tenure in Months<span class="required">*</span></label>
-                                        <input type="text" placeholder="0" min="0" maxlength="2" value="<?php echo isset($vehicleDetails['tenure_months']) ? $vehicleDetails['tenure_months'] : ''; ?>" class="form-control formInput numbersOnlyCheck" name="tenure_months" id="tenure_months">
+                                        <input type="text" placeholder="0" min="0" maxlength="2" class="form-control formInput numbersOnlyCheck" name="tenure_months" id="tenure_months">
                                     </div>
                                 </div>
+                                <div class="col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Reservation Amount<span class="required">*</span></label>
+                                    <input type="text" placeholder="0" min="0" maxlength="5" class="form-control formInput numbersOnlyCheck" name="reservation_amt" id="reservation_amt" data-toggle="tooltip" title="Vehicle reservation/test drive booking amount">
+                                </div>
+                            </div>
                             </div>
                             <!-- Add more fields for Step 6 here -->
                             <div class="pull-right">

@@ -30,7 +30,7 @@
 						</ul>
 
 					</li>
-					<li class="dropdown">
+					<li class="dropdown d-none">
 						<a href="javascript:;" class="dropdown-toggle">
 							<span class="micon dw dw-megaphone"></span><span class="mtext">Promotions</span>
 						</a>

@@ -37,8 +37,11 @@ class Reservation extends BaseController {
 
 	public function index() {
 		$data = array();
-		/* get plan details */
+
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
 		$data['planData'] = $this->planDetails;
+
 		echo view('dealer/vehicles/list-reserved-vehicles.php', $data);
 	}
 
@@ -57,6 +60,14 @@ class Reservation extends BaseController {
 			$reservedVehicles = $this->vehicleModel->getReservedVehiclesByBranch($branch['id'], $limit, $offset);
 
 			foreach ($reservedVehicles as $reservedVehicle) {
+
+				/* // Unserialize orderNotes */
+				$orderNotesData = unserialize($reservedVehicle['orderNotes']);
+
+				// echo "<pre>";
+				// print_r($reservedVehicles); 
+				// die;
+
 				$dealerReservedVehiclesHtml .= '
 				<div class="col-md-6 col-lg-4 reserved-vehicle-card-' . $reservedVehicle['id'] . '">
 					<div class="card card-box mb-3 position-relative">
@@ -67,15 +78,15 @@ class Reservation extends BaseController {
 							<div class="d-flex vehicle-overview">
 								<div class="overview-badge">
 									<h6>Year</h6>
-									<h5>' . $reservedVehicle['manufacture_year'] . '</h5>
+									<h5>' . ($reservedVehicle['manufacture_year'] ?? 'N/A') . '</h5>
 								</div>
 								<div class="overview-badge">
 									<h6>Driven</h6>
-									<h5>' . $reservedVehicle['kms_driven'] . '</h5>
+									<h5>' . ($reservedVehicle['kms_driven'] ?? 'N/A') . '</h5>
 								</div>
 								<div class="overview-badge">
 									<h6>Fuel Type</h6>
-									<h5>' . $reservedVehicle['fuel_type'] . '</h5>
+									<h5>' .  ($reservedVehicle['fuel_type'] ?? 'N/A') . '</h5>
 								</div>
 								<div class="overview-badge">
 									<h6>Owner</h6>
@@ -86,7 +97,53 @@ class Reservation extends BaseController {
 									<i class="icofont-heart"></i>
 								</div>
 							</div>
-							<a href="promote.html" class="btn btn-primary mt-3 btn-block">Promote</a>
+							<hr/>
+							<h5 class="card-title weight-500">Reservation Details</h5>
+							<p class="card-text"></p>
+							<div class="d-flex vehicle-overview pd-10">
+								<div class="overview-badge">
+									<h6>Resveration Id</h6>
+									<h5>#' .  ($reservedVehicle['reservation_id'] ?? 'N/A') . '</h5>
+								</div>
+								<div class="overview-badge">
+									<h6>Resveration Date</h6>
+									<h5>' . date("d-m-Y h:i a", strtotime($reservedVehicle['created_datetime'])) . '</h5>
+								</div>
+							</div>
+							
+							<div class="d-flex vehicle-overview pd-10">
+								<div class="overview-badge">
+									<h6>Date of Visit</h6>
+									<h5>' . date("d-m-Y", strtotime($reservedVehicle['dateOfVisit'])) . '</h5>
+								</div>
+								<div class="overview-badge">
+									<h6>TIme of Visit</h6>
+									<h5>' . date("h:i a", strtotime($reservedVehicle['timeOfVisit'])) . '</h5>
+								</div>
+							</div>
+
+							<div class="d-flex vehicle-overview pd-10">
+								<div class="overview-badge">
+									<h6>Reserved By</h6>
+									<h5>' . ($reservedVehicle['customer_name'] ?? 'N/A') . '</h5>
+								</div>
+								<div class="overview-badge">
+									<h6>Customer Contact</h6>
+									<h5>' . ($reservedVehicle['contact_no'] ?? 'N/A') . '</h5>
+								</div>
+							</div>
+
+							<div class="d-flex vehicle-overview pd-10">
+								<div class="overview-badge">
+									<h6>Order Id</h6>
+									<h5>' . ($reservedVehicle['orderId'] ?? 'N/A') . '</h5>
+								</div>
+								<div class="overview-badge">
+									<h6>Reservation Amount Paid</h6>
+									<h5>' . ($orderNotesData['reservationAmt'] ?? 'N/A') . '</h5>
+								</div>
+							</div>
+							
 							<div class="option-btn">
 								<div class="dropdown">
 									<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">

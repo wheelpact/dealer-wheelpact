@@ -694,6 +694,7 @@ $(document).ready(function () {
 			if (field.value.trim() === '') {
 				emptyFields.push(field.id);
 				return false; /*// Field is empty, consider it as invalid */
+
 			} else {
 				return true;
 			}
@@ -785,6 +786,10 @@ $(document).ready(function () {
 		event.preventDefault();
 
 		var action_page = $("#update_vehicle_form").attr('action');
+		event.preventDefault();
+		if (!validateStep(currentStep)) {
+			return false;
+		}
 		$.ajax({
 			url: action_page,
 			type: "POST",
@@ -1206,7 +1211,7 @@ $(document).ready(function () {
 	$(".getPaymentmentAmt").click(function () {
 		var PlanChecked = $("input[name='promotion-amount-radio']:checked").val();
 		$('#promotionPlanValue').text(PlanChecked);
-		
+
 		/* hide the razorpay button */
 		$("#rzp-promotion-button").hide();
 
@@ -1244,7 +1249,7 @@ $(document).ready(function () {
 			var promotionUnder = selectedRadio.data("promotionunder");
 			formData.append('promotionUnder', promotionUnder);
 
-			/* itemId shall be id of vehicle or showroom, from which its initiated */ 
+			/* itemId shall be id of vehicle or showroom, from which its initiated */
 			var itemId = selectedRadio.data("itemid");
 			formData.append('itemId', itemId);
 		} else {
@@ -1440,7 +1445,7 @@ function form_validation_messages(fieldId) {
 	switch (fieldId) {
 		// form step 1 fields validation messages
 		case 'branch_id':
-			msg = 'Please choose dealer branch.';
+			msg = 'Please choose Showroom.';
 			break;
 		case 'vehicle_type':
 			msg = 'Please choose Vehicle Type.';
@@ -1621,6 +1626,9 @@ function form_validation_messages(fieldId) {
 		case 'tenure_months':
 			msg = 'Please enter Vehicle EMI tenure months.';
 			break;
+		case 'reservation_amt':
+			msg = 'Please enter Vehicle Reservation Amount.';
+			break;
 		// form images fields validation messages
 		case 'exterior_main_front_img':
 			msg = 'Please choose Vehicle Exterior Main Front Image.';
@@ -1760,12 +1768,11 @@ function form_validation_messages(fieldId) {
 			msg = 'Enter Model Name';
 			break;
 		/* //add company from validation end */
-
 		case 'promotionType':
 			msg = 'Choose Promotion Type'
 			break;
 		default:
-			// Default case if none of the above cases match
+			/*// Default case if none of the above cases match*/
 			msg = 'Form Field ID not found.';
 			break;
 	}

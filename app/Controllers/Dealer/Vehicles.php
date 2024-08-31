@@ -81,7 +81,7 @@ class Vehicles extends BaseController {
                                 </div>
                                 <div class="overview-badge">
                                     <h6>Driven</h6>
-                                    <h5>' . $vehicle['kms_driven'] . 'km</h5>
+                                    <h5>' . number_format($vehicle['kms_driven'], 0, '.', ',') . ' km</h5>
                                 </div>
                                 <div class="overview-badge">
                                     <h6>Fuel Type</h6>
@@ -196,7 +196,8 @@ class Vehicles extends BaseController {
 
 				'regular_price'  => 'required',
 				'selling_price'  => 'required',
-				'pricing_type'   => 'required'
+				'pricing_type'   => 'required',
+				'reservation_amt' => 'required'
 			]);
 
 			// Run the validation
@@ -279,6 +280,7 @@ class Vehicles extends BaseController {
 			$emi_option      = $this->request->getPost('emi_option');
 			$avg_interest_rate  = $this->request->getPost('avg_interest_rate');
 			$tenure_months      = $this->request->getPost('tenure_months');
+			$reservation_amt = $this->request->getPost('reservation_amt');
 			$created_by      = session()->get('userId');
 			$created_datetime = date("Y-m-d H:i:s");
 
@@ -350,6 +352,7 @@ class Vehicles extends BaseController {
 				'emi_option' => $emi_option,
 				'avg_interest_rate' => $avg_interest_rate,
 				'tenure_months' => $tenure_months,
+				'reservation_amt' => $reservation_amt,
 				'is_active' => 1,
 				'created_by'    => $created_by,
 				'created_datetime' => $created_datetime
@@ -610,6 +613,7 @@ class Vehicles extends BaseController {
 				'regular_price'  => 'required',
 				'selling_price'  => 'required',
 				'pricing_type'   => 'required',
+				'reservation_amt' => 'required'
 			]);
 
 			// Run the validation
@@ -644,17 +648,14 @@ class Vehicles extends BaseController {
 			$registered_state_id    = $this->request->getPost('registered_state_id');
 			$rto                    = $this->request->getPost('rto');
 
-			// Get the form input values
 			$insurance_type         = $this->request->getPost('insurance_type');
 			$insurance_validity     = $this->request->getPost('insurance_validity');
 
-			// Get the form input values
 			$accidental_status   = $this->request->getPost('accidental_status');
 			$flooded_status      = $this->request->getPost('flooded_status');
 			$last_service_kms    = $this->request->getPost('last_service_kms');
 			$last_service_date   = $this->request->getPost('last_service_date');
 
-			// Get the form input values
 			$car_no_of_airbags              = $this->request->getPost('car_no_of_airbags');
 			$car_central_locking            = $this->request->getPost('car_central_locking');
 			$car_seat_upholstery            = $this->request->getPost('car_seat_upholstery');
@@ -667,7 +668,6 @@ class Vehicles extends BaseController {
 			$car_headlamps                  = $this->request->getPost('car_headlamps');
 			$car_power_steering             = $this->request->getPost('car_power_steering');
 
-			// Get the form input values
 			$bike_headlight_type            = $this->request->getPost('bike_headlight_type');
 			$bike_odometer                  = $this->request->getPost('bike_odometer');
 			$bike_drl                       = $this->request->getPost('bike_drl');
@@ -685,13 +685,13 @@ class Vehicles extends BaseController {
 			$bike_break_light               = $this->request->getPost('bike_break_light');
 			$bike_turn_signal_indicator     = $this->request->getPost('bike_turn_signal_indicator');
 
-			// Get the form input values
 			$regular_price = $this->request->getPost('regular_price');
 			$selling_price = $this->request->getPost('selling_price');
 			$pricing_type = $this->request->getPost('pricing_type');
 			$emi_option = $this->request->getPost('emi_option');
 			$avg_interest_rate = $this->request->getPost('avg_interest_rate');
 			$tenure_months = $this->request->getPost('tenure_months');
+			$reservation_amt = $this->request->getPost('reservation_amt');
 			$updated_by = session()->get('userId');
 			$updated_datetime = date("Y-m-d H:i:s");
 
@@ -762,6 +762,7 @@ class Vehicles extends BaseController {
 				'emi_option' => $emi_option,
 				'avg_interest_rate' => $avg_interest_rate,
 				'tenure_months' => $tenure_months,
+				'reservation_amt' => $reservation_amt,
 				'updated_by'    => $updated_by,
 				'updated_datetime' => $updated_datetime
 			];
