@@ -216,8 +216,8 @@ class Vehicles extends BaseController {
 			$fuel_type          = $this->request->getPost('fuel_type');
 			$body_type          = $this->request->getPost('body_type');
 			$variant_id         = $this->request->getPost('variant_id');
-			$mileage            = $this->request->getPost('mileage', FILTER_SANITIZE_STRING);
-			$kms_driven         = $this->request->getPost('kms_driven', FILTER_SANITIZE_STRING);
+			$mileage            = $this->request->getPost('mileage', FILTER_SANITIZE_SPECIAL_CHARS);
+			$kms_driven         = $this->request->getPost('kms_driven', FILTER_SANITIZE_SPECIAL_CHARS);
 			$owner              = $this->request->getPost('owner');
 			$transmission_id    = $this->request->getPost('transmission_id');
 			$color_id           = $this->request->getPost('color_id');
@@ -632,8 +632,8 @@ class Vehicles extends BaseController {
 			$fuel_type      = $this->request->getPost('fuel_type');
 			$body_type      = $this->request->getPost('body_type');
 			$variant_id     = $this->request->getPost('variant_id');
-			$mileage        = $this->request->getPost('mileage', FILTER_SANITIZE_STRING);
-			$kms_driven     = $this->request->getPost('kms_driven', FILTER_SANITIZE_STRING);
+			$mileage        = $this->request->getPost('mileage', FILTER_SANITIZE_SPECIAL_CHARS);
+			$kms_driven     = $this->request->getPost('kms_driven', FILTER_SANITIZE_SPECIAL_CHARS);
 			$owner          = $this->request->getPost('owner');
 			$transmission_id = $this->request->getPost('transmission_id');
 			$color_id       = $this->request->getPost('color_id');

@@ -64,10 +64,6 @@ class Reservation extends BaseController {
 				/* // Unserialize orderNotes */
 				$orderNotesData = unserialize($reservedVehicle['orderNotes']);
 
-				// echo "<pre>";
-				// print_r($reservedVehicles); 
-				// die;
-
 				$dealerReservedVehiclesHtml .= '
 				<div class="col-md-6 col-lg-4 reserved-vehicle-card-' . $reservedVehicle['id'] . '">
 					<div class="card card-box mb-3 position-relative">
