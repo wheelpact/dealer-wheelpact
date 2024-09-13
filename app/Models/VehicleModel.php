@@ -172,7 +172,6 @@ class VehicleModel extends Model {
         // die;
     }
 
-
     public function insertVehicle($formDataArray) {
         $builder = $this->db->table('vehicles');
 
@@ -192,5 +191,43 @@ class VehicleModel extends Model {
             // echo $lastQuery; exit;
             return false;
         }
+    }
+
+    public function fetchTestDriveData($dealerId = '', $search = '', $columnName = 'created_at', $order = 'desc') {
+        $builder = $this->select('test_drive_request.*, b.name as branch_name, 
+        vc.cmp_name, vcm.model_name, vcmv.name as variant_name,
+        DATE_FORMAT(test_drive_request.dateOfVisit, "%d-%m-%Y") as formatted_dateOfVisit,
+        DATE_FORMAT(test_drive_request.created_at, "%d-%m-%Y") as formatted_created_at')
+            ->from('test_drive_request')
+            ->join('vehicles as v', 'test_drive_request.vehicle_id = v.id', 'left')
+            ->join('branches as b', 'test_drive_request.branch_id = b.id', 'left');
+        $builder->join('vehiclecompanies as vc', 'vc.id = v.cmp_id', 'left');
+        $builder->join('vehiclecompaniesmodels as vcm', 'vcm.id = v.model_id', 'left');
+        $builder->join('vehiclecompaniesmodelvariants as vcmv', 'vcmv.id = v.variant_id', 'left');
+
+
+        if ($search != '') {
+            $builder->groupStart()
+                ->like('test_drive_request.customer_name', $search)
+                ->orLike('test_drive_request.customer_phone', $search)
+                ->orLike('b.name', $search)
+                ->orLike('vc.cmp_name', $search)
+                ->orLike('vcm.model_name', $search)
+                ->orLike('vcmv.name', $search)
+                ->groupEnd();
+        }
+
+        if (isset($dealerId) && !empty($dealerId)) {
+            $builder->where('b.dealer_id', $dealerId);
+        }
+
+        // Order by the formatted date and the column passed
+        $builder->orderBy($columnName, $order);
+        $builder->orderBy('test_drive_request.dateOfVisit');
+
+        // Group by original columns, not formatted ones
+        $builder->groupBy(['test_drive_request.vehicle_id', 'test_drive_request.customer_id', 'test_drive_request.dateOfVisit', 'test_drive_request.timeOfVisit']);
+
+        return $builder;
     }
 }

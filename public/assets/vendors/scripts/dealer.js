@@ -1329,6 +1329,7 @@ $(document).ready(function () {
 
 });
 
+
 /*// check vehicle images fields empty or not loaded */
 function validateVehicleImagesFields(formId) {
 	var fields = $("#" + formId).find('.formInput');

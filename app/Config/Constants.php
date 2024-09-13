@@ -200,8 +200,23 @@ define("SERVER_ROOT_PATH_ASSETS", SERVER_SITE_PATH . 'assets/');
 define('SERVER_ROOT_PATH_DEFAULTIMAGE', SERVER_SITE_PATH . 'assets/admin/src/images/default-img.png');
 
 
+define('ORDER_PREFIX', 'WP-ORD-');
+define('FREE_TRIAL_DAYS', '30');
+
+/* default values*/
+define('RESERVATION_PERCENT', 0.10);
+define('INTEREST_RATE', 12);
+define('EMI_TENURE', 15);
+
+
 /* drop dpwn value for PromotionPage */
 define('PROMTION_TYPE', [
     1 => 'Featured',
     2 => 'On-Sale'
+]);
+
+define('TEST_DRIVE_SLOTS', [
+    1 => 'Morning (11 am - 1 pm)',
+    2 => 'Afternoon (1 pm - 4 pm)',
+    3 => 'Evening (4 pm - 8 pm)'
 ]);

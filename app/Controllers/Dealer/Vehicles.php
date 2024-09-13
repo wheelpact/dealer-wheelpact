@@ -1106,4 +1106,52 @@ class Vehicles extends BaseController {
 
 		return $this->response->setJSON(['status' => 'success', 'vehicle_form_feilds' => $vehicleFeaturesHtmlContent, 'vehicle_image_fields' => $vehicleExteriorImagesHtmlContent]);
 	}
+
+	public function test_drive_view() {
+		$data = array();
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
+		$data['planData'] = $this->planDetails;
+
+		echo view('dealer/vehicles/list-test-drive-request', $data);
+	}
+
+	public function fetch_test_drive_request() {
+
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
+		$data['planData'] = $this->planDetails;
+
+		$dealerId = $data['userData']['userId'];
+
+		// Datatable request parameters
+		$draw = $this->request->getPost('draw');
+		$start = (int)$this->request->getPost('start'); // Cast to int
+		$length = (int)$this->request->getPost('length'); // Cast to int
+		$search = $this->request->getPost('search')['value'];
+		$order = $this->request->getPost('order')[0];
+		$columnIndex = $order['column']; // Column index
+		$columnName = $this->request->getPost('columns')[$columnIndex]['data']; // Column name
+		$columnSortOrder = $order['dir']; // ASC or DESC
+
+		// Set the base query
+		$query = $this->vehicleModel->fetchTestDriveData($dealerId, $search, $columnName, $columnSortOrder);
+
+		// Get total records (before filtering)
+		$totalRecords = $query->countAllResults(false);
+
+		// Apply pagination limit
+		$query->limit($length, $start); // Ensure limit is set with int values
+
+		// Get paginated data
+		$data = $query->get()->getResultArray();
+
+		// Return JSON response
+		return $this->response->setJSON([
+			'draw' => intval($draw),
+			'recordsTotal' => $totalRecords,
+			'recordsFiltered' => $totalRecords,
+			'data' => $data
+		]);
+	}
 }

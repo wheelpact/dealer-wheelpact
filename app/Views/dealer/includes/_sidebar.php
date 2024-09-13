@@ -48,7 +48,14 @@
 							<li><a href="<?php echo base_url('dealer/list-branches'); ?>" class="<?php echo (in_array(service('uri')->getSegment(2), ['list-branches', 'single-branch-info', 'edit-branch'])) ? 'active' : ''; ?>">List Showrooms</a></li>
 						</ul>
 					</li>
+
 					<li class="dropdown">
+						<a href="<?php echo base_url('dealer/test-drive-requests'); ?>" class="dropdown-toggle no-arrow <?php echo (in_array(service('uri')->getSegment(2), ['test-drive-requests'])) ? 'active' : ''; ?>">
+							<span class="micon dw dw-caravan"></span><span class="mtext">Test Drive Request</span>
+						</a>
+					</li>
+
+					<li class="dropdown d-none">
 						<a href="<?php echo base_url('dealer/list-reserved-vehicles'); ?>" class="dropdown-toggle no-arrow <?php echo (in_array(service('uri')->getSegment(2), ['list-reserved-vehicles'])) ? 'active' : ''; ?>">
 							<span class="micon dw dw-calendar-6"></span><span class="mtext">Reservations</span>
 						</a>

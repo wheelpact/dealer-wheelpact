@@ -63,6 +63,9 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->match(['GET', 'POST'], 'upload-others-vehicle-images', 'Vehicles::upload_others_vehicle_images');
     $routes->match(['GET', 'POST'], 'deleteVehicle/(:num)', 'Vehicles::delete/$1');
     $routes->match(['GET', 'POST'], 'getbranchvehicles/(:num)/(:num)/(:num)/(:num)', 'Vehicles::getAllVehicles/$1/$2/$3/$4', ['filter' => 'auth']);
+    
+    $routes->match(['GET', 'POST'], 'test-drive-requests', 'Vehicles::test_drive_view', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'fetch-test-drive-request', 'Vehicles::fetch_test_drive_request', ['filter' => 'auth']);
 
     $routes->match(['GET', 'POST'], 'load_brands', 'Vehicles::load_brands');
     $routes->match(['GET', 'POST'], 'load_models', 'Vehicles::load_models');
