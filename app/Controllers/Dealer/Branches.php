@@ -144,7 +144,14 @@ class Branches extends BaseController {
 					'rules' => 'required|regex_match[/^[0-9]{10}$/]',
 					'errors' => [
 						'required' => 'Please enter a contact number.',
-						'regex_match' => 'Please enter a valid 10-digit contact number.',
+						'regex_match' => 'Please enter a valid 10-digit number.',
+					],
+				],
+				'whatsapp_no' => [
+					'rules' => 'required|regex_match[/^[0-9]{10}$/]',
+					'errors' => [
+						'required' => 'Please enter whatsapp number.',
+						'regex_match' => 'Please enter a valid 10-digit number.',
 					],
 				],
 				'email' => [
@@ -180,13 +187,21 @@ class Branches extends BaseController {
 			/* validate contact number, email exist start */
 
 			$checkContactNo = $this->request->getPost('contactNumber');
+			$checkwhatsapp_no = $this->request->getPost('whatsapp_no');			
 			$checkEmail = $this->request->getPost('email');
 
-			// Check if the contact number already exists
+			// Check if the contact whatsapp_no already exists
 			$existingContact = $this->branchModel->where('contact_number', $checkContactNo)->first();
 
 			if ($existingContact) {
 				return $this->response->setJSON(['status' => 'error', 'message' => 'Contact number already exists.', 'field' => 'contactNumber']);
+			}
+
+			// Check if the whatsapp_no already exists
+			$existingwhatsapp_no = $this->branchModel->where('whatsapp_no', $checkwhatsapp_no)->first();
+
+			if ($existingwhatsapp_no) {
+				return $this->response->setJSON(['status' => 'error', 'message' => 'Whatsapp No. already exists.', 'field' => 'whatsapp_no']);
 			}
 
 			// Check if the email already exists
@@ -272,8 +287,10 @@ class Branches extends BaseController {
 			$cityId = $this->request->getPost('chooseCity');
 			$address = $this->request->getPost('address', FILTER_UNSAFE_RAW);
 			$contactNumber = $this->request->getPost('contactNumber');
+			$whatsapp_no = $this->request->getPost('whatsapp_no');
 			$email = $this->request->getPost('email');
 			$shortDescription = $this->request->getPost('shortDescription', FILTER_UNSAFE_RAW);
+			$branch_map = $this->request->getPost('branch_map');
 			$branch_services = implode(', ', $this->request->getPost('branchServices'));
 
 			// Prepare the data to be inserted
@@ -293,8 +310,10 @@ class Branches extends BaseController {
 				'city_id' => $cityId,
 				'address' => $address,
 				'contact_number' => $contactNumber,
+				'whatsapp_no' => $whatsapp_no,
 				'email' => $email,
 				'short_description' => $shortDescription,
+				'branch_map' => $branch_map,
 				'is_active' => 1,
 				'created_at' => ''
 			];
@@ -386,20 +405,20 @@ class Branches extends BaseController {
 			$validation = \Config\Services::validation();
 
 			$fieldsToValidate = [
-				'branchType' => [
-					'rules' => 'required|not_equals[0]',
-					'errors' => [
-						'required' => 'Please choose Showroom-Type.',
-						'not_equals' => 'Please choose Showroom-Type.'
-					],
-				],
-				'branchSupportedVehicleType' => [
-					'rules' => 'required|not_equals[0]',
-					'errors' => [
-						'required' => 'Please Select Vehicle Type',
-						'not_equals' => 'Please Select Vehicle Type'
-					],
-				],
+				// 'branchType' => [
+				// 	'rules' => 'required|not_equals[0]',
+				// 	'errors' => [
+				// 		'required' => 'Please choose Showroom-Type.',
+				// 		'not_equals' => 'Please choose Showroom-Type.'
+				// 	],
+				// ],
+				// 'branchSupportedVehicleType' => [
+				// 	'rules' => 'required|not_equals[0]',
+				// 	'errors' => [
+				// 		'required' => 'Please Select Vehicle Type',
+				// 		'not_equals' => 'Please Select Vehicle Type'
+				// 	],
+				// ],
 				// 'branchThumbnail' => [
 				// 	'rules' => 'uploaded[branchThumbnail]|max_size[branchThumbnail,1024]|is_image[branchThumbnail]|mime_in[branchThumbnail,image/jpeg,image/png,image/gif]',
 				// 	'errors' => [
@@ -455,6 +474,13 @@ class Branches extends BaseController {
 				// 		'valid_email' => 'Please enter a valid email address.',
 				// 	],
 				// ],
+				'whatsapp_no' => [
+					'rules' => 'required|regex_match[/^[0-9]{10}$/]',
+					'errors' => [
+						'required' => 'Please enter whatsapp number.',
+						'regex_match' => 'Please enter a valid 10-digit number.',
+					],
+				],
 				'shortDescription' => [
 					'rules' => 'required',
 					'errors' => [
@@ -485,14 +511,16 @@ class Branches extends BaseController {
 
 			$branchId = $this->request->getPost('branchId');
 			$formData = [
-				'branch_supported_vehicle_type' => $this->request->getPost('branchSupportedVehicleType'),
+				//'branch_supported_vehicle_type' => $this->request->getPost('branchSupportedVehicleType'),
 				'country_id' => $this->request->getPost('chooseCountry'),
 				'state_id' => $this->request->getPost('chooseState'),
 				'city_id' => $this->request->getPost('chooseCity'),
 				'address' => $this->request->getPost('address'),
-				'contact_number' => $this->request->getPost('contactNumber'),
-				'email' => $this->request->getPost('email'),
-				'short_description' => $this->request->getPost('shortDescription')
+				//'contact_number' => $this->request->getPost('contactNumber'),
+				'whatsapp_no' => $this->request->getPost('whatsapp_no'),
+				//'email' => $this->request->getPost('email'),
+				'short_description' => $this->request->getPost('shortDescription'),
+				'branch_map' => $this->request->getPost('branch_map'),
 			];
 
 			$uploadFolderPath = realpath($_SERVER['DOCUMENT_ROOT'] . '/../../production/');

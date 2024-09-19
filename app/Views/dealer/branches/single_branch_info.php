@@ -227,13 +227,19 @@ echo view('dealer/includes/_sidebar');
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="contactNumber">Contact Number:</label>
                             <input type="text" value="<?php echo isset($branchDetails['contact_number']) ? $branchDetails['contact_number'] : ''; ?>" class="form-control NumOnly" id="contactNumber" name="contactNumber" disabled>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="whatsapp_no">Whatsapp Number:</label>
+                            <input type="text" value="<?php echo isset($branchDetails['whatsapp_no']) ? $branchDetails['whatsapp_no'] : ''; ?>" class="form-control NumOnly" id="whatsapp_no" name="whatsapp_no" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="email">Email:</label>
                             <input type="email" value="<?php echo isset($branchDetails['email']) ? $branchDetails['email'] : ''; ?>" class="form-control" id="email" name="email" disabled>
@@ -256,16 +262,14 @@ echo view('dealer/includes/_sidebar');
                                         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                                             <ol class="carousel-indicators">
                                                 <?php foreach ($branchDeliverableImgs as $key => $value) { ?>
-                                                    <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo $key; ?>" <?php
-                                                                                                                                        if ($key == 0) {
+                                                    <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo $key; ?>" <?php if ($key == 0) {
                                                                                                                                             echo 'class="active"';
                                                                                                                                         } ?>></li>
                                                 <?php } ?>
                                             </ol>
                                             <div class=" carousel-inner">
                                                 <?php foreach ($branchDeliverableImgs as $k => $val) { ?>
-                                                    <div class="carousel-item <?php
-                                                                                if ($k == 0) {
+                                                    <div class="carousel-item <?php if ($k == 0) {
                                                                                     echo 'active';
                                                                                 } ?>">
                                                         <img class="d-block w-100" src="<?php echo isset($val['img_name']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . "branch_deliverables/" . $val['img_name'] : ''; ?>">
@@ -282,15 +286,24 @@ echo view('dealer/includes/_sidebar');
                                                 <span class="sr-only">Next</span>
                                             </a>
                                         </div>
-
-
-
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="form-group">
+                            <label for="Map">Map:</label>
+                            <div class="embed-responsive embed-responsive-21by9">
+                                <?php echo isset($branchDetails['branch_map']) ? $branchDetails['branch_map'] : ''; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <?php echo view('dealer/includes/_footer'); ?>

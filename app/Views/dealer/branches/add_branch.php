@@ -165,13 +165,19 @@ echo view('dealer/includes/_sidebar');
                         <!-- add branch service End -->
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="contactNumber">Contact Number:</label>
-                                <input type="text" class="form-control NumOnly" minlength="9" maxlength="10" id="contactNumber" name="contactNumber">
+                                <input type="text" class="form-control numbersOnlyCheck" minlength="9" maxlength="10" id="contactNumber" name="contactNumber">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="whatsapp_no">Whatsapp Number:</label>
+                                <input type="text" class="form-control numbersOnlyCheck" minlength="9" maxlength="10" id="whatsapp_no" name="whatsapp_no">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="email">Email:</label>
                                 <input type="email" class="form-control" id="email" name="email">
@@ -185,6 +191,17 @@ echo view('dealer/includes/_sidebar');
                                 <textarea class="form-control" id="shortDescription" name="shortDescription"></textarea>
                             </div>
                         </div>
+                        <!-- add iframe code of map Start -->
+                        <div class="col-md-6 col-sm-12 mb-30">
+                            <div class="form-group">
+                                <label for="branch_map">Branch Google Maps: </label>
+                                <label class="text-right"><a href="https://support.google.com/maps/answer/7101463?hl=en" target="_blank">Help</a></label>
+                                <textarea class="form-control" id="branch_map" name="branch_map" placeholder="<iframe src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.1279385462935!2d72.86234667498618!3d19'></iframe>"></textarea>
+                            </div>
+                        </div>
+                        <!-- add iframe code of map  End -->
+                    </div>
+                    <div class="row">
                         <!-- add deliverable images Start -->
                         <div class="col-md-6 col-sm-12 mb-30">
                             <div class="form-group">

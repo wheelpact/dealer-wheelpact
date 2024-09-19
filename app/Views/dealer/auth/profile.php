@@ -44,6 +44,10 @@ echo view('dealer/includes/_sidebar');
                                     <?php echo !empty($dealerData['contact_no']) ? $dealerData['contact_no'] : ''; ?>
                                 </li>
                                 <li>
+                                    <span>WhatsApp Number:</span>
+                                    <?php echo !empty($dealerData['whatsapp_no']) ? $dealerData['whatsapp_no'] : ''; ?>
+                                </li>
+                                <li>
                                     <span>Country / State / City</span>
                                     <?php echo !empty($dealerData['country']) ? $dealerData['country'] : 'NA'; ?>, &nbsp;
                                     <?php echo !empty($dealerData['state']) ? $dealerData['state'] : 'NA'; ?>, &nbsp;
@@ -157,6 +161,10 @@ echo view('dealer/includes/_sidebar');
                                                     <div class="form-group">
                                                         <label>Phone Number</label>
                                                         <input class="form-control form-control-lg numbersOnlyCheck" minlength="9" maxlength="10" name="contact_no" id="contact_no" type="text" value="<?php echo !empty($dealerData['contact_no']) ? $dealerData['contact_no'] : ''; ?>" disabled readonly>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>WhatsApp Number</label>
+                                                        <input class="form-control form-control-lg numbersOnlyCheck" minlength="9" maxlength="10" name="whatsapp_no" id="whatsapp_no" type="text" value="<?php echo !empty($dealerData['whatsapp_no']) ? $dealerData['whatsapp_no'] : ''; ?>">
                                                     </div>
 
                                                     <div class="form-group">

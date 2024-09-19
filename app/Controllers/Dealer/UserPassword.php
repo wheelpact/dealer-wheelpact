@@ -141,6 +141,7 @@ class UserPassword extends BaseController {
 			$formattedDOB = (new \DateTime($this->request->getPost('date_of_birth')))->format('Y-m-d');
 			$formData = [
 				'name' => $this->request->getPost('dealerName'),
+				'whatsapp_no' => $this->request->getPost('whatsapp_no'),				
 				'gender' => $this->request->getPost('gender'),
 				'date_of_birth' => $formattedDOB,
 				'addr_residential' => $this->request->getPost('addr_residential'),
@@ -169,7 +170,6 @@ class UserPassword extends BaseController {
 				$formData['profile_image'] = $newName;
 			}
 			$result = $this->userModel->updateData($dealerId, $formData);
-
 			if ($result) {
 				return $this->response->setJSON(['status' => 'success', 'redirect' => 'dealer/profile', 'message' => 'Details Updated Successfully.']);
 			} else {

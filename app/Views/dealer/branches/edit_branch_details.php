@@ -20,8 +20,11 @@ echo view('dealer/includes/_sidebar');
                         </nav>
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
+                        <a href="<?php echo base_url('dealer/single-branch-info/' . $branchDetails['id']); ?>" class="btn btn-outline-primary btn-md" rel="content-y" role="button">
+                            <i class="icon-copy bi bi-list-stars"></i> View this Branch
+                        </a>
                         <a href="<?php echo base_url('dealer/list-branches'); ?>" class="btn btn-outline-primary btn-md" rel="content-y" role="button">
-                            <i class="icon-copy bi bi-list-stars"></i> View Branches
+                            <i class="icon-copy bi bi-list-stars"></i> View All Branches
                         </a>
                     </div>
                 </div>
@@ -238,24 +241,48 @@ echo view('dealer/includes/_sidebar');
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="address">Address:</label>
-                    <textarea class="form-control" id="address" name="address"><?php echo !empty($branchDetails['address']) ? $branchDetails['address'] : ''; ?></textarea>
-                </div>
+
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="contactNumber">Contact Number:</label>
-                            <input type="text" minlength="9" maxlength="10" value="<?php echo !empty($branchDetails['contact_number']) ? $branchDetails['contact_number'] : ''; ?>" class="form-control NumOnly" id="contactNumber" disabled>
+                            <label for="address">Address:</label>
+                            <textarea class="form-control" id="address" name="address"><?php echo !empty($branchDetails['address']) ? $branchDetails['address'] : ''; ?></textarea>
                         </div>
                     </div>
                     <div class="col-md-6">
+                        <!-- add iframe code of map Start -->
+                        <div class="col-md-6 col-sm-12 mb-30">
+                            <div class="form-group">
+                                <label for="branch_map">Branch Google Maps: </label>
+                                <label class="text-right"><a href="https://support.google.com/maps/answer/7101463?hl=en" target="_blank">Help</a></label>
+                                <textarea class="form-control" id="branch_map" name="branch_map"><?php echo !empty($branchDetails['branch_map']) ? $branchDetails['branch_map'] : ''; ?></textarea>
+                            </div>
+                        </div>
+                        <!-- add iframe code of map  End -->
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="contactNumber">Contact Number:</label>
+                            <input type="text" minlength="9" maxlength="10" value="<?php echo !empty($branchDetails['contact_number']) ? $branchDetails['contact_number'] : ''; ?>" class="form-control numbersOnlyCheck" name="contactNumber" id="contactNumber" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="whatsapp_no">Whatsapp Number:</label>
+                            <input type="text" minlength="9" maxlength="10" value="<?php echo !empty($branchDetails['whatsapp_no']) ? $branchDetails['whatsapp_no'] : ''; ?>" class="form-control numbersOnlyCheck" name="whatsapp_no" id="whatsapp_no">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="email">Email:</label>
                             <input type="email" value="<?php echo !empty($branchDetails['email']) ? $branchDetails['email'] : ''; ?>" class="form-control" id="email" disabled>
                         </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-6 col-sm-12 mb-30">
                         <div class="form-group">

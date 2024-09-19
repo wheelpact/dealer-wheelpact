@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class UserModel extends Model {
     protected $table = 'users';
-    protected $allowedFields =  ['user_code', 'name', 'email', 'addr_residential', 'addr_permanent', 'date_of_birth', 'gender', 'profile_image', 'country_id', 'state_id', 'city_id', 'zipcode', 'contact_no', 'social_fb_link', 'social_twitter_link', 'social_linkedin_link', 'social_skype_link', 'role_id', 'otp', 'otp_status', 'is_active', 'created_at', 'reset_token', 'token_expiration', 'updated_at'];
+    protected $allowedFields =  ['user_code', 'name', 'email', 'addr_residential', 'addr_permanent', 'date_of_birth', 'gender', 'profile_image', 'country_id', 'state_id', 'city_id', 'zipcode', 'contact_no', 'whatsapp_no', 'social_fb_link', 'social_twitter_link', 'social_linkedin_link', 'social_skype_link', 'role_id', 'otp', 'otp_status', 'is_active', 'created_at', 'reset_token', 'token_expiration', 'updated_at'];
 
     public function getuser() {
         return $this->findAll();
@@ -14,7 +14,7 @@ class UserModel extends Model {
 
     public function chkUserCredentials($email, $password) {
 
-        $user = $this->select(['u.id as userId','u.name as dealerName', 'u.user_code', 'u.email', 'u.role_id', 'ur.role_name', 'u.is_active', 'uc.password'])
+        $user = $this->select(['u.id as userId', 'u.name as dealerName', 'u.user_code', 'u.email', 'u.role_id', 'ur.role_name', 'u.is_active', 'uc.password'])
             ->from('users as u')
             ->join('userscredentials as uc', 'u.id = uc.user_id')
             ->join('userroles as ur', 'u.role_id = ur.id')

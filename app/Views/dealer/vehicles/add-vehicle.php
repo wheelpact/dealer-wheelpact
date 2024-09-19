@@ -86,7 +86,6 @@ echo view('dealer/includes/_sidebar');
                                             <?php
                                             $showOption1 = ($planData['allowedVehicleListing'] == 1 || $planData['allowedVehicleListing'] != 2);
                                             $showOption2 = ($planData['allowedVehicleListing'] == 2 || $planData['allowedVehicleListing'] != 1);
-
                                             foreach (VEHICLE_TYPE as $id => $type) : ?>
                                                 <?php if (($id == 1 && $showOption1) || ($id == 2 && $showOption2)) : ?>
                                                     <option value="<?= $id ?>"><?= $type ?></option>
