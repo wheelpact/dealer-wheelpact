@@ -251,11 +251,27 @@ echo view('dealer/includes/_sidebar');
                     </div>
                     <div class="col-md-6">
                         <!-- add iframe code of map Start -->
-                        <div class="col-md-6 col-sm-12 mb-30">
-                            <div class="form-group">
+                        <div class="col-md-12 col-sm-12 mb-30">
+                            <div class="form-group d-none">
                                 <label for="branch_map">Branch Google Maps: </label>
                                 <label class="text-right"><a href="https://support.google.com/maps/answer/7101463?hl=en" target="_blank">Help</a></label>
                                 <textarea class="form-control" id="branch_map" name="branch_map"><?php echo !empty($branchDetails['branch_map']) ? $branchDetails['branch_map'] : ''; ?></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="location-input">Enter Branch Location:</label>
+                                <input type="text" id="location-input" name="location" placeholder="Enter location" />
+                                
+                                <!-- Map Display -->
+                                <div id="map" style="width: 100%; height: 400px;"></div>
+                                <!-- Hidden Fields for Latitude, Longitude, City, District, State -->
+                            </div>
+                            <div class="d-none">
+                                <input type="text" name="map_latitude" id="map_latitude" value="<?php echo !empty($branchDetails['map_latitude']) ? $branchDetails['map_latitude'] : ''; ?>">
+                                <input type="text" name="map_longitude" id="map_longitude" value="<?php echo !empty($branchDetails['map_longitude']) ? $branchDetails['map_longitude'] : ''; ?>">
+                                <input type="text" name="map_city" id="map_city" value="<?php echo !empty($branchDetails['map_city']) ? $branchDetails['map_city'] : ''; ?>">
+                                <input type="text" name="map_district" id="map_district" value="<?php echo !empty($branchDetails['map_district']) ? $branchDetails['map_district'] : ''; ?>">
+                                <input type="text" name="map_state" id="map_state" value="<?php echo !empty($branchDetails['map_state']) ? $branchDetails['map_state'] : ''; ?>">
                             </div>
                         </div>
                         <!-- add iframe code of map  End -->
@@ -362,3 +378,14 @@ echo view('dealer/includes/_sidebar');
         <?php echo view('dealer/includes/_footer'); ?>
     </div>
 </div>
+
+<script>
+    /* init map in addbranch page */
+    var lat = <?php echo !empty($branchDetails['map_latitude']) ? $branchDetails['map_latitude'] : '19.2742053'; ?>;
+    var lng = <?php echo !empty($branchDetails['map_longitude']) ? $branchDetails['map_longitude'] : '72.8788707'; ?>;
+
+    // Call the map initialization function with the coordinates
+    window.initMap = function() {
+        initMapWithCoordinates(lat, lng);
+    };
+</script>

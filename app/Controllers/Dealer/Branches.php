@@ -167,6 +167,12 @@ class Branches extends BaseController {
 						'required' => 'Please enter Short Description.'
 					],
 				],
+				'map_latitude' => [
+					'rules' => 'required',
+					'errors' => [
+						'required' => 'Please Add Location in Map'
+					],
+				]
 			];
 
 			foreach ($fieldsToValidate as $fieldName => $rules) {
@@ -187,7 +193,7 @@ class Branches extends BaseController {
 			/* validate contact number, email exist start */
 
 			$checkContactNo = $this->request->getPost('contactNumber');
-			$checkwhatsapp_no = $this->request->getPost('whatsapp_no');			
+			$checkwhatsapp_no = $this->request->getPost('whatsapp_no');
 			$checkEmail = $this->request->getPost('email');
 
 			// Check if the contact whatsapp_no already exists
@@ -290,7 +296,13 @@ class Branches extends BaseController {
 			$whatsapp_no = $this->request->getPost('whatsapp_no');
 			$email = $this->request->getPost('email');
 			$shortDescription = $this->request->getPost('shortDescription', FILTER_UNSAFE_RAW);
-			$branch_map = $this->request->getPost('branch_map');
+			//$branch_map = $this->request->getPost('branch_map');
+			$map_latitude = $this->request->getPost('map_latitude');
+			$map_longitude = $this->request->getPost('map_longitude');
+			$map_city = $this->request->getPost('map_city');
+			$map_district = $this->request->getPost('map_district');
+			$map_state = $this->request->getPost('map_state');
+
 			$branch_services = implode(', ', $this->request->getPost('branchServices'));
 
 			// Prepare the data to be inserted
@@ -313,7 +325,12 @@ class Branches extends BaseController {
 				'whatsapp_no' => $whatsapp_no,
 				'email' => $email,
 				'short_description' => $shortDescription,
-				'branch_map' => $branch_map,
+				//'branch_map' => $branch_map,
+				'map_latitude' => $map_latitude,
+				'map_longitude' => $map_longitude,
+				'map_city' => $map_city,
+				'map_district' => $map_district,
+				'map_state' => $map_state,
 				'is_active' => 1,
 				'created_at' => ''
 			];
@@ -487,6 +504,12 @@ class Branches extends BaseController {
 						'required' => 'Please enter Short Description.'
 					],
 				],
+				'map_latitude' => [
+					'rules' => 'required',
+					'errors' => [
+						'required' => 'Please Add Location in Map'
+					],
+				]
 			];
 
 			foreach ($fieldsToValidate as $fieldName => $rules) {
@@ -520,7 +543,12 @@ class Branches extends BaseController {
 				'whatsapp_no' => $this->request->getPost('whatsapp_no'),
 				//'email' => $this->request->getPost('email'),
 				'short_description' => $this->request->getPost('shortDescription'),
-				'branch_map' => $this->request->getPost('branch_map'),
+				//'branch_map' => $this->request->getPost('branch_map'),
+				'map_latitude' => $this->request->getPost('map_latitude'),
+				'map_longitude' => $this->request->getPost('map_longitude'),
+				'map_city' => $this->request->getPost('map_city'),
+				'map_district' => $this->request->getPost('map_district'),
+				'map_state' => $this->request->getPost('map_state')
 			];
 
 			$uploadFolderPath = realpath($_SERVER['DOCUMENT_ROOT'] . '/../../production/');

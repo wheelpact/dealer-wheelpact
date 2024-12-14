@@ -193,11 +193,22 @@ echo view('dealer/includes/_sidebar');
                         </div>
                         <!-- add iframe code of map Start -->
                         <div class="col-md-6 col-sm-12 mb-30">
-                            <div class="form-group">
+                            <div class="form-group d-none">
                                 <label for="branch_map">Branch Google Maps: </label>
                                 <label class="text-right"><a href="https://support.google.com/maps/answer/7101463?hl=en" target="_blank">Help</a></label>
                                 <textarea class="form-control" id="branch_map" name="branch_map" placeholder="<iframe src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.1279385462935!2d72.86234667498618!3d19'></iframe>"></textarea>
                             </div>
+
+                            <div class="form-group">
+                                <label for="branch_map">Branch Location: </label>
+                                <input id="location-input" type="text" placeholder="Enter location">
+                                <div id="map" style="width: 100%; height: 400px;"></div>
+                            </div>
+                            <input type="hidden" name="map_latitude" id="map_latitude">
+                            <input type="hidden" name="map_longitude" id="map_longitude">
+                            <input type="hidden" name="map_city" id="map_city">
+                            <input type="hidden" name="map_district" id="map_district">
+                            <input type="hidden" name="map_state" id="map_state">
                         </div>
                         <!-- add iframe code of map  End -->
                     </div>
@@ -233,4 +244,13 @@ echo view('dealer/includes/_sidebar');
         /* on page load trigger to load brands of cars & bikes both in select option filter */
         $('.custom-select.country').trigger('change');
     });
+
+    /* init map in addbranch page */
+    var lat = 19.2742053;
+    var lng = 72.8788707;
+
+    // Call the map initialization function with the coordinates
+    window.initMap = function() {
+        initMapWithCoordinates(lat, lng);
+    };
 </script>

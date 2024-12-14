@@ -10,7 +10,7 @@ class BranchModel extends Model {
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType     = 'array';
-    protected $allowedFields = ['dealer_id', 'name', 'branch_banner1', 'branch_banner2', 'branch_banner3', 'branch_thumbnail', 'branch_logo', 'branch_type', 'branch_supported_vehicle_type', 'branch_services', 'country_id', 'state_id', 'city_id', 'address', 'contact_number', 'whatsapp_no', 'email', 'short_description', 'branch_map', 'is_active'];
+    protected $allowedFields = ['dealer_id', 'name', 'branch_banner1', 'branch_banner2', 'branch_banner3', 'branch_thumbnail', 'branch_logo', 'branch_type', 'branch_supported_vehicle_type', 'branch_services', 'country_id', 'state_id', 'city_id', 'address', 'contact_number', 'whatsapp_no', 'email', 'short_description', 'branch_map', 'map_latitude', 'map_longitude', 'map_city', 'map_district','map_state', 'is_active'];
 
     public function getAllBranchByDealerId($dealerId, $countryId, $stateId, $cityId, $branchType, $limit, $offset) {
 
