@@ -10,7 +10,7 @@ class VehicleModel extends Model {
     protected $table                = 'vehicles';
     protected $primaryKey           = 'id';
     protected $returnType           = 'array';
-    protected $allowedFields        = ['unique_id', 'branch_id', 'vehicle_type', 'cmp_id', 'model_id', 'fuel_type', 'body_type', 'variant_id', 'mileage', 'kms_driven', 'owner', 'transmission_id', 'color_id', 'featured_status', 'search_keywords', 'onsale_status', 'onsale_percentage', 'manufacture_year', 'registration_year', 'registered_state_id', 'rto', 'insurance_type', 'insurance_validity', 'accidental_status', 'flooded_status', 'last_service_kms', 'last_service_date', 'car_no_of_airbags', 'car_central_locking', 'car_seat_upholstery', 'car_sunroof', 'car_integrated_music_system', 'car_rear_ac', 'car_outside_rear_view_mirrors', 'car_power_windows', 'car_engine_start_stop', 'car_headlamps', 'car_power_steering', 'bike_headlight_type', 'bike_odometer', 'bike_drl', 'bike_mobile_connectivity', 'bike_gps_navigation', 'bike_usb_charging_port', 'bike_low_battery_indicator', 'bike_under_seat_storage', 'bike_speedometer', 'bike_stand_alarm', 'bike_low_fuel_indicator', 'bike_low_oil_indicator', 'bike_start_type', 'bike_kill_switch', 'bike_break_light', 'bike_turn_signal_indicator', 'regular_price', 'selling_price', 'pricing_type', 'emi_option', 'avg_interest_rate', 'reservation_amt', 'tenure_months', 'thumbnail_url', 'is_active', 'created_by', 'created_datetime', 'updated_by', 'updated_datetime'];
+    protected $allowedFields        = ['unique_id', 'branch_id', 'vehicle_type', 'cmp_id', 'model_id', 'fuel_type', 'body_type', 'variant_id', 'mileage', 'kms_driven', 'owner', 'transmission_id', 'color_id', 'featured_status', 'search_keywords', 'onsale_status', 'onsale_percentage', 'manufacture_year', 'registration_year', 'registered_state_id', 'rto', 'insurance_type', 'insurance_validity', 'accidental_status', 'flooded_status', 'last_service_kms', 'last_service_date', 'car_no_of_airbags', 'car_central_locking', 'car_seat_upholstery', 'car_sunroof', 'car_integrated_music_system', 'car_rear_ac', 'car_outside_rear_view_mirrors', 'car_power_windows', 'car_engine_start_stop', 'car_headlamps', 'car_power_steering', 'bike_headlight_type', 'bike_odometer', 'bike_drl', 'bike_mobile_connectivity', 'bike_gps_navigation', 'bike_usb_charging_port', 'bike_low_battery_indicator', 'bike_under_seat_storage', 'bike_speedometer', 'bike_stand_alarm', 'bike_low_fuel_indicator', 'bike_low_oil_indicator', 'bike_start_type', 'bike_kill_switch', 'bike_break_light', 'bike_turn_signal_indicator', 'regular_price', 'selling_price', 'pricing_type', 'emi_option', 'avg_interest_rate', 'reservation_amt', 'tenure_months', 'thumbnail_url', 'is_active', 'soldReason', 'created_by', 'created_datetime', 'updated_by', 'updated_datetime'];
 
     protected $validationRules      = [];
     protected $validationMessages   = [];
@@ -82,7 +82,7 @@ class VehicleModel extends Model {
         $builder->select('vc.cmp_name, vcm.model_name, vcmv.name as variantName, ft.name as fuel_type, vbt.title as bodytype, 
         vt.title as vehicletransmission, v.id, v.vehicle_type, v.unique_id, v.mileage, v.kms_driven, v.owner, v.onsale_status, 
         v.onsale_percentage, v.registration_year, st.name as statename, st.short_code, rto.rto_state_code, v.insurance_type, 
-        v.insurance_validity, v.regular_price, v.selling_price, v.thumbnail_url, v.manufacture_year, dp.promotionUnder,
+        v.insurance_validity, v.regular_price, v.selling_price, v.thumbnail_url, v.manufacture_year, v.is_active, dp.promotionUnder,
         CASE WHEN dp.end_dt >= NOW() THEN 1 ELSE 0 END as is_promoted, dp.end_dt as promotion_end_date');
 
         $builder->join('vehiclecompanies as vc', 'vc.id = v.cmp_id', 'left');
@@ -96,7 +96,10 @@ class VehicleModel extends Model {
         $builder->join('dealer_promotion as dp', 'dp.itemId = v.id AND dp.promotionUnder = "vehicle" AND dp.is_active = 1', 'left');
 
         $builder->where('v.branch_id', $branchId);
-        $builder->where('v.is_active', 1);
+        $builder->groupStart()
+            ->where('v.is_active', 1)
+            ->orWhere('v.is_active', 4)
+            ->groupEnd();
 
         // Conditional filtering
         if ($vehicleTypeId != '0') {
@@ -112,6 +115,7 @@ class VehicleModel extends Model {
             $builder->where('v.variant_id', $vehicleVariantId);
         }
 
+        $builder->groupBy('v.id'); // Group by vehicle ID to avoid duplicate rows
         $builder->limit($limit, $offset);
 
         // Conditional sorting: prioritize is_promoted and promotion_end_date, then fallback to v.id descending
