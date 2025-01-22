@@ -71,12 +71,11 @@ echo view('dealer/includes/_sidebar');
 						</div>
 					</div>
 				</div>
-
 			</div>
 
 			<input type="hidden" id="actionurl" value="<?php echo base_url('dealer/getdealerbranches/0/0/0/0'); ?>">
 			<div class="row" class="vehicle-list">
-				<div class="container mb-3 mt-3">
+				<div class="container-fluid mb-3 mt-3">
 					<div class="row" id="load_data"></div>
 					<div class="row">
 						<div class="col-md-12 text-center">

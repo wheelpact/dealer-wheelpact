@@ -264,7 +264,7 @@ echo view('dealer/includes/_sidebar');
                                         <!-- Timeline Tab End -->
                                     </div>
 
-                                    <!-- Tasks Tab start -->
+                                    <!-- Active Plan Tab start -->
                                     <div class="tab-pane fade" id="plan-details" role="tabpanel">
                                         <div class="pd-20 profile-task-wrap">
                                             <div class="container pd-0">
@@ -316,11 +316,11 @@ echo view('dealer/includes/_sidebar');
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Free Inventory Promotions</th>
-                                                            <td scope="row"><?php echo $planData['free_inventory_promotions'] ?></td>
+                                                            <td scope="row"><?php echo $dealerPromotedDetails['vehicle_count'] . ' utilized / out of ' . $planData['free_inventory_promotions'] ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Free Showroom Promotions</th>
-                                                            <td scope="row"><?php echo $planData['free_showroom_promotions'] ?></td>
+                                                            <td scope="row"><?php echo  $dealerPromotedDetails['showroom_count'] . ' utilized / out of ' . $planData['free_showroom_promotions'] ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Showroom Branch Listing</th>
@@ -332,7 +332,7 @@ echo view('dealer/includes/_sidebar');
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Tasks Tab End -->
+                                    <!-- Active Plan Tab End -->
                                 </div>
                             </div>
                         </div>

@@ -10,7 +10,7 @@ class BranchModel extends Model {
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType     = 'array';
-    protected $allowedFields = ['dealer_id', 'name', 'branch_banner1', 'branch_banner2', 'branch_banner3', 'branch_thumbnail', 'branch_logo', 'branch_type', 'branch_supported_vehicle_type', 'branch_services', 'country_id', 'state_id', 'city_id', 'address', 'contact_number', 'whatsapp_no', 'email', 'short_description', 'branch_map', 'map_latitude', 'map_longitude', 'map_city', 'map_district','map_state', 'is_active'];
+    protected $allowedFields = ['dealer_id', 'name', 'branch_banner1', 'branch_banner2', 'branch_banner3', 'branch_thumbnail', 'branch_logo', 'branch_type', 'branch_supported_vehicle_type', 'branch_services', 'country_id', 'state_id', 'city_id', 'address', 'contact_number', 'whatsapp_no', 'email', 'short_description', 'branch_map', 'map_latitude', 'map_longitude', 'map_city', 'map_district', 'map_state', 'is_active'];
 
     public function getAllBranchByDealerId($dealerId, $countryId, $stateId, $cityId, $branchType, $limit, $offset) {
 
@@ -21,6 +21,8 @@ class BranchModel extends Model {
             rating_data.rating_count as branch_review_count,
             dp.id as promotion_id, dp.start_dt as promotion_start_date, dp.end_dt as promotion_end_date,
             CASE WHEN dp.end_dt >= NOW() THEN 1 ELSE 0 END as is_promoted', false);
+
+        // Joins
         $builder->join('countries', 'countries.id = b.country_id', 'left');
         $builder->join('states as s', 's.id = b.state_id', 'left');
         $builder->join('cities as c', 'c.id = b.city_id', 'left');
@@ -31,10 +33,11 @@ class BranchModel extends Model {
             'left'
         );
         $builder->join('dealer_promotion as dp', 'dp.itemId = b.id AND dp.promotionUnder = "showroom" AND dp.is_active = 1', 'left');
-        $builder->where('b.dealer_id', $dealerId);
-        $builder->where('b.is_active', 1);
 
-        /* // Include conditions for city_id and state_id only if they are not equal to 0 */
+        // Conditions
+        $builder->where('b.dealer_id', $dealerId);
+        //$builder->where('b.is_active', 1);
+
         if ($countryId !== '0') {
             $builder->where('b.country_id', $countryId);
         }
@@ -51,11 +54,13 @@ class BranchModel extends Model {
             $builder->where('b.branch_type', $branchType);
         }
 
-        /* Order by branch_type with "Main Branch" first */
-        $builder->orderBy('dp.end_dt');
-        $builder->orderBy('b.branch_type', 'DESC');
-        $builder->groupBy('b.id', 'DESC');
+        // Sorting logic
+        $builder->orderBy('is_promoted', 'DESC'); // Prioritize promoted branches
+        $builder->orderBy('CASE WHEN is_promoted = 1 THEN dp.end_dt ELSE NULL END', 'DESC', false); // Promotion end date (descending)
+        $builder->orderBy('b.branch_type', 'DESC'); // Main branch first
+        $builder->orderBy('b.id', 'DESC'); // Remaining by ID (descending)
 
+        // Pagination
         $builder->limit($limit, $offset);
 
         return $builder->get()->getResultArray();

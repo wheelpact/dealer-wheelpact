@@ -5056,6 +5056,7 @@ img.showroom-image {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    margin-top: 15px;
 }
 
 .step-indicators li {
@@ -5067,18 +5068,28 @@ img.showroom-image {
 
 .step-indicators .indicator {
     display: inline-block;
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    border: 2px solid #ccc;
+    width: 50px;
+    height: 50px;
+    border: 3px solid #F3F3F3;
     border-radius: 50%;
     background-color: #fff;
+    margin-bottom: 8px;
+    font-size: 1.3rem;
+    font-weight: 400;
+    padding: 6px;
+    color: #999999;
 }
 
 ul.step-indicators span.indicator.active {
-    background-color: #007bff;
-    color: #fff;
+    border-color: #009efb;
+    background-color: #fff;
+    color: #009efb;
 }
+
+ul.step-indicators h6 {
+    font-weight: 400;
+}
+
 
 /* sai css */
 .vehicleImg {
@@ -5236,3 +5247,16 @@ ul.step-indicators span.indicator.active {
 }
 
 /* store css rating - */
+
+
+/* SULTAN'S CSS STARTS */
+
+.view-showroom-data {
+    margin-bottom: 1rem;
+}
+
+.view-showroom-data p {
+    margin-bottom: 5px;
+}
+
+/* SULTAn'S CSS ENDS */

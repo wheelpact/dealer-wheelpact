@@ -76,12 +76,15 @@ class VehicleModel extends Model {
         return $query->get()->getRowArray();
     }
 
-    /* fetch the list  of vehicle of the dealer */
+    /* Fetch the list of vehicles for the dealer */
     public function getAllVehiclesByBranch($branchId, $limit, $offset, $vehicleTypeId, $vehicleBrandId, $vehicleModelId, $vehicleVariantId) {
         $builder = $this->db->table('vehicles as v');
-        $builder->select('vc.cmp_name, vcm.model_name, vcmv.name as variantName, ft.name as fuel_type, vbt.title as bodytype, vt.title as vehicletransmission, v.id, v.vehicle_type, v.unique_id, v.mileage, v.kms_driven, v.owner, v.onsale_status, v.onsale_percentage, v.registration_year,
-        st.name as statename, st.short_code, rto.rto_state_code, v.insurance_type, v.insurance_validity, v.regular_price, v.selling_price, v.thumbnail_url, v.manufacture_year, dp.promotionUnder,
+        $builder->select('vc.cmp_name, vcm.model_name, vcmv.name as variantName, ft.name as fuel_type, vbt.title as bodytype, 
+        vt.title as vehicletransmission, v.id, v.vehicle_type, v.unique_id, v.mileage, v.kms_driven, v.owner, v.onsale_status, 
+        v.onsale_percentage, v.registration_year, st.name as statename, st.short_code, rto.rto_state_code, v.insurance_type, 
+        v.insurance_validity, v.regular_price, v.selling_price, v.thumbnail_url, v.manufacture_year, dp.promotionUnder,
         CASE WHEN dp.end_dt >= NOW() THEN 1 ELSE 0 END as is_promoted, dp.end_dt as promotion_end_date');
+
         $builder->join('vehiclecompanies as vc', 'vc.id = v.cmp_id', 'left');
         $builder->join('vehiclecompaniesmodels as vcm', 'vcm.id = v.model_id', 'left');
         $builder->join('fueltypes as ft', 'v.fuel_type = ft.id', 'left');
@@ -91,9 +94,11 @@ class VehicleModel extends Model {
         $builder->join('states as st', 'v.registered_state_id = st.id', 'left');
         $builder->join('indiarto as rto', 'v.rto = rto.id', 'left');
         $builder->join('dealer_promotion as dp', 'dp.itemId = v.id AND dp.promotionUnder = "vehicle" AND dp.is_active = 1', 'left');
+
         $builder->where('v.branch_id', $branchId);
         $builder->where('v.is_active', 1);
 
+        // Conditional filtering
         if ($vehicleTypeId != '0') {
             $builder->where($vehicleTypeId == 3 ? 'v.vehicle_type IN (1, 2)' : 'v.vehicle_type = ' . $vehicleTypeId);
         }
@@ -108,7 +113,10 @@ class VehicleModel extends Model {
         }
 
         $builder->limit($limit, $offset);
-        $builder->orderBy('dp.end_dt');
+
+        // Conditional sorting: prioritize is_promoted and promotion_end_date, then fallback to v.id descending
+        $builder->orderBy('is_promoted', 'DESC');
+        $builder->orderBy('CASE WHEN is_promoted = 1 THEN dp.end_dt ELSE NULL END', 'DESC', false);
         $builder->orderBy('v.id', 'DESC');
 
         return $builder->get()->getResultArray();
@@ -193,7 +201,7 @@ class VehicleModel extends Model {
         }
     }
 
-    public function fetchTestDriveData($dealerId = '', $search = '', $columnName = 'created_at', $order = 'desc') {
+    public function fetchTestDriveData($dealerId = '', $search = '', $columnName = 'created_at', $order = 'desc', $request_id = '') {
         $builder = $this->select('test_drive_request.*, b.name as branch_name, 
         vc.cmp_name, vcm.model_name, vcmv.name as variant_name,
         DATE_FORMAT(test_drive_request.dateOfVisit, "%d-%m-%Y") as formatted_dateOfVisit,
@@ -204,7 +212,6 @@ class VehicleModel extends Model {
         $builder->join('vehiclecompanies as vc', 'vc.id = v.cmp_id', 'left');
         $builder->join('vehiclecompaniesmodels as vcm', 'vcm.id = v.model_id', 'left');
         $builder->join('vehiclecompaniesmodelvariants as vcmv', 'vcmv.id = v.variant_id', 'left');
-
 
         if ($search != '') {
             $builder->groupStart()
@@ -221,13 +228,30 @@ class VehicleModel extends Model {
             $builder->where('b.dealer_id', $dealerId);
         }
 
+        // Apply request_id filter if provided
+        if (!empty($request_id)) {
+            $builder->where('test_drive_request.id', $request_id);
+        }
+
         // Order by the formatted date and the column passed
         $builder->orderBy($columnName, $order);
-        $builder->orderBy('test_drive_request.dateOfVisit');
+        $builder->orderBy('test_drive_request.dateOfVisit', 'desc');
 
         // Group by original columns, not formatted ones
         $builder->groupBy(['test_drive_request.vehicle_id', 'test_drive_request.customer_id', 'test_drive_request.dateOfVisit', 'test_drive_request.timeOfVisit']);
 
         return $builder;
+    }
+
+    public function update_test_drive_status($updateData) {
+        $builder = $this->db->table('test_drive_request');
+        $builder->where('id', $updateData['testDriveRequestId']);
+        $builder->update([
+            'status' => $updateData['status'],
+            'reason_selected' => $updateData['reason_selected'],
+            'dealer_comments'  => $updateData['dealer_comments'],
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+        return $this->db->affectedRows() > 0;
     }
 }

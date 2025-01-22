@@ -131,7 +131,7 @@ class RazorpayController extends BaseController {
                     "currency": "INR",
                     "name": "PARASTONE GLOBAL PVT LTD",
                     "description": "",
-                    "image": "' . SERVER_ROOT_PATH_ASSETS . 'vendors/images/logo-bg.png",
+                    "image": "' . SERVER_ROOT_PATH_ASSETS . 'vendors/images/wheelpact-logo.png",
                     "order_id": "' . $razorpayOrder['id'] . '",
                     "handler": function (response){
                     $.ajax({

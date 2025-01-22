@@ -22,7 +22,6 @@ class Vehicles extends BaseController {
 	protected $vehicleImagesModel;
 	protected $promotionPlanModel;
 
-
 	protected $dealerId;
 	protected $userSesData;
 	protected $planDetails;
@@ -119,7 +118,6 @@ class Vehicles extends BaseController {
 				$dealerVehiclesHtml .= '</div></div></div></div></div></div>';
 			}
 		}
-
 		echo $dealerVehiclesHtml;
 	}
 
@@ -1046,7 +1044,6 @@ class Vehicles extends BaseController {
 		} else {
 			$html .= '<option>No Data Found</option>';
 		}
-
 		echo $html;
 	}
 
@@ -1117,8 +1114,7 @@ class Vehicles extends BaseController {
 	}
 
 	public function fetch_test_drive_request() {
-
-		/* // Fetch user session data and plan details */
+		// Fetch user session data and plan details
 		$data['userData'] = $this->userSesData;
 		$data['planData'] = $this->planDetails;
 
@@ -1144,7 +1140,19 @@ class Vehicles extends BaseController {
 		$query->limit($length, $start); // Ensure limit is set with int values
 
 		// Get paginated data
-		$data = $query->get()->getResultArray();
+		$resultData = $query->get()->getResultArray();
+
+		// Process the data to include the image URL
+		$data = array_map(function ($row) {
+			// Check if 'driving_license_image' exists and is not empty
+			if (!empty($row['license_file_path'])) {
+				$row['license_file_path'] = WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'test_drive_data/license/' . $row['license_file_path'];
+			} else {
+				// Use a placeholder image if the key is missing or empty
+				$row['license_file_path'] = NO_IMAGE_AVAILABLE;
+			}
+			return $row;
+		}, $resultData);
 
 		// Return JSON response
 		return $this->response->setJSON([
@@ -1153,5 +1161,49 @@ class Vehicles extends BaseController {
 			'recordsFiltered' => $totalRecords,
 			'data' => $data
 		]);
+	}
+
+	public function update_test_drive_status() {
+		$data['userData'] = $this->userSesData;
+		$dealerId = $data['userData']['userId'];
+
+		$updateData = array(
+			'testDriveRequestId' => $this->request->getPost('testDriveRequestId'),
+			'status' => $this->request->getPost('status'),
+			'reason_selected' => $this->request->getPost('reason_selected'),
+			'dealer_comments' => $this->request->getPost('dealer_comments'),
+			'updated_by' => $dealerId,
+			'updated_at' => date("Y-m-d H:i:s")
+		);
+
+		if (!$this->request->getPost('testDriveRequestId') || !$this->request->getPost('status')) {
+			echo json_encode(['status' => 'error', 'message' => 'Invalid input']);
+			return;
+		}
+
+		if ($this->vehicleModel->update_test_drive_status($updateData)) {
+			/* mail to user */
+
+			$query = $this->vehicleModel->fetchTestDriveData('', '', '', '', $this->request->getPost('testDriveRequestId'));
+			// Get paginated data
+			$getTestDriveDataByIDTemp = $query->get()->getResultArray();
+			$getTestDriveDataByID = $getTestDriveDataByIDTemp[0];
+
+			$subject = 'Test Drive Status Update - ' . ucfirst($getTestDriveDataByID['status']);
+			$body = view('dealer/email_templates/test_drive_reminder_mail', ['testDriveData' => $getTestDriveDataByID]);
+			$mailResult = sendEmail($getTestDriveDataByID['customer_email'], $getTestDriveDataByID['customer_name'], $subject, $body);
+			if ($mailResult <> true) {
+				throw new \Exception('Failed to send email');
+			} else {
+				$response = array(
+					'status' => 'success',
+					'message' => 'Test Drive Status Updated Successfully',
+					'responseData' => $mailResult
+				);
+			}
+			return $this->response->setJSON($response);
+		} else {
+			return $this->response->setJSON(['status' => 'error', 'message' => 'Failed to update status.']);
+		}
 	}
 }

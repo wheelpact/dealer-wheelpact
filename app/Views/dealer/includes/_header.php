@@ -22,7 +22,7 @@
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/src/plugins/datatables/css/dataTables.bootstrap4.min.css">
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/src/plugins/datatables/css/responsive.bootstrap4.min.css">
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/vendors/styles/style.css">
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/src/plugins/fancybox/dist/jquery.fancybox.css">
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/src/plugins/fancybox/dist/jquery.fancybox.min.css">
 	<!-- JQUERY FORM STEPS CSS -->
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/src/plugins/jquery-steps/jquery.steps.css">
 	<!-- Sweetalert2 CDN CSS -->

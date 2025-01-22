@@ -66,7 +66,8 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     
     $routes->match(['GET', 'POST'], 'test-drive-requests', 'Vehicles::test_drive_view', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'fetch-test-drive-request', 'Vehicles::fetch_test_drive_request', ['filter' => 'auth']);
-
+    $routes->match(['GET', 'POST'], 'update-test-drive-status', 'Vehicles::update_test_drive_status');
+    
     $routes->match(['GET', 'POST'], 'load_brands', 'Vehicles::load_brands');
     $routes->match(['GET', 'POST'], 'load_models', 'Vehicles::load_models');
     $routes->match(['GET', 'POST'], 'load_variants', 'Vehicles::load_variants');
@@ -88,6 +89,8 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->match(['GET', 'POST'], 'load_cities', 'Branches::load_cities');
     $routes->match(['GET', 'POST'], 'getdealerbranches/(:num)/(:num)/(:num)/(:num)', 'Branches::getAllBranches/$1/$2/$3/$4', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'deleteBranch/(:num)', 'Branches::delete/$1');
+    
+    $routes->match(['GET', 'POST'], 'enable_disable_branch', 'Branches::enable_disable_branch');
 
     $routes->match(['GET', 'POST'], 'promote-vehicle/(:num)', 'PromotionController::promoteVehicle/$1', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'promote-showroom/(:num)', 'PromotionController::promoteShowroom/$1', ['filter' => 'auth']);

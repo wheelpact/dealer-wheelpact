@@ -21,7 +21,7 @@ echo view('dealer/includes/_sidebar');
 					</div>
 					<div class="col-md-6 col-sm-12 text-right">
 						<div class="dropdown">
-							<a class="btn btn-primary" href="<?php echo base_url('dealer/add-vehicle'); ?>">Add Vehckes</a>
+							<a class="btn btn-primary" href="<?php echo base_url('dealer/add-vehicle'); ?>">Add Vehicles</a>
 						</div>
 					</div>
 				</div>
@@ -69,7 +69,7 @@ echo view('dealer/includes/_sidebar');
 
 			<input type="hidden" id="actionurl" value="<?php echo base_url('dealer/getbranchvehicles/0/0/0/0'); ?>">
 			<div class="row" class="vehicle-list">
-				<div class="container mb-3 mt-3">
+				<div class="container-fluid mb-3 mt-3">
 					<div class="row" id="load_data"></div>
 					<div class="row">
 						<div class="col-md-12 text-center">

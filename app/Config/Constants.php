@@ -96,6 +96,8 @@ define('EVENT_PRIORITY_HIGH', 10);
 
 /* wheelpact main site path */
 
+define('MAIN_SITE_PATH', 'https://www.wheelpact.com/');
+
 define("WHEELPACT_VEHICLE_UPLOAD_IMG_PATH", "https://www.wheelpact.com/public/uploads/");
 
 define("NO_IMAGE_AVAILABLE", "https://www.wheelpact.com/public/uploads/image_not_available.jpg");
@@ -220,3 +222,5 @@ define('TEST_DRIVE_SLOTS', [
     2 => 'Afternoon (1 pm - 4 pm)',
     3 => 'Evening (4 pm - 8 pm)'
 ]);
+
+define('WP_DEALER_JWT_TOKEN', 'K2ARaauESDawjYHp98dN5h6mrnpUWkP2KDCj');

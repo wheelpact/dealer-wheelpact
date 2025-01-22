@@ -28,12 +28,11 @@ class UserPassword extends BaseController {
 	}
 
 	public function dealer_profile() {
-
 		$dealerId = session()->get('userId');
 
 		$dealerDetails = $this->userModel->getDealerDetailsById($dealerId);
-
 		$planDetails = $this->userModel->getPlanDetailsBYId($dealerId);
+		$getDealerPromotedDetails = $this->userModel->getDealerPromotedDetails($dealerId);
 
 		if ($dealerDetails) {
 			$data['countryList'] = $this->commonModel->get_all_country_data();
@@ -44,6 +43,8 @@ class UserPassword extends BaseController {
 		$data['userData'] = $this->userSesData;
 		$data['dealerData'] = $dealerDetails;
 		$data['planData'] = $planDetails[0];
+		$data['dealerPromotedDetails'] = $getDealerPromotedDetails;
+
 		echo view('dealer/auth/profile.php', $data);
 	}
 
@@ -276,7 +277,6 @@ class UserPassword extends BaseController {
 				/* Token not found or expired */
 				return $this->response->setJSON(['status' => 'error', 'message' => 'Invalid Request or expired token.']);
 			}
-
 			$updatePass = $this->userModel->updatePassword($user['id'], password_hash($newPassword, PASSWORD_BCRYPT));
 		} else {
 			/* Password updated from profile page */

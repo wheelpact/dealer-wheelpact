@@ -100,21 +100,21 @@ class Branches extends BaseController {
 					],
 				],
 				'branchThumbnail' => [
-					'rules' => 'uploaded[branchThumbnail]|max_size[branchThumbnail,1024]|is_image[branchThumbnail]|mime_in[branchThumbnail,image/jpeg,image/png,image/gif]',
+					'rules' => 'uploaded[branchThumbnail]|max_size[branchThumbnail,1024]|is_image[branchThumbnail]|mime_in[branchThumbnail,image/jpeg,image/jpg,image/png,image/gif]',
 					'errors' => [
 						'uploaded' => 'Please choose Showroom Thumbnail image to upload.',
 						'max_size' => 'The image size should not exceed 1 MB.',
 						'is_image' => 'The uploaded file is not a valid image.',
-						'mime_in' => 'Only JPEG, PNG, and GIF images are allowed.',
+						'mime_in' => 'Only JPEG, PNG, and GIF images are allowed In Showroom Thumbnail.',
 					],
 				],
 				'branchLogo' => [
-					'rules' => 'uploaded[branchLogo]|max_size[branchLogo,1024]|is_image[branchLogo]|mime_in[branchLogo,image/jpeg,image/png,image/gif]',
+					'rules' => 'uploaded[branchLogo]|max_size[branchLogo,1024]|is_image[branchLogo]|mime_in[branchLogo,image/jpeg,image/jpg,image/png,image/gif]',
 					'errors' => [
 						'uploaded' => 'Please choose Showroom Logo image to upload.',
 						'max_size' => 'The image size should not exceed 1 MB.',
 						'is_image' => 'The uploaded file is not a valid image.',
-						'mime_in' => 'Only JPEG, PNG, and GIF images are allowed.',
+						'mime_in' => 'Only JPEG, PNG, and GIF images are allowed In Showroom Logo.',
 					],
 				],
 				'chooseCountry' => [
@@ -399,6 +399,23 @@ class Branches extends BaseController {
 		}
 	}
 
+	public function single_branch_info($branchId) {
+
+		/* // Fetch user session data and plan details */
+		$data['userData'] = $this->userSesData;
+		$data['planData'] = $this->planDetails;
+
+		$data['countryList'] = $this->commonModel->get_all_country_data();
+		$data['branchDetails'] = $this->branchModel->getStoreDetails($branchId);
+
+		$data['stateList'] = $this->commonModel->get_country_states($data['branchDetails']['country_id']);
+		$data['cityList'] = $this->commonModel->get_state_cities($data['branchDetails']['state_id']);
+		$data['branchService'] = explode(",", $data['branchDetails']['branch_services']);
+		$data['branchDeliverableImgs'] = $this->branchModel->get_branch_deliverable_imgs($branchId);
+
+		return view('dealer/branches/single_branch_info', $data);
+	}
+
 	public function edit_branch_details($branchId) {
 
 		/* // Fetch user session data and plan details */
@@ -407,8 +424,10 @@ class Branches extends BaseController {
 
 		$data['countryList'] = $this->commonModel->get_all_country_data();
 		$data['branchDetails'] = $this->branchModel->getStoreDetails($branchId);
+
 		$data['stateList'] = $this->commonModel->get_country_states($data['branchDetails']['country_id']);
 		$data['cityList'] = $this->commonModel->get_state_cities($data['branchDetails']['state_id']);
+		$data['branchService'] = explode(",", $data['branchDetails']['branch_services']);
 		$data['branchDeliverableImgs'] = $this->branchModel->get_branch_deliverable_imgs($branchId);
 
 		return view('dealer/branches/edit_branch_details', $data);
@@ -643,23 +662,6 @@ class Branches extends BaseController {
 		}
 	}
 
-	public function single_branch_info($branchId) {
-
-		/* // Fetch user session data and plan details */
-		$data['userData'] = $this->userSesData;
-		$data['planData'] = $this->planDetails;
-
-		$data['countryList'] = $this->commonModel->get_all_country_data();
-		$data['branchDetails'] = $this->branchModel->getStoreDetails($branchId);
-
-		$data['stateList'] = $this->commonModel->get_country_states($data['branchDetails']['country_id']);
-		$data['cityList'] = $this->commonModel->get_state_cities($data['branchDetails']['state_id']);
-		$data['branchService'] = explode(",", $data['branchDetails']['branch_services']);
-		$data['branchDeliverableImgs'] = $this->branchModel->get_branch_deliverable_imgs($branchId);
-
-		return view('dealer/branches/single_branch_info', $data);
-	}
-
 	public function getAllBranches($countryId, $stateId, $cityId, $branchType) {
 
 		$limit = $this->request->getVar('limit');
@@ -697,8 +699,10 @@ class Branches extends BaseController {
 								<a class="view-reviews-link" href="#" data-branch-id="' . $branch['id'] . '">(' . $branch['branch_review_count'] . ' Reviews)</a>
 							</div>
 							</div>';
-			if ($branch['is_promoted'] == 1) {
-				$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-success mt-3 btn-block"> Promotion ends on: ' . date('Y-m-d', strtotime($branch['promotion_end_date'])) . '</a>';
+			if ($branch['is_active'] == 2) {
+				$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-secondary mt-3 btn-block disabled" aria-disabled="true">Branch Disabled</a>';
+			} else if ($branch['is_promoted'] == 1) {
+				$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-success mt-3 btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($branch['promotion_end_date'])) . '</a>';
 			} else {
 				$dealerBranchHtml .= '<a href="' . base_url() . 'dealer/promote-showroom/' . $branch['id'] . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
 			}
@@ -711,13 +715,49 @@ class Branches extends BaseController {
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                                         <a class="dropdown-item" href="' . base_url() . 'dealer/single-branch-info/' . $branch['id'] . '"><i class="dw dw-eye"></i> View</a>
                                         <a class="dropdown-item" href="' . base_url() . 'dealer/edit-branch/' . $branch['id'] . '"><i class="dw dw-edit2"></i> Edit</a>';
+
 			if ($branch['is_promoted'] != 1) {
-				$dealerBranchHtml .= '<a class="dropdown-item sa-params delete-branch" data-branch-id="' . $branch['id'] . '" href="#"><i class="dw dw-delete-3"></i> Delete</a>';
+				if ($branch['is_active'] == 1) {
+					$dealerBranchHtml .= '<a class="dropdown-item toggle-branch-status" href="#" data-branch-id="' . $branch['id'] . '" data-status="2"><i class="dw dw-ban"></i> Disable Branch</a>';
+				} else if ($branch['is_active'] == 2) {
+					$dealerBranchHtml .= '<a class="dropdown-item toggle-branch-status" href="#" data-branch-id="' . $branch['id'] . '" data-status="1"><i class="dw dw-checked"></i> Enable Branch</a>';
+				}
 			}
 			$dealerBranchHtml .= '</div></div></div></div></div></div>';
 		}
 
 		echo $dealerBranchHtml;
+	}
+
+	/* disableling branch */
+	public function enable_disable_branch() {
+		// Fetch branch details using the branch ID from the request
+		$branch = $this->branchModel->find($this->request->getPost('branch_id'));
+
+		// Check if branch exists
+		if ($branch) {
+			// Update the branch status
+			$this->branchModel->updateData($this->request->getPost('branch_id'),  ['is_active' => $this->request->getPost('status')]);
+
+			// Check the status and return appropriate message
+			if ($this->request->getPost('status') == '2') {
+				return $this->response->setJSON([
+					'status' => 'success',
+					'message' => 'Branch Disabled Successfully'
+				]);
+			} else {
+				return $this->response->setJSON([
+					'status' => 'success',
+					'message' => 'Branch Enabled Successfully'
+				]);
+			}
+		} else {
+			// If branch not found, return error response
+			return $this->response->setJSON([
+				'status' => 'error',
+				'message' => 'Branch not found or error in enabling/disabling.'
+			]);
+		}
 	}
 
 	public function delete($branchId) {
@@ -755,8 +795,6 @@ class Branches extends BaseController {
 
 	public function load_cities() {
 		$state_id = $this->request->getPost('state_id');
-
-
 		$cityList = $this->commonModel->get_state_cities($state_id);
 
 		// Return HTML options for models dropdown

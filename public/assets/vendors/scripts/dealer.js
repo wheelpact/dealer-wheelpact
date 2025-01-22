@@ -2,8 +2,8 @@ $(document).ready(function () {
 
 	/* loader start */
 	var width = 100,
-		perfData = window.performance.timing, // The PerformanceTiming interface represents timing-related performance information for the given page.
-		EstimatedTime = -(perfData.loadEventEnd - perfData.navigationStart),
+		perfEntries = performance.getEntriesByType("navigation")[0], // Get navigation timing entry
+		EstimatedTime = -(perfEntries.loadEventEnd - perfEntries.startTime),
 		time = parseInt((EstimatedTime / 1000) % 60) * 100;
 
 	// Percentage Increment Animation
@@ -533,6 +533,60 @@ $(document).ready(function () {
 						showErrorAlert('Error in Ajax request');
 					}
 				});
+			}
+		});
+	});
+
+	$(document).on('click', '.toggle-branch-status', function (e) {
+		e.preventDefault(); // Prevent default link behavior
+
+		const branchId = $(this).data('branch-id');
+		const status = $(this).data('status');
+
+		Swal.fire({
+			title: 'Are you sure?',
+			text: 'Do you want to enable/disable the branch?',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Yes, do it!',
+			cancelButtonText: 'No, cancel!',
+			reverseButtons: true
+		}).then((result) => {
+			if (result.isConfirmed) {
+				// Send AJAX request to update branch status
+				$.ajax({
+					url: base_url + 'dealer/enable_disable_branch',
+					type: 'POST',
+					data: {
+						branch_id: branchId,
+						status: status
+					},
+					success: function (response) {
+						if (response.status === 'success') {
+							showSuccessAlert(response.message);
+
+							// Update the specific card content dynamically
+							const card = $('.branch-card-' + branchId);
+							if (card.length) {
+								card.find('.branch-status').text(status == 2 ? 'Disabled' : 'Enabled');
+								// Optionally update the button's status
+								card.find('.toggle-branch-status').data('status', status == 2 ? 1 : 2).text(status == 2 ? 'Enable' : 'Disable');
+							}
+						} else {
+							showErrorAlert(response.message || 'An error occurred. Please try again.');
+						}
+					},
+					error: function () {
+						showErrorAlert('Failed to update the branch status. Please try again.');
+					},
+				});
+			} else {
+				// If canceled, show a message or do nothing
+				Swal.fire(
+					'Cancelled',
+					'No changes were made.',
+					'info'
+				);
 			}
 		});
 	});

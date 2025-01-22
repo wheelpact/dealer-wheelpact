@@ -77,6 +77,22 @@ class UserModel extends Model {
         return $result;
     }
 
+    public function getDealerPromotedDetails(int $dealerId): array {
+        $builder = $this->db->table('dealer_promotion');
+
+        $builder->select([
+            "SUM(CASE WHEN promotionUnder = 'vehicle' THEN 1 ELSE 0 END) AS vehicle_count",
+            "SUM(CASE WHEN promotionUnder = 'showroom' THEN 1 ELSE 0 END) AS showroom_count",
+        ]);
+        $builder->where('dealerId', $dealerId);
+        $builder->where('is_active', 1); // Only active promotions
+        $builder->where('CURDATE() BETWEEN start_dt AND end_dt'); // Date range filter
+
+        $query = $builder->get();
+
+        return $query->getRowArray() ?: ['vehicle_count' => 0, 'showroom_count' => 0];
+    }
+
     public function updatePlanPreference($data) {
         $this->db->table(' dealer_subscription')
             ->set(['vehicle_type' => $data['vehicle_type']])

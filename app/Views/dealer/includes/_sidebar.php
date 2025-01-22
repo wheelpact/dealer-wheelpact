@@ -1,8 +1,8 @@
 <div class="left-side-bar">
 	<div class="brand-logo">
 		<a href="<?php echo base_url('dealer/dashboard'); ?>">
-			<img src="<?php echo base_url(); ?>assets/vendors/images/wheelpact-logo.png" alt="" class="dark-logo">
-			<img src="<?php echo base_url(); ?>assets/vendors/images/wheelpact-logo.png" alt="" class="light-logo">
+			<img src="<?php echo base_url(); ?>assets/vendors/images/wheelpact-logo-light.png" alt="" class="dark-logo">
+			<img src="<?php echo base_url(); ?>assets/vendors/images/wheelpact-logo-light.png" alt="" class="light-logo">
 		</a>
 		<div class="close-sidebar" data-toggle="left-sidebar-close">
 			<i class="ion-close-round"></i>
@@ -61,7 +61,7 @@
 						</a>
 					</li>
 				<?php } ?>
-				<li class="dropdown">
+				<li class="dropdown d-none">
 					<a href="javascript:;" class="dropdown-toggle no-arrow">
 						<span class="micon dw dw-question-1"></span><span class="mtext">Enquires</span>
 					</a>

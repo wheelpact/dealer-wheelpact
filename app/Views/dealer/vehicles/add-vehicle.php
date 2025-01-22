@@ -51,12 +51,12 @@ echo view('dealer/includes/_sidebar');
                     </div>
                     <div class="wizard-content" id="vehicleBasicInformationMultipartFormWrapper">
                         <ul class="step-indicators">
-                            <li><span class="indicator active" data-step="1">1</span></li>
-                            <li><span class="indicator" data-step="2">2</span></li>
-                            <li><span class="indicator" data-step="3">3</span></li>
-                            <li><span class="indicator" data-step="4">4</span></li>
-                            <li><span class="indicator" data-step="5">5</span></li>
-                            <li><span class="indicator" data-step="6">6</span></li>
+                            <li><span class="indicator active" data-step="1">1</span><h6>Vehicle Info</h6></li>
+                            <li><span class="indicator" data-step="2">2</span><h6>Registration Details</h6></li>
+                            <li><span class="indicator" data-step="3">3</span><h6>Insurance Details</h6></li>
+                            <li><span class="indicator" data-step="4">4</span><h6>Overview</h6></li>
+                            <li><span class="indicator" data-step="5">5</span><h6>Features</h6></li>
+                            <li><span class="indicator" data-step="6">6</span><h6>Pricing</h6></li>
                         </ul>
 
                         <?= form_open('dealer/save-new-vehicle', 'id="save_new_vehicle" class="custom-tab-wizard-add wizard-circle wizard"') ?>

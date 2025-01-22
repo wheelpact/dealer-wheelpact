@@ -32,18 +32,21 @@ echo view('dealer/includes/_sidebar');
             <div class="pd-20 bg-white border-radius-4 box-shadow mb-30">
                 <?= form_open('dealer/edit-update-branch-details', ['id' => 'edit_update_branch_details', 'method' => 'POST', 'enctype' => 'multipart/form-data']); ?>
                 <?= csrf_field(); ?>
+                <div class="clearfix">
+                    <h4 class="text-blue h4">Showroom Summary</h4>
+                </div>
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label for="selectDealer">Dealer:</label>
+                            <label for="selectDealer">Dealer Name</label>
                             <input type="text" value="<?php echo !empty($branchDetails['owner_name']) ? $branchDetails['owner_name'] : ''; ?>" class="form-control" disabled readonly>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label for="branchType">Branch Type:</label>
+                            <label for="branchType">Showroom Type</label>
                             <select class="form-control col-12 custom-select branchType" id="branchType" name="branchType" disabled readonly>
-                                <option value="0" selected>Select Branch Type</option>
+                                <option value="0" selected>Select Showroom Type</option>
                                 <?php foreach (BRANCH_TYPE as $id => $type) : ?>
                                     <?php if ($id != 0) : ?>
                                         <option value="<?= $id ?>" <?php if ($id == $branchDetails['branch_type']) echo 'selected'; ?>><?= $type ?></option>
@@ -54,13 +57,13 @@ echo view('dealer/includes/_sidebar');
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="branchName">Branch Name:</label>
+                            <label for="branchName">Showroom Branch Name</label>
                             <input type="text" value="<?php echo !empty($branchDetails['name']) ? $branchDetails['name'] : ''; ?>" class="form-control" id="branchName" name="branchName" disabled>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="branchType">Supported Vehicle Type:</label>
+                            <label for="branchType">Supported Vehicle Type</label>
                             <select class="form-control custom-select vehicle-type col-12" name="branchSupportedVehicleType" disabled readonly>
                                 <option>Select Vehicle Type</option>
                                 <?php foreach (VEHICLE_TYPE as $id => $type) : ?>
@@ -69,12 +72,10 @@ echo view('dealer/includes/_sidebar');
                             </select>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="branchName">Branch Thumbnail:</label>
+                            <label for="branchName">Showroom Thumbnail</label>
                             <input type="file" class="form-control" id="branchThumbnail" name="branchThumbnail">
                             <div class="da-card box-shadow mt-3">
                                 <div class="da-card-photo">
@@ -96,9 +97,9 @@ echo view('dealer/includes/_sidebar');
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="branchName">Branch Logo:</label>
+                            <label for="branchName">Showroom Logo</label>
                             <input type="file" class="form-control" id="branchLogo" name="branchLogo">
                             <div class="da-card box-shadow mt-3">
                                 <div class="da-card-photo">
@@ -121,10 +122,38 @@ echo view('dealer/includes/_sidebar');
                         </div>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 mb-30">
+                        <div class="form-group">
+                            <label for="shortDescription">Showroom Short Description</label>
+                            <textarea class="form-control" id="shortDescription" name="shortDescription"><?php echo !empty($branchDetails['short_description']) ? $branchDetails['short_description'] : ''; ?></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-12 mb-30">
+                        <div class="form-group">
+                            <label for="address">Showroom Services</label>
+                            <div class="btn-list">
+                                <?php foreach ($branchService as $key => $value) { ?>
+                                    <button type="button" class="btn" data-bgcolor="#3b5998" data-color="#ffffff" style="color: rgb(255, 255, 255); background-color: rgb(59, 89, 152);">
+                                        <i class="icon-copy fa fa-wrench" aria-hidden="true"></i> <?php echo isset($value) ? $value : ''; ?>
+                                    </button>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="clearfix">
+                    <h4 class="text-blue h4">Showroom Banners</h4>
+                </div>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="branchBanner">Banner 1:</label>
+                            <label for="branchBanner">Showroom Banner 1</label>
                             <input type="file" class="form-control" id="branchBanner1" name="branchBanner1">
                             <div class="da-card box-shadow mt-3">
                                 <div class="da-card-photo">
@@ -149,7 +178,7 @@ echo view('dealer/includes/_sidebar');
 
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="branchBanner">Banner 2:</label>
+                            <label for="branchBanner">Showroom Banner 2</label>
                             <input type="file" class="form-control" id="branchBanner2" name="branchBanner2">
                             <div class="da-card box-shadow mt-3">
                                 <div class="da-card-photo">
@@ -174,7 +203,7 @@ echo view('dealer/includes/_sidebar');
 
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="branchBanner">Banner 3:</label>
+                            <label for="branchBanner">Showroom Banner 3</label>
                             <input type="file" class="form-control" id="branchBanner3" name="branchBanner3">
                             <div class="da-card box-shadow mt-3">
                                 <div class="da-card-photo">
@@ -198,10 +227,35 @@ echo view('dealer/includes/_sidebar');
                     </div>
                 </div>
 
+                <hr>
+
+                <div class="clearfix">
+                    <h4 class="text-blue h4">Showroom Contact Details</h4>
+                </div>
+
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="chooseCountry">Choose Country:</label>
+                            <label for="contactNumber">Contact Number</label>
+                            <input type="text" minlength="9" maxlength="10" value="<?php echo !empty($branchDetails['contact_number']) ? $branchDetails['contact_number'] : ''; ?>" class="form-control numbersOnlyCheck" name="contactNumber" id="contactNumber" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="whatsapp_no">Whatsapp Number</label>
+                            <input type="text" minlength="9" maxlength="10" value="<?php echo !empty($branchDetails['whatsapp_no']) ? $branchDetails['whatsapp_no'] : ''; ?>" class="form-control numbersOnlyCheck" name="whatsapp_no" id="whatsapp_no">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" value="<?php echo !empty($branchDetails['email']) ? $branchDetails['email'] : ''; ?>" class="form-control" id="email" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="chooseCountry">Choose Country</label>
                             <select class="form-control col-12 custom-select country" id="chooseCountry" name="chooseCountry">
                                 <option value="0">Select Country</option>
                                 <?php foreach ($countryList as $id => $country) : ?>
@@ -215,7 +269,7 @@ echo view('dealer/includes/_sidebar');
 
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="chooseState">Choose State:</label>
+                            <label for="chooseState">Choose State</label>
                             <select class="form-control custom-select state" id="chooseState" name="chooseState">
                                 <option value="">Choose State</option>
                                 <?php if (isset($stateList) && !empty($stateList)) {
@@ -229,7 +283,7 @@ echo view('dealer/includes/_sidebar');
 
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="chooseCity">Choose City:</label>
+                            <label for="chooseCity">Choose City</label>
                             <select class="form-control  custom-select city" id="chooseCity" name="chooseCity">
                                 <option value="">Choose City</option>
                                 <?php if (isset($cityList) && !empty($cityList)) {
@@ -243,91 +297,63 @@ echo view('dealer/includes/_sidebar');
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-group">
-                            <label for="address">Address:</label>
+                            <label for="address">Showroom Address</label>
                             <textarea class="form-control" id="address" name="address"><?php echo !empty($branchDetails['address']) ? $branchDetails['address'] : ''; ?></textarea>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <!-- add iframe code of map Start -->
-                        <div class="col-md-12 col-sm-12 mb-30">
-                            <div class="form-group d-none">
-                                <label for="branch_map">Branch Google Maps: </label>
-                                <label class="text-right"><a href="https://support.google.com/maps/answer/7101463?hl=en" target="_blank">Help</a></label>
-                                <textarea class="form-control" id="branch_map" name="branch_map"><?php echo !empty($branchDetails['branch_map']) ? $branchDetails['branch_map'] : ''; ?></textarea>
-                            </div>
 
-                            <div class="form-group">
-                                <label for="location-input">Enter Branch Location:</label>
-                                <input type="text" id="location-input" name="location" placeholder="Enter location" />
-                                
-                                <!-- Map Display -->
-                                <div id="map" style="width: 100%; height: 400px;"></div>
-                                <!-- Hidden Fields for Latitude, Longitude, City, District, State -->
-                            </div>
-                            <div class="d-none">
-                                <input type="text" name="map_latitude" id="map_latitude" value="<?php echo !empty($branchDetails['map_latitude']) ? $branchDetails['map_latitude'] : ''; ?>">
-                                <input type="text" name="map_longitude" id="map_longitude" value="<?php echo !empty($branchDetails['map_longitude']) ? $branchDetails['map_longitude'] : ''; ?>">
-                                <input type="text" name="map_city" id="map_city" value="<?php echo !empty($branchDetails['map_city']) ? $branchDetails['map_city'] : ''; ?>">
-                                <input type="text" name="map_district" id="map_district" value="<?php echo !empty($branchDetails['map_district']) ? $branchDetails['map_district'] : ''; ?>">
-                                <input type="text" name="map_state" id="map_state" value="<?php echo !empty($branchDetails['map_state']) ? $branchDetails['map_state'] : ''; ?>">
-                            </div>
+                        <div class="form-group d-none">
+                            <label for="branch_map">Showroom Google Maps</label>
+                            <label class="text-right"><a href="https://support.google.com/maps/answer/7101463?hl=en" target="_blank">Help</a></label>
+                            <textarea class="form-control" id="branch_map" name="branch_map"><?php echo !empty($branchDetails['branch_map']) ? $branchDetails['branch_map'] : ''; ?></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location-input">Showroom Location</label>
+                            <input class="form-control mb-3 w-50" type="text" id="location-input" name="location" placeholder="Enter location" />
+                            <!-- Map Display -->
+                            <div id="map" style="width: 100%; height: 400px;"></div>
+                            <!-- Hidden Fields for Latitude, Longitude, City, District, State -->
+                        </div>
+                        <div class="d-none">
+                            <input type="text" name="map_latitude" id="map_latitude" value="<?php echo !empty($branchDetails['map_latitude']) ? $branchDetails['map_latitude'] : ''; ?>">
+                            <input type="text" name="map_longitude" id="map_longitude" value="<?php echo !empty($branchDetails['map_longitude']) ? $branchDetails['map_longitude'] : ''; ?>">
+                            <input type="text" name="map_city" id="map_city" value="<?php echo !empty($branchDetails['map_city']) ? $branchDetails['map_city'] : ''; ?>">
+                            <input type="text" name="map_district" id="map_district" value="<?php echo !empty($branchDetails['map_district']) ? $branchDetails['map_district'] : ''; ?>">
+                            <input type="text" name="map_state" id="map_state" value="<?php echo !empty($branchDetails['map_state']) ? $branchDetails['map_state'] : ''; ?>">
                         </div>
                         <!-- add iframe code of map  End -->
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="contactNumber">Contact Number:</label>
-                            <input type="text" minlength="9" maxlength="10" value="<?php echo !empty($branchDetails['contact_number']) ? $branchDetails['contact_number'] : ''; ?>" class="form-control numbersOnlyCheck" name="contactNumber" id="contactNumber" disabled>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="whatsapp_no">Whatsapp Number:</label>
-                            <input type="text" minlength="9" maxlength="10" value="<?php echo !empty($branchDetails['whatsapp_no']) ? $branchDetails['whatsapp_no'] : ''; ?>" class="form-control numbersOnlyCheck" name="whatsapp_no" id="whatsapp_no">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" value="<?php echo !empty($branchDetails['email']) ? $branchDetails['email'] : ''; ?>" class="form-control" id="email" disabled>
-                        </div>
-                    </div>
-                </div>
+                <hr>
 
-                <div class="row">
-                    <div class="col-md-6 col-sm-12 mb-30">
-                        <div class="form-group">
-                            <label for="shortDescription">Short Description:</label>
-                            <textarea class="form-control" id="shortDescription" name="shortDescription"><?php echo !empty($branchDetails['short_description']) ? $branchDetails['short_description'] : ''; ?></textarea>
-                        </div>
-                    </div>
+                <div class="clearfix">
+                    <h4 class="text-blue h4">Showroom Delivery Images</h4>
                 </div>
                 <div class="row">
                     <!-- deliverable images Start -->
                     <div class="col-md-6 col-sm-12 mb-30">
                         <div class="form-group">
-                            <label for="address">Add Deliverable Images:</label>
-                            <div class="pull-right">
-                                <a href="#input-validation-form" id="extend-deliverable-img" class="btn btn-primary btn-sm scroll-click collapsed" rel="content-y" data-toggle="collapse" role="button" aria-expanded="false"><i class="fa fa-plus"></i> Add </a>
-                            </div>
-                            <div class="col-md-10 col-sm-10">
-                                <div id="extend-deliverable-img-field">
-                                    <div class="form-group">
-                                        <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected"><input type="file" placeholder="Choose Image" name="deliverableImg[]" class="form-control deliverableImg" accept="image/png, image/jpeg"><span class="input-group-btn input-group-append"><button class="btn btn-primary bootstrap-touchspin-up remove-deliverable-img-field" type="button">-</button></span></div>
-                                    </div>
+                            <label for="address">Edit Deliverable Images</label>
+                            <div id="extend-deliverable-img-field">
+                                <div class="form-group">
+                                    <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected"><input type="file" placeholder="Choose Image" name="deliverableImg[]" class="form-control deliverableImg" accept="image/png, image/jpeg"><span class="input-group-btn input-group-append"><button class="btn btn-primary bootstrap-touchspin-up remove-deliverable-img-field" type="button">-</button></span></div>
                                 </div>
+                            </div>
+                            <div class="text-right">
+                                <a href="#input-validation-form" id="extend-deliverable-img" class="btn btn-primary btn-sm scroll-click collapsed" rel="content-y" data-toggle="collapse" role="button" aria-expanded="false"><i class="fa fa-plus"></i> Add More Delivery Images</a>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-6 col-sm-12 mb-30">
                         <div class="form-group">
-                            <label for="shortDescription">Deliverable Images:</label>
+                            <label for="shortDescription">Deliverable Images</label>
                             <div class="product-wrap">
                                 <div class="product-detail-wrap mb-30">
                                     <div class="row">
