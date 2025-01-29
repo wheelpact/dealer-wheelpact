@@ -64,16 +64,15 @@ class Vehicles extends BaseController {
 		foreach ($branches as $branch) {
 
 			$vehicles = $this->vehicleModel->getAllVehiclesByBranch($branch['id'], $limit, $offset, $vehicleTypeId, $vehicleBrandId, $vehicleModelId, $vehicleVariantId);
-
-			foreach ($vehicles as $vehicle) {
+			//echo '<pre>'; print_r($vehicles); exit();
+			foreach ($vehicles['data'] as $vehicle) {
 				$dealerVehiclesHtml .= '
 				<div class="col-md-6 col-lg-4 vehicle-card-' . $vehicle['id'] . '">
 					<div class="card card-box mb-3 position-relative">
 						<img class="card-img-top vehicle-image" src="' . WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'vehicle_thumbnails/' . $vehicle['thumbnail_url'] . '" alt="' . $vehicle['unique_id'] . '" />
 						<div class="card-body">
-							<h5 class="card-title weight-500">' . $vehicle['cmp_name'] . ' ' . $vehicle['model_name'] . ' ' . $vehicle['variantName'] . '</h5>
-							<p class="card-text"></p>
-							<div class="d-flex vehicle-overview">
+							<h5 class="card-title weight-500 text-blue">' . $vehicle['cmp_name'] . ' ' . $vehicle['model_name'] . ' ' . $vehicle['variantName'] . '</h5>
+								<div class="d-flex vehicle-overview">
 								<div class="overview-badge">
 									<h6>Year</h6>
 									<h5>' . $vehicle['manufacture_year'] . '</h5>
@@ -93,42 +92,80 @@ class Vehicles extends BaseController {
 							</div>
 							<h5 class="card-title mt-3">' . $branch['name'] . ' - ' . VEHICLE_TYPE[$vehicle['vehicle_type']] . '</h5>';
 
-				if ($vehicle['is_promoted'] == 1 && $vehicle['is_active'] == 4) {
-					// Show both Promotion and Sold buttons
-					$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-success mt-3 btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($vehicle['promotion_end_date'])) . '</a>';
-					$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-secondary mt-3 btn-block" disabled>Sold</a>';
-				} elseif ($vehicle['is_promoted'] == 1) {
-					// Show promotion details if the vehicle is promoted
-					$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-success mt-3 btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($vehicle['promotion_end_date'])) . '</a>';
-				} elseif ($vehicle['is_active'] == 4) {
-					// Show as Sold and make it non-clickable
-					$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-secondary mt-3 btn-block" disabled>Sold</a>';
-				} else {
-					// Show Promote button
-					$dealerVehiclesHtml .= '<a href="' . base_url() . 'dealer/promote-vehicle/' . $vehicle['id'] . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
-				}
+				if ($vehicle['is_active'] != 3) {
+					if ($vehicle['is_promoted'] == 1 && $vehicle['is_active'] == 4) {
+						// Show both Promotion and Sold buttons
+						$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-success btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($vehicle['promotion_end_date'])) . '</a>';
+						$dealerVehiclesHtml .= '<a href="' . base_url() . 'dealer/vehicle-promotion-details/' . encryptData($vehicle['id']) . '" target="_blank" class="btn btn-info btn-block">Promotion Details</a>';
+						$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-secondary btn-block">Sold</a>';
+					} elseif ($vehicle['is_promoted'] == 1) {
+						// Show promotion details if the vehicle is promoted
+						$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-success btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($vehicle['promotion_end_date'])) . '</a>';
+						$dealerVehiclesHtml .= '<a href="' . base_url() . 'dealer/vehicle-promotion-details/' . encryptData($vehicle['id']) . '" target="_blank" class="btn btn-info btn-block">Promotion Details</a>';
+					} elseif ($vehicle['is_active'] == 4) {
+						// Show as Sold and make it non-clickable
+						$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-secondary mt-3 btn-block" disabled>Sold</a>';
+					} elseif ($vehicle['is_active'] != 2) {
+						// Show Promote button
+						$dealerVehiclesHtml .= '<a href="' . base_url() . 'dealer/promote-vehicle/' . encryptData($vehicle['id']) . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
+					}
 
-				// Show "Mark as Sold" button if the vehicle is not already sold
-				if ($vehicle['is_active'] != 4) {
-					$dealerVehiclesHtml .= '<a href="#" class="btn btn-success mt-1 btn-block vehicleMarkSoldModal" data-vehicle-id=' . $vehicle['id'] . ' data-toggle="modal" data-target="#markSoldModal">Mark as Sold</a>';
-				}
+					// Show "Mark as Sold" button if the vehicle is not already sold
+					if ($vehicle['is_active'] != 4 && $vehicle['is_active'] != 2) {
+						$dealerVehiclesHtml .= '<a href="#" class="btn btn-success mt-1 btn-block vehicleMarkSoldModal" data-vehicle-id=' . encryptData($vehicle['id']) . ' data-toggle="modal" data-target="#markSoldModal">Mark as Sold</a>';
+					}
 
-				// Option button dropdown
-				$dealerVehiclesHtml .= '
+					// Option button dropdown
+					$dealerVehiclesHtml .= '
 				<div class="option-btn">
 					<div class="dropdown">
 						<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
 							<i class="dw dw-more"></i>
 						</a>
 						<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-							<a class="dropdown-item" href="' . base_url() . 'dealer/single-vehicle-info/' . $vehicle['id'] . '"><i class="dw dw-eye"></i> View</a>
-							<a class="dropdown-item" href="' . base_url() . 'dealer/edit-vehicle/' . $vehicle['id'] . '"><i class="dw dw-edit2"></i> Edit</a>';
+							<a class="dropdown-item" href="' . base_url() . 'dealer/single-vehicle-info/' . encryptData($vehicle['id']) . '"><i class="dw dw-eye"></i> View</a>
+							<a class="dropdown-item" href="' . base_url() . 'dealer/edit-vehicle/' . encryptData($vehicle['id']) . '"><i class="dw dw-edit2"></i> Edit</a>';
 
-				if ($vehicle['is_promoted'] != 1 && $vehicle['is_active'] != 4) {
-					$dealerVehiclesHtml .= '<a class="dropdown-item sa-params delete-vehicle" data-vehicle-id="' . $vehicle['id'] . '" href="#"><i class="dw dw-delete-3"></i> Delete</a>';
+					if ($vehicle['is_promoted'] != 1 && $vehicle['is_active'] != 4) {
+						//$dealerVehiclesHtml .= '<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" href="#"><i class="dw dw-delete-3"></i> Enable </a>';
+						if ($vehicle['is_active'] == 1) {
+							// Active: Displayed on site
+							$dealerVehiclesHtml .= '
+							<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" data-vehicle-flag="2" href="#">
+							   <i class="dw dw-delete-3"></i> Disable
+							</a>';
+						} elseif ($vehicle['is_active'] == 2) {
+							// Inactive: Hidden on site
+							$dealerVehiclesHtml .= '
+							<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" data-vehicle-flag="1" href="#">
+							   <i class="dw dw-delete-3"></i> Enable
+							</a>';
+						}
+					}
+					$dealerVehiclesHtml .= '</div></div></div>';
 				}
 
-				$dealerVehiclesHtml .= '</div></div></div></div></div></div>';
+				if ($vehicle['is_active'] === '1' || $vehicle['is_active'] === '4') {
+					// Active: Displayed on site
+					$dealerVehiclesHtml .= '
+						<div class="card-status-badge">
+							<span class="badge badge-success">Active</span>
+						</div>';
+				} elseif ($vehicle['is_active'] === '3') {
+					// Deleted: Hidden on site, shown on dealer panel & superadmin
+					$dealerVehiclesHtml .= '
+						<div class="card-status-badge">
+							<span class="badge badge-danger">Deleted</span>
+						</div>';
+				} elseif ($vehicle['is_active'] === '2') {
+					// Inactive: Hidden on site, shown on dealer panel & superadmin
+					$dealerVehiclesHtml .= '
+						<div class="card-status-badge">
+							<span class="badge badge-warning">Inactive</span>
+						</div>';
+				}
+
+				$dealerVehiclesHtml .= '</div></div></div>';
 			}
 		}
 
@@ -395,7 +432,8 @@ class Vehicles extends BaseController {
 		}
 	}
 
-	public function edit_vehicle($vehicleId) {
+	public function edit_vehicle($vehicle_Id) {
+		$vehicleId = decryptData($vehicle_Id);
 
 		$dealerId = session()->get('userId');
 		/* // Fetch user session data and plan details */
@@ -799,8 +837,8 @@ class Vehicles extends BaseController {
 		}
 	}
 
-	public function single_vehicle_info($vehicleId) {
-
+	public function single_vehicle_info($vehicle_Id) {
+		$vehicleId = decryptData($vehicle_Id);
 		$dealerId = session()->get('userId');
 		/* // Fetch user session data and plan details */
 		$data['userData'] = $this->userSesData;
@@ -888,6 +926,48 @@ class Vehicles extends BaseController {
 			// Return a JSON response indicating failure
 			return $this->response->setJSON(['status' => 'error', 'message' => 'Vehicle not found']);
 		}
+	}
+
+	public function toggleVehicleStatus() {
+		$vehicleId = $this->request->getPost('vehicle_id');
+		$vehicleFlag = $this->request->getPost('vehicle_flag'); // 1 for Activate, 2 for Deactivate
+
+		// Validate inputs
+		if (empty($vehicleId) || empty($vehicleFlag)) {
+			return $this->response->setJSON([
+				'status' => 'error',
+				'message' => 'Invalid request data.'
+			]);
+		}
+
+
+		// Check if the vehicle exists
+		$vehicle = $this->vehicleModel->find($vehicleId);
+		if (!$vehicle) {
+			return $this->response->setJSON([
+				'status' => 'error',
+				'message' => 'Vehicle not found.'
+			]);
+		}
+
+		// Update the status
+		$data = [
+			'is_active' => ($vehicleFlag == 1) ? 1 : 2, // 1 = Active, 2 = Inactive
+		];
+
+		if ($this->vehicleModel->update($vehicleId, $data)) {
+			$statusText = ($vehicleFlag == 1) ? 'Enabled' : 'Disabled';
+			return $this->response->setJSON([
+				'status' => 'success',
+				'message' => "Vehicle successfully $statusText."
+			]);
+		}
+
+		// Error response
+		return $this->response->setJSON([
+			'status' => 'error',
+			'message' => 'Failed to update the vehicle status.'
+		]);
 	}
 
 	public function upload_thumbnail() {
@@ -1144,36 +1224,37 @@ class Vehicles extends BaseController {
 		$columnName = $this->request->getPost('columns')[$columnIndex]['data']; // Column name
 		$columnSortOrder = $order['dir']; // ASC or DESC
 
-		// Set the base query
-		$query = $this->vehicleModel->fetchTestDriveData($dealerId, $search, $columnName, $columnSortOrder);
+		// Set the base query and get the result
+		$resultData = $this->vehicleModel->fetchTestDriveData($dealerId, $search, $columnName, $columnSortOrder, '', $start, $length);
 
-		// Get total records (before filtering)
-		$totalRecords = $query->countAllResults(false);
+		// Calculate the total records based on the resultData array
+		// Assuming 'data' is the key that contains the result records
+		$totalRecords = isset($resultData) ? count($resultData) : 0;
 
-		// Apply pagination limit
-		$query->limit($length, $start); // Ensure limit is set with int values
+		// Process the data only if it's an array
+		if (isset($resultData) && is_array($resultData)) {
+			// Process the records to include image URL for the license file
+			$data = array_map(function ($row) {
+				if (!empty($row['license_file_path'])) {
+					// Concatenate the base URL with the license file path
+					$row['license_file_path'] = WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'test_drive_data/license/' . $row['license_file_path'];
+				} else {
+					// Use a placeholder image if the key is missing or empty
+					$row['license_file_path'] = NO_IMAGE_AVAILABLE;
+				}
+				return $row;
+			}, $resultData);
+		} else {
+			// If the data field is not found or not an array, return empty data
+			$data = [];
+		}
 
-		// Get paginated data
-		$resultData = $query->get()->getResultArray();
-
-		// Process the data to include the image URL
-		$data = array_map(function ($row) {
-			// Check if 'driving_license_image' exists and is not empty
-			if (!empty($row['license_file_path'])) {
-				$row['license_file_path'] = WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'test_drive_data/license/' . $row['license_file_path'];
-			} else {
-				// Use a placeholder image if the key is missing or empty
-				$row['license_file_path'] = NO_IMAGE_AVAILABLE;
-			}
-			return $row;
-		}, $resultData);
-
-		// Return JSON response
+		// Return JSON response with totalRecords, filtered data, and processed data
 		return $this->response->setJSON([
 			'draw' => intval($draw),
-			'recordsTotal' => $totalRecords,
-			'recordsFiltered' => $totalRecords,
-			'data' => $data
+			'recordsTotal' => $totalRecords, // Use the total count of records from resultData
+			'recordsFiltered' => $totalRecords, // Adjust based on filtering logic (you may need to implement filtered total if necessary)
+			'data' => $data // Use processed data
 		]);
 	}
 
@@ -1223,10 +1304,12 @@ class Vehicles extends BaseController {
 
 	public function updateVehicleSoldStatus() {
 
+		$vehicleId = decryptData($this->request->getPost('vehicle_id'));
+
 		$data['userData'] = $this->userSesData;
 		$dealerId = $data['userData']['userId'];
 
-		if (!$this->request->getPost('vehicle_id') || !$this->request->getPost('reason')) {
+		if (!$vehicleId || !$this->request->getPost('reason')) {
 			return $this->response->setJSON(['error' => false, 'message' => 'Invalid request']);
 		}
 
@@ -1237,7 +1320,7 @@ class Vehicles extends BaseController {
 			'updated_datetime' => date("Y-m-d H:i:s")
 		);
 
-		$result = $this->vehicleModel->updateData($this->request->getPost('vehicle_id'), $updateData);
+		$result = $this->vehicleModel->updateData($vehicleId, $updateData);
 
 		if ($result) {
 			return $this->response->setJSON(['success' => true, 'message' => 'Marked as Sold successfully.']);

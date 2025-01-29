@@ -105,13 +105,13 @@
             <p>We are thrilled to have you join our community of trusted dealers. Your registration was successful, and your dealer account is now active. Here are the details of your registration:</p>
             <h3>Promotion Details:</h3>
             <p><strong>Plan:</strong> <?php echo $planDetails['promotionName']; ?></p>
-            <?php if ($promtionData['promotionUnder'] == 'vehicle') { ?>
+            <?php if ($promotionData['promotionUnder'] == 'vehicle') { ?>
                 <p><strong>Promoted Vehicle:</strong> <?php echo $itemDetails['cmp_name'] . ' ' . $itemDetails['cmp_model_name'] . ' ' . $itemDetails['variantName']; ?></p>
-            <?php } elseif ($promtionData['promotionUnder'] == 'showroom') { ?>
+            <?php } elseif ($promotionData['promotionUnder'] == 'showroom') { ?>
                 <p><strong>Promoted Showroom:</strong> <?php echo $itemDetails['branchName']; ?></p>
             <?php } ?>
-            <p><strong>Promoted Date:</strong> <?php echo date('d/m/Y', strtotime($promtionData['start_dt'])); ?></p>
-            <p><strong>Promtion Valid Till:</strong> <?php echo date('d/m/Y', strtotime($promtionData['end_dt'])); ?></p>
+            <p><strong>Promoted Date:</strong> <?php echo date('d/m/Y', strtotime($promotionData['start_dt'])); ?></p>
+            <p><strong>Promtion Valid Till:</strong> <?php echo date('d/m/Y', strtotime($promotionData['end_dt'])); ?></p>
             <p><strong>Total Amount:</strong> <?php echo $orderDetails['amount'] . ' ' . $orderDetails['currency']; ?></p>
             <h3>Need Assistance?</h3>
             <p>If you have any questions or need help getting started, our support team is here for you. Feel free to contact us at <a href="mailto:support@wheelpact.com">support@wheelpact.com</a> or call us at +91-1234567890.

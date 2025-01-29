@@ -1,6 +1,7 @@
 <?php
 
 use Config\Services;
+use Config\Encryption;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -206,5 +207,56 @@ if (!function_exists('imageToBase64')) {
             return base64_encode($imageData);
         }
         return '';
+    }
+}
+
+if (!function_exists('encryptData')) {
+    /**
+     * Encrypt ID
+     *
+     * @param int|string $id The ID to encrypt.
+     * @return string The encrypted ID.
+     */
+    function encryptData($id) {
+        // Get the encryption configuration
+        $config = new Encryption();
+        $config->driver = 'OpenSSL'; // Specify the driver (e.g., OpenSSL)
+        $config->cipher = 'AES-256-CTR'; // Specify the cipher algorithm
+        $config->key = WP_ENC_TOKEN; // Use a strong key
+        $config->digest = 'SHA256'; // Digest algorithm
+
+        // Initialize the encrypter
+        $encrypter = \Config\Services::encrypter($config);
+
+        // Encrypt the ID and return as a hexadecimal string
+        return bin2hex($encrypter->encrypt($id));
+    }
+}
+
+if (!function_exists('decryptData')) {
+    /**
+     * Decrypt ID
+     *
+     * @param string $encryptedId The encrypted ID to decrypt.
+     * @return string|false The decrypted ID, or false if decryption fails.
+     */
+    function decryptData($encryptedId) {
+        // Get the encryption configuration
+        $config = new Encryption();
+        $config->driver = 'OpenSSL'; // Specify the driver (e.g., OpenSSL)
+        $config->cipher = 'AES-256-CTR'; // Specify the cipher algorithm
+        $config->key = WP_ENC_TOKEN; // Use the same strong key
+        $config->digest = 'SHA256'; // Digest algorithm
+
+        // Initialize the encrypter
+        $encrypter = \Config\Services::encrypter($config);
+
+        try {
+            // Decrypt the ID from the hexadecimal string
+            return $encrypter->decrypt(hex2bin($encryptedId));
+        } catch (\Exception $e) {
+            // Handle decryption errors gracefully
+            return false;
+        }
     }
 }

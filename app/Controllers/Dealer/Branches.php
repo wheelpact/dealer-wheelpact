@@ -399,7 +399,9 @@ class Branches extends BaseController {
 		}
 	}
 
-	public function single_branch_info($branchId) {
+	public function single_branch_info($branch_Id) {
+
+		$branchId = decryptData($branch_Id);
 
 		/* // Fetch user session data and plan details */
 		$data['userData'] = $this->userSesData;
@@ -412,12 +414,13 @@ class Branches extends BaseController {
 		$data['cityList'] = $this->commonModel->get_state_cities($data['branchDetails']['state_id']);
 		$data['branchService'] = explode(",", $data['branchDetails']['branch_services']);
 		$data['branchDeliverableImgs'] = $this->branchModel->get_branch_deliverable_imgs($branchId);
+		$data['branchDetails']['encryptedID'] = $branch_Id;
 
 		return view('dealer/branches/single_branch_info', $data);
 	}
 
-	public function edit_branch_details($branchId) {
-
+	public function edit_branch_details($branch_Id) {
+		$branchId = decryptData($branch_Id);
 		/* // Fetch user session data and plan details */
 		$data['userData'] = $this->userSesData;
 		$data['planData'] = $this->planDetails;
@@ -429,6 +432,7 @@ class Branches extends BaseController {
 		$data['cityList'] = $this->commonModel->get_state_cities($data['branchDetails']['state_id']);
 		$data['branchService'] = explode(",", $data['branchDetails']['branch_services']);
 		$data['branchDeliverableImgs'] = $this->branchModel->get_branch_deliverable_imgs($branchId);
+		$data['branchDetails']['encryptedID'] = $branch_Id;
 
 		return view('dealer/branches/edit_branch_details', $data);
 	}
@@ -672,7 +676,7 @@ class Branches extends BaseController {
 
 		$dealerBranchHtml = '';
 
-		foreach ($branches as $branch) {
+		foreach ($branches['data'] as $branch) {
 			$dealerBranchHtml .= '
                 <div class="col-md-6 col-lg-4 branch-card-' . $branch['id'] . '">
                     <div class="card card-box mb-3 position-relative">
@@ -696,15 +700,16 @@ class Branches extends BaseController {
 								</div>
 							<div class="store-rating-count">' . round($branch['branch_rating'], 1) . '</div>
 							<div class="store-reviews">
-								<a class="view-reviews-link" href="#" data-branch-id="' . $branch['id'] . '">(' . $branch['branch_review_count'] . ' Reviews)</a>
+								<a class="view-reviews-link" href="#" data-branch-id="' . encryptData($branch['id']) . '">(' . $branch['branch_review_count'] . ' Reviews)</a>
 							</div>
 							</div>';
 			if ($branch['is_active'] == 2) {
 				$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-secondary mt-3 btn-block disabled" aria-disabled="true">Branch Disabled</a>';
 			} else if ($branch['is_promoted'] == 1) {
 				$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-success mt-3 btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($branch['promotion_end_date'])) . '</a>';
+				$dealerBranchHtml .= '<a href="' . base_url() . 'dealer/showroom-promotion-details/' . encryptData($branch['id']) . '" target="_blank" class="btn btn-info btn-block">Promotion Details</a>';
 			} else {
-				$dealerBranchHtml .= '<a href="' . base_url() . 'dealer/promote-showroom/' . $branch['id'] . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
+				$dealerBranchHtml .= '<a href="' . base_url() . 'dealer/promote-showroom/' . encryptData($branch['id']) . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
 			}
 
 			$dealerBranchHtml .= '<div class="option-btn">
@@ -713,14 +718,14 @@ class Branches extends BaseController {
                                         <i class="dw dw-more"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                        <a class="dropdown-item" href="' . base_url() . 'dealer/single-branch-info/' . $branch['id'] . '"><i class="dw dw-eye"></i> View</a>
-                                        <a class="dropdown-item" href="' . base_url() . 'dealer/edit-branch/' . $branch['id'] . '"><i class="dw dw-edit2"></i> Edit</a>';
+                                        <a class="dropdown-item" href="' . base_url() . 'dealer/single-branch-info/' . encryptData($branch['id']) . '"><i class="dw dw-eye"></i> View</a>
+                                        <a class="dropdown-item" href="' . base_url() . 'dealer/edit-branch/' . encryptData($branch['id']) . '"><i class="dw dw-edit2"></i> Edit</a>';
 
 			if ($branch['is_promoted'] != 1) {
 				if ($branch['is_active'] == 1) {
-					$dealerBranchHtml .= '<a class="dropdown-item toggle-branch-status" href="#" data-branch-id="' . $branch['id'] . '" data-status="2"><i class="dw dw-ban"></i> Disable Branch</a>';
+					$dealerBranchHtml .= '<a class="dropdown-item toggle-branch-status" href="#" data-branch-id="' . encryptData($branch['id']) . '" data-status="2"><i class="dw dw-ban"></i> Disable Branch</a>';
 				} else if ($branch['is_active'] == 2) {
-					$dealerBranchHtml .= '<a class="dropdown-item toggle-branch-status" href="#" data-branch-id="' . $branch['id'] . '" data-status="1"><i class="dw dw-checked"></i> Enable Branch</a>';
+					$dealerBranchHtml .= '<a class="dropdown-item toggle-branch-status" href="#" data-branch-id="' . encryptData($branch['id']) . '" data-status="1"><i class="dw dw-checked"></i> Enable Branch</a>';
 				}
 			}
 			$dealerBranchHtml .= '</div></div></div></div></div></div>';
@@ -810,8 +815,67 @@ class Branches extends BaseController {
 		echo $html;
 	}
 
-	public function load_branch_reviews($branchId) {
+	public function load_branch_reviews($branch_Id) {
+		$branchId = decryptData($branch_Id);
 		$reviews = $this->branchModel->getBranchReviews($branchId);
 		return $this->response->setJSON($reviews);
+	}
+
+	public function load_dealer_branch_reviews() {
+		$dealerId = session()->get('userId');
+
+
+		// Fetch branches and their reviews
+		$branches = $this->branchModel->where('dealer_id', $dealerId)->getAllBranchByDealerId($dealerId, NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
+
+		$html = '';
+
+		foreach ($branches['data'] as $branch) {
+			// Add branch name as a heading
+			$html .= '
+    <div class="pd-20 bg-white border-radius-10 box-shadow mb-30">
+        <div class="branch-name">
+            <h3 class="text-blue">' . htmlspecialchars($branch['name']) . '</h3>
+        </div>';
+
+			// Fetch reviews for the branch
+			$reviews = $this->branchModel->getBranchReviews($branch['id']);
+
+			if (!empty($reviews)) {
+				foreach ($reviews as $review) {
+					$html .= '
+            <div class="review-details" style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px;">
+                <div class="reviewer-name">
+                    <h4 class="text-blue h4">' . htmlspecialchars($review['userName']) . '</h4>
+                    <div class="review-date-time">
+                        <p class="text-blue">' . date('d-m-Y', strtotime($review['created_datetime'])) . '</p>
+                    </div>
+                </div>
+                <div class="reviewer-comment">
+                    <p>' . htmlspecialchars($review['message']) . '</p>
+                </div>
+                <p class="text-blue">' . htmlspecialchars($review['rating']) . ' Rating</p>
+            </div>';
+				}
+			} else {
+				// If no reviews are found, display a message
+				$html .= '<p class="text-muted">No reviews available for this branch.</p>';
+			}
+
+			$html .= '</div>'; // Close the branch container
+		}
+
+
+		// Check if the request is an AJAX request
+		if ($this->request->isAJAX()) {
+			return $this->response->setJSON(['html' => $html]);
+			exit;
+		}
+
+		// Otherwise, load the main view
+		$data['userData'] = $this->userSesData;
+		$data['planData'] = $this->planDetails;
+		$data['reviewsHtml'] = $html; // Pass the prepared HTML to the view
+		echo view('dealer/branches/list_branch_reviews', $data);
 	}
 }

@@ -23,10 +23,10 @@ echo view('dealer/includes/_sidebar');
 			</div>
 
 			<div class="row">
-
 				<div class="col-md-8">
 					<?= form_open('create-rzp-order', ['id' => 'promotionPlanProcess', 'method' => 'POST']); ?>
 					<?= csrf_field(); ?>
+
 					<div class="pd-20 bg-white border-radius-10 box-shadow mb-30">
 						<h4 class="text-blue h4">Select Your Promotion Package</h4>
 						<div class="promotion-points">
@@ -43,34 +43,59 @@ echo view('dealer/includes/_sidebar');
 								<p>Sell you vehicles faster</p>
 							</div>
 						</div>
-						<!-- <div class="form-group col-6">
-							<label>Promote Under<span class="required">*</span></label>
-							<select class="custom-select formInput" name="promotionType" id="promotionType" required>
-								<option value="">Choose...</option>
-								<?php //foreach (PROMTION_TYPE as $id => $type) : ?>
-									<option value="<?php //$id ?>"><?php //$type ?></option>
-								<?php //endforeach; ?>
-							</select>
-						</div> -->
 					</div>
 
-					<?php $first = true;
-					if (isset($promotionPlans) && !empty($promotionPlans)) : ?>
-						<?php foreach ($promotionPlans as $plan) : ?>
-							<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative">
+					<!-- Promotion Plans Section -->
+					<?php if (isset($promotionPlans) && !empty($promotionPlans)) : ?>
+						<?php
+						$first = true; // To mark the first item for default selection
+						foreach ($promotionPlans as $plan) :
+							// Hide free promotion plan if the user exceeds the free inventory limit
+							$hidePlan = ($vehiclePromoteCount >= $planData['free_inventory_promotions'] && $plan['id'] === '1') ? 'd-none' : '';
+							$isFreePlan = ($plan['id'] === '1'); // Check if the current plan is the free plan
+						?>
+							<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative <?= esc($hidePlan); ?>" id="promotionPlan<?= esc($plan['id']); ?>">
+								<!-- Plan Name -->
 								<h4 class="text-blue h4"><?= esc($plan['promotionName']); ?></h4>
+
+								<!-- Free Promotion Details -->
+								<?php if ($isFreePlan) : ?>
+									<p class="text-muted">
+										You have used <strong><?= esc($vehiclePromoteCount); ?></strong> out of
+										<strong><?= esc($planData['free_inventory_promotions']); ?></strong> free promotions.
+									</p>
+								<?php endif; ?>
+
+								<!-- Radio Input for Selecting Plan -->
 								<div class="custom-control custom-radio mb-5">
-									<input checked type="radio" data-itemid="<?= esc($vehicleDetails['id']); ?>" data-promotionunder="vehicle" data-promotionplanid="<?= esc($plan['id']); ?>" id="promotionCustomRadio<?= esc($plan['id']); ?>" name="promotion-amount-radio" class="custom-control-input getPaymentmentAmt" value="<?= esc($plan['promotionAmount']); ?>" <?= $first ? 'checked' : '' ?>>
-									<label class="custom-control-label" for="promotionCustomRadio<?= esc($plan['id']); ?>">Promotion Validity for <?= esc($plan['promotionDaysValidity']); ?> Days</label>
+									<input
+										type="radio"
+										data-itemid="<?= esc($vehicleDetails['id']); ?>"
+										data-promotionunder="vehicle"
+										data-promotionplanid="<?= esc($plan['id']); ?>"
+										id="promotionCustomRadio<?= esc($plan['id']); ?>"
+										name="promotion-amount-radio"
+										class="custom-control-input getPaymentmentAmt"
+										value="<?= esc($plan['promotionAmount']); ?>"
+										<?= $first ? 'checked' : '' ?>>
+									<label class="custom-control-label" for="promotionCustomRadio<?= esc($plan['id']); ?>">
+										Promotion Validity for <?= esc($plan['promotionDaysValidity']); ?> Days
+									</label>
 								</div>
 
+								<!-- Promotion Plan Price -->
 								<div class="promotion-plan-price">
 									<h4>₹<?= esc($plan['promotionAmount']); ?></h4>
 								</div>
 							</div>
-						<?php endforeach; ?>
+						<?php
+							$first = false; // Reset the first flag after rendering the first plan
+						endforeach;
+						?>
 					<?php endif; ?>
+
 				</div>
+
 				<div class="col-md-4">
 					<div class="card card-box mb-3 stick-promo">
 						<img class="card-img-top vehicle-image" src="<?php echo isset($vehicleDetails['thumbnail_url']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'vehicle_thumbnails/' . $vehicleDetails['thumbnail_url'] : WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'default-img.png'; ?>" alt="<?php echo $vehicleDetails['cmp_name'] . ' ' . $vehicleDetails['cmp_model_name']; ?>" />
@@ -111,6 +136,7 @@ echo view('dealer/includes/_sidebar');
 					</div>
 				</div>
 			</div>
+
 		</div>
 		<!-- footer -->
 		<?php echo view('dealer/includes/_footer'); ?>

@@ -508,7 +508,7 @@ echo view('dealer/includes/_sidebar');
                 <h5 class="text-blue mb-3">Vehicle Images</h5>
 
                 <div class="row">
-                    <div class="col-lg-3 col-md-6 col-sm-12 mb-30">
+                    <div class="col-lg-2 col-md-2 col-sm-12 mb-30">
                         <label>Thumbnail Image</label><br>
                         <div class="card card-box">
                             <?php
@@ -516,25 +516,23 @@ echo view('dealer/includes/_sidebar');
                             echo '<img class="card-img replaceThumbnailImg" src="' . $thumbnailUrl . '" class="img img-responsive vehicleImg" alt="' . $vehicleDetails['cmp_name'] . ' ' . $vehicleDetails['cmp_model_name'] . '">';
                             ?>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-6 col-sm-12 mb-30">
-                        <div class="input-group mb-3">
+
+                        <div class="input-group mt-2 mb-3">
                             <input type="file" class="form-control onlyImageInput" id="thumbnailImage" accept="image/*">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" id="uploadThumbnail">Update</button>
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-lg-10 col-md-10 col-sm-12 mb-30">
+                        <?php if ($vehicleDetails['vehicle_type'] == 1) { ?>
+                            <?php echo view('dealer/vehicles/form_includes/cars/edit-car-img-form'); ?>
+                        <?php } elseif ($vehicleDetails['vehicle_type'] == 2) { ?>
+                            <?php echo view('dealer/vehicles/form_includes/bikes/edit-bike-img-form'); ?>
+                        <?php } ?>
+                    </div>
                 </div>
-
-                <?php if ($vehicleDetails['vehicle_type'] == 1) { ?>
-                    <?php echo view('dealer/vehicles/form_includes/cars/edit-car-img-form'); ?>
-                <?php } elseif ($vehicleDetails['vehicle_type'] == 2) { ?>
-                    <?php echo view('dealer/vehicles/form_includes/bikes/edit-bike-img-form'); ?>
-                <?php } ?>
-
             </div>
             <!-- vehicle image end -->
             <?php echo view('dealer/includes/_footer'); ?>

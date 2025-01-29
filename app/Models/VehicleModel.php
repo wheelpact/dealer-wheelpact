@@ -55,7 +55,7 @@ class VehicleModel extends Model {
 
     public function getVehicleDetails($vehicleId) {
         $builder = $this->db->table('vehicles as v');
-        $builder->select('v.*, vc.cmp_name as cmp_name, vcm.model_name as cmp_model_name, vcmv.name as variantName, fueltypes.name as fuelTypeName, indiarto.rto_state_code as indiarto_rto_state_code, b.id as branch_id, b.name as branch_name, b.address as branch_address, CONCAT(countries.name, "," , states.name , "," , cities.name) AS branch_location , t.title as transmission_name');
+        $builder->select('v.*, vc.cmp_name as cmp_name, vcm.model_name as cmp_model_name, vcmv.name as variantName, fueltypes.name as fuelTypeName, indiarto.rto_state_code as indiarto_rto_state_code, b.id as branch_id, b.name as branch_name, b.address as branch_address, CONCAT(cities.name, "," , states.name , "," , countries.name) AS branch_location , t.title as transmission_name');
         $builder->join('vehiclecompanies as vc', 'vc.id = v.cmp_id', 'left');
         $builder->join('vehiclecompaniesmodels as vcm', 'vcm.id = v.model_id', 'left');
         $builder->join('vehiclecompaniesmodelvariants as vcmv', 'vcmv.id = v.variant_id', 'left');
@@ -73,58 +73,127 @@ class VehicleModel extends Model {
 
     public function getVehicleImagesDetails($vehicleId) {
         $query = $this->db->table('vehicleimages')->select('*')->where('vehicle_id', $vehicleId);
-        return $query->get()->getRowArray();
+        return $query->get()->getResultArray();
     }
 
     /* Fetch the list of vehicles for the dealer */
-    public function getAllVehiclesByBranch($branchId, $limit, $offset, $vehicleTypeId, $vehicleBrandId, $vehicleModelId, $vehicleVariantId) {
+    public function getAllVehiclesByBranch($branchId, $limit = NULL, $offset = NULL, $vehicleTypeId = NULL, $vehicleBrandId = NULL, $vehicleModelId = NULL, $vehicleVariantId = NULL, $is_promoted = NULL) {
         $builder = $this->db->table('vehicles as v');
-        $builder->select('vc.cmp_name, vcm.model_name, vcmv.name as variantName, ft.name as fuel_type, vbt.title as bodytype, 
-        vt.title as vehicletransmission, v.id, v.vehicle_type, v.unique_id, v.mileage, v.kms_driven, v.owner, v.onsale_status, 
-        v.onsale_percentage, v.registration_year, st.name as statename, st.short_code, rto.rto_state_code, v.insurance_type, 
-        v.insurance_validity, v.regular_price, v.selling_price, v.thumbnail_url, v.manufacture_year, v.is_active, dp.promotionUnder,
-        CASE WHEN dp.end_dt >= NOW() THEN 1 ELSE 0 END as is_promoted, dp.end_dt as promotion_end_date');
+        $builder->select('
+        vc.cmp_name, 
+        b.name as branch_name,
+        vcm.model_name, 
+        vcmv.name as variantName, 
+        ft.name as fuel_type, 
+        vbt.title as bodytype, 
+        vt.title as vehicletransmission, 
+        v.id, 
+        v.vehicle_type, 
+        v.unique_id, 
+        v.mileage, 
+        v.kms_driven, 
+        v.owner, 
+        v.onsale_status, 
+        v.onsale_percentage, 
+        v.registration_year, 
+        st.name as statename, 
+        st.short_code, 
+        rto.rto_state_code, 
+        v.insurance_type, 
+        v.insurance_validity, 
+        v.regular_price, 
+        v.selling_price, 
+        v.thumbnail_url, 
+        v.manufacture_year, 
+        v.is_active, 
+        dp.promotionUnder,
+        CASE WHEN NOW() BETWEEN dp.start_dt AND dp.end_dt THEN 1 ELSE 0 END as is_promoted, 
+        dp.start_dt as promotion_start_date,
+        dp.end_dt as promotion_end_date
+    ');
 
         $builder->join('vehiclecompanies as vc', 'vc.id = v.cmp_id', 'left');
         $builder->join('vehiclecompaniesmodels as vcm', 'vcm.id = v.model_id', 'left');
         $builder->join('fueltypes as ft', 'v.fuel_type = ft.id', 'left');
         $builder->join('vehiclebodytypes as vbt', 'v.body_type = vbt.id', 'left');
+        $builder->join('branches as b', 'b.id = v.branch_id', 'left');
         $builder->join('transmissions as vt', 'v.transmission_id = vt.id', 'left');
         $builder->join('vehiclecompaniesmodelvariants as vcmv', 'vcmv.id = v.variant_id', 'left');
         $builder->join('states as st', 'v.registered_state_id = st.id', 'left');
         $builder->join('indiarto as rto', 'v.rto = rto.id', 'left');
-        $builder->join('dealer_promotion as dp', 'dp.itemId = v.id AND dp.promotionUnder = "vehicle" AND dp.is_active = 1', 'left');
+        $builder->join(
+            '(SELECT itemId, promotionUnder, is_active, MAX(start_dt) as start_dt, MAX(end_dt) as end_dt
+              FROM dealer_promotion
+              WHERE promotionUnder = "vehicle" AND is_active = 1
+              GROUP BY itemId) as dp',
+            'dp.itemId = v.id',
+            'left'
+        );
 
         $builder->where('v.branch_id', $branchId);
-        $builder->groupStart()
-            ->where('v.is_active', 1)
-            ->orWhere('v.is_active', 4)
-            ->groupEnd();
+        $builder->where('v.is_admin_approved', '1');
 
-        // Conditional filtering
-        if ($vehicleTypeId != '0') {
-            $builder->where($vehicleTypeId == 3 ? 'v.vehicle_type IN (1, 2)' : 'v.vehicle_type = ' . $vehicleTypeId);
+        // Apply filters
+        if (!empty($vehicleTypeId)) {
+            $builder->where($vehicleTypeId == 3 ? 'v.vehicle_type IN (1, 2)' : 'v.vehicle_type', $vehicleTypeId);
         }
-        if ($vehicleBrandId != '0') {
+
+        if (!empty($vehicleBrandId)) {
             $builder->where('v.cmp_id', $vehicleBrandId);
         }
-        if ($vehicleModelId != '0') {
+
+        if (!empty($vehicleModelId)) {
             $builder->where('v.model_id', $vehicleModelId);
         }
-        if ($vehicleVariantId != '0') {
+
+        if (!empty($vehicleVariantId)) {
             $builder->where('v.variant_id', $vehicleVariantId);
         }
 
-        $builder->groupBy('v.id'); // Group by vehicle ID to avoid duplicate rows
-        $builder->limit($limit, $offset);
+        // Apply filter for promoted vehicles if $isPromoted is true
+        if ($is_promoted) {
+            $builder->having('is_promoted', 1); // Filter promoted vehicles
+        }
 
-        // Conditional sorting: prioritize is_promoted and promotion_end_date, then fallback to v.id descending
+        $builder->groupBy('v.id'); // Ensure unique rows by grouping by vehicle ID
+
+        if (!is_null($limit) && !is_null($offset)) {
+            $builder->limit($limit, $offset);
+        }
+
+        // Sorting: prioritize promoted vehicles, then fallback to ID
         $builder->orderBy('is_promoted', 'DESC');
-        $builder->orderBy('CASE WHEN is_promoted = 1 THEN dp.end_dt ELSE NULL END', 'DESC', false);
+        $builder->orderBy('dp.end_dt', 'DESC', false);
         $builder->orderBy('v.id', 'DESC');
 
-        return $builder->get()->getResultArray();
+        $vehicles = $builder->get()->getResultArray();
+
+        // Total vehicle count
+        $totalVehiclesQuery = $this->db->table('vehicles as v');
+        $totalVehiclesQuery->select('COUNT(*) as total_count');
+        $totalVehiclesQuery->where('v.branch_id', $branchId);
+        $totalVehiclesQuery->where('v.is_admin_approved', '1');
+        $totalVehicles = $totalVehiclesQuery->get()->getRowArray()['total_count'];
+
+        // Promoted vehicle count
+        $promotedVehiclesQuery = $this->db->table('vehicles as v');
+        $promotedVehiclesQuery->select('COUNT(*) as promoted_count');
+        $promotedVehiclesQuery->join(
+            'dealer_promotion as dp',
+            'dp.itemId = v.id AND dp.promotionUnder = "vehicle" AND dp.is_active = 1',
+            'inner'
+        );
+        $promotedVehiclesQuery->where('v.branch_id', $branchId);
+        $promotedVehiclesQuery->where('dp.end_dt >= NOW()');
+        $promotedVehicles = $promotedVehiclesQuery->get()->getRowArray()['promoted_count'];
+
+        return [
+            'data' => $vehicles,
+            'total_vehicles' => $totalVehicles,
+            'promoted_vehicles' => $promotedVehicles,
+        ];
     }
+
 
     public function updateData($id, $data) {
         return $this->update($id, $data);
@@ -205,9 +274,9 @@ class VehicleModel extends Model {
         }
     }
 
-    public function fetchTestDriveData($dealerId = '', $search = '', $columnName = 'created_at', $order = 'desc', $request_id = '') {
+    public function fetchTestDriveData($dealerId = '', $search = '', $columnName = 'created_at', $order = 'desc', $request_id = '', $limit = NULL) {
         $builder = $this->select('test_drive_request.*, b.name as branch_name, 
-        vc.cmp_name, vcm.model_name, vcmv.name as variant_name,
+        vc.cmp_name, vcm.model_name, vcmv.name as variant_name, count(test_drive_request.id) as total_requests,
         DATE_FORMAT(test_drive_request.dateOfVisit, "%d-%m-%Y") as formatted_dateOfVisit,
         DATE_FORMAT(test_drive_request.created_at, "%d-%m-%Y") as formatted_created_at')
             ->from('test_drive_request')
@@ -244,7 +313,49 @@ class VehicleModel extends Model {
         // Group by original columns, not formatted ones
         $builder->groupBy(['test_drive_request.vehicle_id', 'test_drive_request.customer_id', 'test_drive_request.dateOfVisit', 'test_drive_request.timeOfVisit']);
 
-        return $builder;
+        // Execute the query and return the results
+        return $builder->get()->getResultArray();
+    }
+
+    public function fetchTestDriveDataCount($dealerId = '', $search = '', $columnName = 'created_at', $order = 'desc', $request_id = '') {
+        // Build the query
+        $builder = $this->db->table('branches b')
+            ->select('
+                COUNT(tdr.id) AS total_requests,
+                SUM(CASE WHEN tdr.status = "pending" THEN 1 ELSE 0 END) AS pending_requests,
+                SUM(CASE WHEN tdr.status = "accepted" THEN 1 ELSE 0 END) AS accepted_requests,
+                SUM(CASE WHEN tdr.status = "rejected" THEN 1 ELSE 0 END) AS rejected_requests,
+                SUM(CASE WHEN tdr.status = "completed" THEN 1 ELSE 0 END) AS completed_requests,
+                SUM(CASE WHEN tdr.status = "canceled" THEN 1 ELSE 0 END) AS canceled_requests
+            ')
+            ->join('test_drive_request tdr', 'b.id = tdr.branch_id', 'left')
+            ->where('b.is_active', 1); // Ensure the branch is active
+
+        // Filter by dealer ID
+        if (!empty($dealerId)) {
+            $builder->where('b.dealer_id', $dealerId);
+        }
+
+        // Apply search filter
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('tdr.customer_name', $search)
+                ->orLike('tdr.customer_phone', $search)
+                ->orLike('b.name', $search)
+                ->groupEnd();
+        }
+
+        // Filter by request ID
+        if (!empty($request_id)) {
+            $builder->where('tdr.id', $request_id);
+        }
+
+        // Order results by column name and branch name
+        $builder->groupBy('b.dealer_id'); // Group by dealer ID
+        $builder->orderBy('b.name', 'ASC'); // Order by branch name
+
+        // Execute the query and return the results
+        return $builder->get()->getResultArray();
     }
 
     public function update_test_drive_status($updateData) {
@@ -257,5 +368,169 @@ class VehicleModel extends Model {
             'updated_at' => date('Y-m-d H:i:s')
         ]);
         return $this->db->affectedRows() > 0;
+    }
+
+    // Function to get vehicle insights for a specific dealer using query builder
+    public function getVehicleInsights($dealerId) {
+        // Get the branch IDs related to the dealer
+        $builder = $this->db->table('branches');
+        $branches = $builder->select('id')
+            ->where('dealer_id', $dealerId)
+            ->where('is_active', 1) // Ensure active branches
+            ->get()
+            ->getResultArray();
+
+        $branchIds = array_column($branches, 'id');
+
+        // If no active branches, return an empty array
+        if (empty($branchIds)) {
+            return [];
+        }
+
+        // Query for vehicle insights
+        $builder = $this->db->table('vehicles as v');
+
+        $builder->select([
+            // Total vehicles count
+            'COUNT(v.id) AS total_vehicles',
+
+            // Active vehicles count
+            'SUM(CASE WHEN v.is_active = 1 THEN 1 ELSE 0 END) AS total_active_vehicles',
+
+            // Inactive vehicles count
+            'SUM(CASE WHEN v.is_active = 2 THEN 1 ELSE 0 END) AS total_inactive_vehicles',
+
+            // deleted vehicles count
+            'SUM(CASE WHEN v.is_active = 3 THEN 1 ELSE 0 END) AS total_deleted_vehicles',
+
+            // sold vehicles count
+            'SUM(CASE WHEN v.is_active = 4 THEN 1 ELSE 0 END) AS total_sold_vehicles',
+
+            // Vehicles under admin approval count
+            'SUM(CASE WHEN v.is_admin_approved = 0 THEN 1 ELSE 0 END) AS total_under_admin_approval',
+
+            // Branch ID to group the results by branch
+            'v.branch_id'
+        ]);
+
+        // Join with the other necessary tables
+        $builder->join('branches b', 'b.id = v.branch_id AND b.dealer_id = ' . $dealerId . ' AND b.is_active = 1', 'inner')
+            ->join('vehiclecompanies as vc', 'vc.id = v.cmp_id', 'left')
+            ->join('vehiclecompaniesmodels as vcm', 'vcm.id = v.model_id', 'left')
+            ->join('fueltypes as ft', 'v.fuel_type = ft.id', 'left')
+            ->join('vehiclebodytypes as vbt', 'v.body_type = vbt.id', 'left')
+            ->join('transmissions as vt', 'v.transmission_id = vt.id', 'left')
+            ->join('vehiclecompaniesmodelvariants as vcmv', 'vcmv.id = v.variant_id', 'left')
+            ->join('states as st', 'v.registered_state_id = st.id', 'left')
+            ->join('indiarto as rto', 'v.rto = rto.id', 'left')
+            ->join('dealer_promotion as dp', 'dp.itemId = v.id AND dp.promotionUnder = "vehicle" AND dp.is_active = 1', 'left');
+
+        // Filter based on branch IDs
+        $builder->whereIn('v.branch_id', $branchIds);
+
+        // Group by branch_id to get insights per branch
+        $builder->groupBy('v.branch_id');
+
+        // Execute the query and return the results
+        return $builder->get()->getResultArray();
+    }
+
+    public function getPromotedInsight($dealerId) {
+        $builder = $this->db->table('dealer_promotion');
+
+        // Select the promotionUnder and count the occurrences
+        $builder->select('promotionUnder, COUNT(*) as count');
+
+        // Filter based on the current date and dealerId
+        $builder->where('start_dt <=', 'NOW()', false); // Use `false` for raw SQL functions
+        $builder->where('end_dt >=', 'NOW()', false); // Use `false` for raw SQL functions
+        $builder->where('dealerId', $dealerId);
+
+        // Group by promotionUnder to count each promotion type separately
+        $builder->groupBy('promotionUnder');
+
+        // Execute the query and get the result
+        $result = $builder->get()->getResultArray();
+
+        // Initialize variables for counts
+        $promotionUnderVehicle = 0;
+        $promotionUnderShowroom = 0;
+
+        // Loop through the result and assign counts to respective variables
+        foreach ($result as $row) {
+            if ($row['promotionUnder'] == 'vehicle') {
+                $promotionUnderVehicle = $row['count'];
+            } elseif ($row['promotionUnder'] == 'showroom') {
+                $promotionUnderShowroom = $row['count'];
+            }
+        }
+
+        // Return the counts for both promotionUnder types
+        return [
+            'promotionUnderVehicle' => $promotionUnderVehicle,
+            'promotionUnderShowroom' => $promotionUnderShowroom
+        ];
+    }
+
+    /* Test Drive Query - For Chart */
+
+    public function fetchTestDriveDataForChart($dealerId = '', $search = '', $request_id = '') {
+        $builder = $this->select('
+                vcm.model_name AS vehicle_name,
+                test_drive_request.status,
+                COUNT(test_drive_request.id) AS status_count
+            ')
+            ->from('test_drive_request')
+            ->join('vehicles as v', 'test_drive_request.vehicle_id = v.id', 'left')
+            ->join('branches as b', 'test_drive_request.branch_id = b.id', 'left')
+            ->join('vehiclecompaniesmodels as vcm', 'vcm.id = v.model_id', 'left');
+
+        if (!empty($dealerId)) {
+            $builder->where('b.dealer_id', $dealerId);
+        }
+
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('test_drive_request.customer_name', $search)
+                ->orLike('test_drive_request.customer_phone', $search)
+                ->orLike('b.name', $search)
+                ->orLike('vcm.model_name', $search)
+                ->groupEnd();
+        }
+
+        if (!empty($request_id)) {
+            $builder->where('test_drive_request.id', $request_id);
+        }
+
+        // Group by vehicle name and status
+        $builder->groupBy(['vcm.model_name', 'test_drive_request.status']);
+
+        // Execute the query and return the results
+        return $builder->get()->getResultArray();
+    }
+
+    public function getPromotiondetails($vehicleOrBranchID) {
+        $query = $this->db->table('dealer_promotion dp')
+            ->select('dp.*, dp.id as promotionId, dp.itemId, dp.promotionUnder,
+                MAX(dp.start_dt) as start_dt, 
+                MAX(dp.end_dt) as end_dt,
+                pp.promotionName, pp.promotionAmount, pp.promotionDetails, 
+                pp.promotionType, pp.promotionDaysValidity, 
+                tr.orderId, tr.dealerUserId, tr.CustomerUserId, 
+                tr.amount, tr.currency, tr.payment_status, 
+                tr.transactionFor, tr.created_dt AS transaction_created_dt,
+                CASE 
+                    WHEN dp.is_active = 3 THEN "Deleted"
+                    WHEN dp.is_active = 2 THEN "Inactive"
+                    WHEN MAX(dp.end_dt) >= CURDATE() THEN "Active"
+                    ELSE "Expired" 
+                END AS promotion_status')
+            ->join('promotionPlans pp', 'dp.promotionPlanId = pp.id', 'left')
+            ->join('transactionsrazorpay tr', 'dp.transactionsrazorpay_id = tr.id', 'left')
+            ->where('dp.itemId', $vehicleOrBranchID)
+            ->groupBy('dp.itemId')  // Required when using MAX() functions
+            ->get();
+
+        return $query->getResultArray();
     }
 }

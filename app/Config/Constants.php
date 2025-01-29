@@ -224,3 +224,4 @@ define('TEST_DRIVE_SLOTS', [
 ]);
 
 define('WP_DEALER_JWT_TOKEN', 'K2ARaauESDawjYHp98dN5h6mrnpUWkP2KDCj');
+define('WP_ENC_TOKEN', 'GKJHGKJHGWkP2KDCj');

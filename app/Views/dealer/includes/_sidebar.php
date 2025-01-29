@@ -26,7 +26,7 @@
 						</a>
 						<ul class="submenu">
 							<li><a href="<?php echo base_url('dealer/add-vehicle'); ?>" class="<?php echo (current_url() == base_url('dealer/add-vehicle')) ? 'active' : ''; ?>">Add Vehicle</a></li>
-							<li><a href="<?php echo base_url('dealer/list-vehicles'); ?>" class="<?php echo (in_array(service('uri')->getSegment(2), ['list-vehicles', 'single-vehicle-info', 'edit-vehicle', 'promote-vehicle'])) ? 'active' : ''; ?>">List Vehicles</a></li>
+							<li><a href="<?php echo base_url('dealer/list-vehicles'); ?>" class="<?php echo (in_array(service('uri')->getSegment(2), ['list-vehicles', 'single-vehicle-info', 'edit-vehicle', 'promote-vehicle', 'vehicle-promotion-details'])) ? 'active' : ''; ?>">List Vehicles</a></li>
 						</ul>
 
 					</li>
@@ -52,6 +52,12 @@
 					<li class="dropdown">
 						<a href="<?php echo base_url('dealer/test-drive-requests'); ?>" class="dropdown-toggle no-arrow <?php echo (in_array(service('uri')->getSegment(2), ['test-drive-requests'])) ? 'active' : ''; ?>">
 							<span class="micon dw dw-caravan"></span><span class="mtext">Test Drive Request</span>
+						</a>
+					</li>
+
+					<li class="dropdown">
+						<a href="<?php echo base_url('dealer/dealer-branch-reviews'); ?>" class="dropdown-toggle no-arrow">
+							<span class="micon dw dw-edit-1"></span><span class="mtext">Reviews</span>
 						</a>
 					</li>
 

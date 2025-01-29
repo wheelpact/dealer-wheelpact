@@ -5,6 +5,7 @@ namespace App\Controllers\dealer;
 use App\Controllers\BaseController;
 use App\Models\UserModel;
 use App\Models\BranchModel;
+use App\Models\VehicleModel;
 
 /**
  * 
@@ -13,14 +14,22 @@ class Dashboard extends BaseController {
 
 	protected $branchModel;
 	protected $userModel;
+	protected $vehicleModel;
 
 	protected $userSesData;
+	protected $planDetails;
 
 	public function __construct() {
 		$this->branchModel  = new BranchModel();
 		$this->userModel  = new UserModel();
+		$this->vehicleModel = new VehicleModel();
 
+		/* // Retrieve session */
 		$this->userSesData = session()->get();
+
+		/* // Retrieve plan details of logged user */
+		$planDetails = $this->userModel->getPlanDetailsBYId(session()->get('userId'));
+		$this->planDetails = $planDetails[0];
 	}
 
 	public function index() {
@@ -29,15 +38,16 @@ class Dashboard extends BaseController {
 
 		try {
 			$dealerId = session()->get('userId');
+
 			if (is_null($dealerId)) {
-				throw new \Exception("User ID not found in session.");
+				throw new \Exception("Invalid Request.");
 			}
 
 			$data['mainBranchData'] = $this->branchModel->getAllBranchByDealerId($dealerId, '0', '0', '0', '0', '0', '0');
 			if (empty($data['mainBranchData'])) {
 				$data['mainBranch'] = null;
 			} else {
-				$data['mainBranch'] = $data['mainBranchData'][0];
+				$data['mainBranch'] = $data['mainBranchData']['data'];
 			}
 
 			/* check for plan details if details to set allowed vehicle her can list for plan 1 & 2 i.e Free & Basic plan */
@@ -47,6 +57,50 @@ class Dashboard extends BaseController {
 				echo view('dealer/dashboard/updateDealerPlanDetails', $data);
 				exit;
 			}
+
+			/* // total promoted vehicles under showroom & vehicle */
+			$branchVehicleInsights = $this->vehicleModel->getVehicleInsights($dealerId);
+			$data['branchVehicleInsights'] = $branchVehicleInsights[0];
+
+			/* // total active & in-active vehicles */
+			$PromotedInsight = $this->vehicleModel->getPromotedInsight($dealerId);
+			$data['vehiclePromoteCount'] = $PromotedInsight['promotionUnderVehicle'];
+			$data['showroomPromoteCount'] = $PromotedInsight['promotionUnderShowroom'];
+
+			/* // total test drive requests in pending */
+			$testDriveRequestsCount = $this->vehicleModel->fetchTestDriveDataCount($dealerId);
+			$data['testDriveRequestsCount']  = $testDriveRequestsCount[0];
+
+			/*  get promoted vechiles start */
+			// Get branches for the dealer
+			$branches = $this->branchModel->where('dealer_id', $dealerId)->getAllBranchByDealerId($dealerId, NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
+			$promotedVehicles = []; // Initialize an empty array to store promoted vehicles
+
+			foreach ($branches['data'] as $branch) {
+				$branchPromotedVehicles = $this->vehicleModel->getAllVehiclesByBranch($branch['id'], NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
+				if (!empty($branchPromotedVehicles)) {
+					$promotedVehicles = array_merge($promotedVehicles, $branchPromotedVehicles['data']);
+				}
+			}
+			$data['dealerPromotedVehicles'] = $promotedVehicles;
+			/*  get promoted vechiles end */
+
+			/* get promoted showrooms start */
+			$promotedShowrooms = array_filter($branches['data'], function ($record) {
+				return $record['is_promoted'] == 1;
+			});
+
+			$data['dealerPromotedShowrooms'] = $promotedShowrooms;
+			/* get promoted showrooms end */
+
+			/* get all test drive requests */
+			$testDriveRequests = $this->vehicleModel->fetchTestDriveData($dealerId, '', '', 'desc', '', 5);
+					// Sort the array by 'formatted_created_at' in descending order
+			usort($testDriveRequests, function ($a, $b) {
+				return strtotime($b['formatted_created_at']) - strtotime($a['formatted_created_at']);
+			});
+			// Get the last five records (after sorting)
+			$data['testDriveRequests'] = array_slice($testDriveRequests, 0, 5);
 
 			echo view('dealer/dashboard/index', $data);
 		} catch (\Exception $e) {
@@ -101,23 +155,52 @@ class Dashboard extends BaseController {
 		}
 	}
 
-	public function one() {
-		$session = session();
-		$data['session'] = \Config\Services::session();
-		$data['username'] = $session->get('user_name');
-		echo view('dealer/dashboard/index', $data);
-	}
+	public function loadTestDriveChartData() {
+		$data['userData'] = $this->userSesData;
+		$data['planData'] = $this->planDetails;
 
-	public function two() {
-		$session = session();
-		$data['session'] = \Config\Services::session();
-		$data['username'] = $session->get('user_name');
-		echo view('dealer/dashboard/index2', $data);
-	}
-	public function three() {
-		$session = session();
-		$data['session'] = \Config\Services::session();
-		$data['username'] = $session->get('user_name');
-		echo view('dealer/dashboard/index3', $data);
+		$dealerId = $data['userData']['userId'];
+
+		if ($this->request->isAJAX()) {
+			$resultData = $this->vehicleModel->fetchTestDriveData($dealerId, '', '', 'desc', '', '');
+
+			$chartData = [];
+			$statuses = ['pending', 'accepted', 'rejected', 'completed']; // Default statuses
+
+			// Process the data to group by vehicle and status
+			foreach ($resultData as $entry) {
+				$vehicle = $entry['cmp_name'] . ' ' . $entry['model_name'];
+				$status = $entry['status'];
+
+				// Initialize the vehicle's status counts
+				if (!isset($chartData[$vehicle])) {
+					$chartData[$vehicle] = array_fill_keys($statuses, 0);
+				}
+
+				// Increment the status count for the vehicle
+				$chartData[$vehicle][$status]++;
+			}
+
+			// Prepare the data for the chart
+			$vehicles = array_keys($chartData); // Vehicle names for the x-axis
+			$series = [];
+			foreach ($statuses as $status) {
+				$statusData = [];
+				foreach ($vehicles as $vehicle) {
+					$statusData[] = $chartData[$vehicle][$status];
+				}
+				$series[] = [
+					'name' => $status, // Status name
+					'data' => $statusData, // Count of each status per vehicle
+				];
+			}
+
+			return $this->response->setJSON([
+				'vehicles' => $vehicles, // Vehicle names for x-axis
+				'series' => $series,    // Status counts for each vehicle
+			]);
+		}
+
+		throw new \CodeIgniter\Exceptions\PageNotFoundException('Page not found');
 	}
 }

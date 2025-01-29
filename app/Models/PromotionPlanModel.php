@@ -106,4 +106,15 @@ class PromotionPlanModel extends Model {
         $result = $builder->get()->getRowArray();
         return $result;
     }
+
+    public function deletePromotion($promotionId) {
+        $this->db->table('dealer_promotion')
+            ->set(['is_active' => '3'])
+            ->where('id', $promotionId)
+            ->update();
+        if ($this->db->affectedRows() > 0) {
+            return true;
+        }
+        return false;
+    }
 }

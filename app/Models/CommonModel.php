@@ -411,4 +411,5 @@ class CommonModel extends Model {
         $amount = str_replace(',', '', $amount);
         return (float)$amount;
     }
+    
 }

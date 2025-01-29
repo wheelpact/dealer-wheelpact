@@ -12,7 +12,15 @@ class BranchModel extends Model {
     protected $returnType     = 'array';
     protected $allowedFields = ['dealer_id', 'name', 'branch_banner1', 'branch_banner2', 'branch_banner3', 'branch_thumbnail', 'branch_logo', 'branch_type', 'branch_supported_vehicle_type', 'branch_services', 'country_id', 'state_id', 'city_id', 'address', 'contact_number', 'whatsapp_no', 'email', 'short_description', 'branch_map', 'map_latitude', 'map_longitude', 'map_city', 'map_district', 'map_state', 'is_active'];
 
-    public function getAllBranchByDealerId($dealerId, $countryId, $stateId, $cityId, $branchType, $limit, $offset) {
+    public function getAllBranchByDealerId(
+        $dealerId, 
+        $countryId = NULL, 
+        $stateId = NULL, 
+        $cityId = NULL, 
+        $branchType = NULL, 
+        $limit = NULL, 
+        $offset = NULL, 
+        $is_promoted = NULL) {
 
         $builder = $this->db->table('branches as b');
         $builder->select('b.*, s.name as state, c.name as city, 
@@ -36,21 +44,26 @@ class BranchModel extends Model {
 
         // Conditions
         $builder->where('b.dealer_id', $dealerId);
-        //$builder->where('b.is_active', 1);
 
-        if ($countryId !== '0') {
+        // Handle the is_promoted filter
+        if ($is_promoted === '1') {
+            $builder->having('is_promoted', 1);
+        }
+
+        // Apply optional filters if values are provided
+        if ($countryId !== NULL && $countryId !== '0') {
             $builder->where('b.country_id', $countryId);
         }
 
-        if ($stateId !== '0') {
+        if ($stateId !== NULL && $stateId !== '0') {
             $builder->where('b.state_id', $stateId);
         }
 
-        if ($cityId !== '0') {
+        if ($cityId !== NULL && $cityId !== '0') {
             $builder->where('b.city_id', $cityId);
         }
 
-        if ($branchType !== '0') {
+        if ($branchType !== NULL && $branchType !== '0') {
             $builder->where('b.branch_type', $branchType);
         }
 
@@ -61,9 +74,22 @@ class BranchModel extends Model {
         $builder->orderBy('b.id', 'DESC'); // Remaining by ID (descending)
 
         // Pagination
-        $builder->limit($limit, $offset);
+        if ($limit !== NULL && $offset !== NULL) {
+            $builder->limit($limit, $offset);
+        }
 
-        return $builder->get()->getResultArray();
+        // Execute query and get results
+        $result = $builder->get()->getResultArray();
+
+        // Count total branches and promoted branches
+        $totalBranches = count($result);
+        $promotedBranches = array_sum(array_column($result, 'is_promoted'));
+
+        return [
+            'total_showrooms' => $totalBranches,
+            'promoted_showrooms' => $promotedBranches,
+            'data' => $result
+        ];
     }
 
     public function getStoreDetails($showroomId) {

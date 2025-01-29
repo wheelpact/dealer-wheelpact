@@ -20,7 +20,7 @@ echo view('dealer/includes/_sidebar');
                         </nav>
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
-                        <a href="<?php echo base_url('dealer/edit-branch/' . $branchDetails['id']); ?>" class="btn btn-outline-primary btn-md" rel="content-y" role="button">
+                        <a href="<?php echo base_url('dealer/edit-branch/' . $branchDetails['encryptedID']); ?>" class="btn btn-outline-primary btn-md" rel="content-y" role="button">
                             <i class="icon-copy bi bi-list-stars"></i> Edit this Showroom
                         </a>
                         <a href="<?php echo base_url('dealer/list-branches'); ?>" class="btn btn-outline-primary btn-md" rel="content-y" role="button">

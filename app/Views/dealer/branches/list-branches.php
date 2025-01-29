@@ -21,7 +21,7 @@ echo view('dealer/includes/_sidebar');
 					</div>
 					<div class="col-md-6 col-sm-12 text-right">
 						<div class="dropdown">
-							<a class="btn btn-primary" href="<?php echo base_url('dealer/add-branch'); ?>">Add Branch</a>
+							<a class="btn btn-primary" href="<?php echo base_url('dealer/add-branch'); ?>">Add Showroom</a>
 						</div>
 					</div>
 				</div>

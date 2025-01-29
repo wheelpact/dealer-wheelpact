@@ -20,7 +20,7 @@ echo view('dealer/includes/_sidebar');
                         </nav>
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
-                        <a href="<?php echo base_url('dealer/single-branch-info/' . $branchDetails['id']); ?>" class="btn btn-outline-primary btn-md" rel="content-y" role="button">
+                        <a href="<?php echo base_url('dealer/single-branch-info/' . $branchDetails['encryptedID']); ?>" class="btn btn-outline-primary btn-md" rel="content-y" role="button">
                             <i class="icon-copy bi bi-list-stars"></i> View this Branch
                         </a>
                         <a href="<?php echo base_url('dealer/list-branches'); ?>" class="btn btn-outline-primary btn-md" rel="content-y" role="button">
@@ -394,7 +394,7 @@ echo view('dealer/includes/_sidebar');
                     <!-- deliverable images End -->
                 </div>
                 <div class="pull-right">
-                    <input type="hidden" name="branchId" id="branchId" value="<?php echo !empty($branchDetails['id']) ? $branchDetails['id'] : ''; ?>">
+                    <input type="hidden" name="branchId" id="branchId" value="<?php echo !empty($branchDetails['encryptedID']) ? $branchDetails['encryptedID'] : ''; ?>">
                     <button type="submit" class="btn btn-success">Update</button>
                 </div>
                 <?= form_close() ?><br /><br />

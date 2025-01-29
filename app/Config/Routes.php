@@ -50,8 +50,8 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->GET('list-vehicles', 'Vehicles::index', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'add-vehicle', 'Vehicles::add_vehicle', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'save-new-vehicle', 'Vehicles::save_new_vehicle');
-    $routes->match(['GET', 'POST'], 'edit-vehicle/(:num)', 'Vehicles::edit_vehicle/$1', ['filter' => 'auth']);
-    $routes->match(['GET', 'POST'], 'single-vehicle-info/(:num)', 'Vehicles::single_vehicle_info/$1', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'edit-vehicle/(:any)', 'Vehicles::edit_vehicle/$1', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'single-vehicle-info/(:any)', 'Vehicles::single_vehicle_info/$1', ['filter' => 'auth']);
 
     $routes->match(['GET', 'POST'], 'update-vehicle', 'Vehicles::update_vehicle', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'upload-exterior-main-vehicle-images', 'Vehicles::upload_exterior_main_vehicle_images');
@@ -62,11 +62,12 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->match(['GET', 'POST'], 'upload-others-vehicle-images', 'Vehicles::upload_others_vehicle_images');
     $routes->match(['GET', 'POST'], 'deleteVehicle/(:num)', 'Vehicles::delete/$1');
     $routes->match(['GET', 'POST'], 'getbranchvehicles/(:num)/(:num)/(:num)/(:num)', 'Vehicles::getAllVehicles/$1/$2/$3/$4', ['filter' => 'auth']);
-    
+
     $routes->match(['GET', 'POST'], 'test-drive-requests', 'Vehicles::test_drive_view', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'fetch-test-drive-request', 'Vehicles::fetch_test_drive_request', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'update-test-drive-status', 'Vehicles::update_test_drive_status');
     $routes->post('update-vehicle-sold-status', 'Vehicles::updateVehicleSoldStatus');
+    $routes->post('toggleVehicleStatus', 'Vehicles::toggleVehicleStatus');
 
     $routes->match(['GET', 'POST'], 'load_brands', 'Vehicles::load_brands');
     $routes->match(['GET', 'POST'], 'load_models', 'Vehicles::load_models');
@@ -77,12 +78,14 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->GET('list-branches', 'Branches::index', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'add-branch', 'Branches::add_branch', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'save-branch', 'Branches::save_branch', ['filter' => 'auth']);
-    $routes->match(['GET', 'POST'], 'edit-branch/(:num)', 'Branches::edit_branch_details/$1');
+    $routes->match(['GET', 'POST'], 'edit-branch/(:any)', 'Branches::edit_branch_details/$1');
     $routes->match(['GET', 'POST'], 'edit-update-branch-details', 'Branches::edit_update_branch_details');
-    $routes->match(['GET', 'POST'], 'single-branch-info/(:num)', 'Branches::single_branch_info/$1', ['filter' => 'auth']);
-    $routes->match(['GET', 'POST'], 'branch-review/(:num)', 'Branches::load_branch_reviews/$1', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'single-branch-info/(:any)', 'Branches::single_branch_info/$1', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'branch-review/(:any)', 'Branches::load_branch_reviews/$1', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'dealer-branch-reviews', 'Branches::load_dealer_branch_reviews', ['filter' => 'auth']);
 
-    $routes->GET('list-reserved-vehicles', 'Reservation::index', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'load-test-drive-chart-data', 'Dashboard::loadTestDriveChartData');
+
     $routes->match(['GET', 'POST'], 'getReseredVehicles/(:num)/(:num)/(:num)/(:num)', 'Reservation::getReservedVehicles/$1/$2/$3/$4', ['filter' => 'auth']);
 
     $routes->match(['GET', 'POST'], 'load_states', 'Branches::load_states');
@@ -91,9 +94,12 @@ $routes->group('dealer', ['namespace' => 'App\Controllers\Dealer'], function ($r
     $routes->match(['GET', 'POST'], 'deleteBranch/(:num)', 'Branches::delete/$1');
     $routes->match(['GET', 'POST'], 'enable_disable_branch', 'Branches::enable_disable_branch');
 
-    $routes->match(['GET', 'POST'], 'promote-vehicle/(:num)', 'PromotionController::promoteVehicle/$1', ['filter' => 'auth']);
-    $routes->match(['GET', 'POST'], 'promote-showroom/(:num)', 'PromotionController::promoteShowroom/$1', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'promote-vehicle/(:any)', 'PromotionController::promoteVehicle/$1', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'promote-showroom/(:any)', 'PromotionController::promoteShowroom/$1', ['filter' => 'auth']);
     $routes->match(['GET', 'POST'], 'promotionPlanProcess', 'PromotionController::promotionPlanProcess', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'vehicle-promotion-details/(:any)', 'PromotionController::promotionDetails/$1', ['filter' => 'auth']);
+    $routes->match(['GET', 'POST'], 'showroom-promotion-details/(:any)', 'PromotionController::promotionDetails/$1', ['filter' => 'auth']);
+    $routes->post('delete-promotion', 'PromotionController::deletePromotion');
 });
 
 /* Razorpay Routes */

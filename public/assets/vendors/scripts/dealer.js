@@ -432,6 +432,66 @@ $(document).ready(function () {
 		});
 	});
 
+	$(document).on('click', '.enable-disable-vehicle', function (e) {
+		e.preventDefault();
+
+		const vehicleId = $(this).data('vehicle-id');
+		const vehicleFlag = $(this).data('vehicle-flag'); // 1 for Activate, 2 for De-Activate
+		const actionText = vehicleFlag === 1 ? 'Activate' : 'De-Activate';
+
+		Swal.fire({
+			title: `Are you sure you want to ${actionText} this vehicle?`,
+			text: `This action will ${actionText.toLowerCase()} the vehicle.`,
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: `Yes, ${actionText}!`
+		}).then((result) => {
+			if (result.isConfirmed) {
+				$.ajax({
+					url: base_url + 'dealer/toggleVehicleStatus',
+					type: 'POST',
+					data: {
+						vehicle_id: vehicleId,
+						vehicle_flag: vehicleFlag
+					},
+					dataType: 'json',
+					success: function (response) {
+						if (response.status === 'success') {
+							showSuccessAlert(response.message);
+
+							// Update the button text and data-vehicle-flag dynamically
+							const $button = $(`.enable-disable-vehicle[data-vehicle-id="${vehicleId}"]`);
+							const $statusBadge = $(`.card-status-badge[data-vehicle-id="${vehicleId}"] span`);
+
+							if (vehicleFlag === 1) {
+								// Update to De-Activate button and badge to Active
+								$button.text('De-Activate').data('vehicle-flag', 2);
+								$statusBadge
+									.removeClass('badge-warning')
+									.addClass('badge-success')
+									.text('Active');
+							} else {
+								// Update to Activate button and badge to Inactive
+								$button.text('Activate').data('vehicle-flag', 1);
+								$statusBadge
+									.removeClass('badge-success')
+									.addClass('badge-warning')
+									.text('Inactive');
+							}
+						} else {
+							showErrorAlert(response.message);
+						}
+					},
+					error: function () {
+						showErrorAlert('Error occurred, please try again later.');
+					}
+				});
+			}
+		});
+	});
+
 	$(document).on('click', '.delete-vehicle', function (e) {
 		e.preventDefault();
 		var vehicleId = $(this).data('vehicle-id');
@@ -1322,6 +1382,14 @@ $(document).ready(function () {
 			success: function (response) {
 				Swal.close();
 				if (response.status === "success") {
+
+					if (typeof response.promotionType !== 'undefined' && response.promotionType !== null && response.promotionType === 'free') {
+						showSuccessAlert(response.message);
+						setTimeout(function () {
+							window.location.href = window.location.origin;
+						}, 4000);
+					}
+
 					$('.promotionPayBtnScript').append(response.paymentForm);
 
 					/* hide the promote button */

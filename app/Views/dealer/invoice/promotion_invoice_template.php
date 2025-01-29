@@ -193,12 +193,12 @@
                     </tr>
 
                     <tr class="item">
-                        <?php if ($promtionData['promotionUnder'] == 'vehicle') { ?>
+                        <?php if ($promotionData['promotionUnder'] == 'vehicle') { ?>
                             <td>Promoted Vehicle</td>
                             <td>
                                 <?php echo $itemDetails['cmp_name'] . ' ' . $itemDetails['cmp_model_name'] . ' ' . $itemDetails['variantName']; ?>
                             </td>
-                        <?php } elseif ($promtionData['promotionUnder'] == 'showroom') { ?>
+                        <?php } elseif ($promotionData['promotionUnder'] == 'showroom') { ?>
                             <td>Promoted Showroom</td>
                             <td>
                                 <?php echo $itemDetails['branchName']; ?>
@@ -209,14 +209,14 @@
                     <tr class="item">
                         <td>Promoted Date</td>
                         <td>
-                            <?php echo date('d/m/Y', strtotime($promtionData['start_dt'])); ?>
+                            <?php echo date('d/m/Y', strtotime($promotionData['start_dt'])); ?>
                         </td>
                     </tr>
 
                     <tr class="item">
                         <td>Promtion Valid Till:</td>
                         <td>
-                            <?php echo date('d/m/Y', strtotime($promtionData['end_dt'])); ?>
+                            <?php echo date('d/m/Y', strtotime($promotionData['end_dt'])); ?>
                         </td>
                     </tr>
 
