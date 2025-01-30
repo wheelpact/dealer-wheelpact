@@ -187,6 +187,8 @@ class VehicleModel extends Model {
         $promotedVehiclesQuery->where('dp.end_dt >= NOW()');
         $promotedVehicles = $promotedVehiclesQuery->get()->getRowArray()['promoted_count'];
 
+       
+
         return [
             'data' => $vehicles,
             'total_vehicles' => $totalVehicles,

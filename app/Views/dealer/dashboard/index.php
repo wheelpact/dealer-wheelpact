@@ -49,12 +49,12 @@
 							<h5 class="text-blue mb-4">Total Vehicles Listed</h5>
 							<div class="row">
 								<div class="col-md-6">
-									<h3 class="mb-2"><?php echo $branchVehicleInsights['total_active_vehicles'] ?></h3>
+									<h3 class="mb-2"><?php echo isset($branchVehicleInsights['total_active_vehicles']) ? $branchVehicleInsights['total_active_vehicles'] : '0'; ?></h3>
 									<p class="mb-0">Active Vehicles</p>
 								</div>
 
 								<div class="col-md-6">
-									<h3 class="mb-2"><?php echo $branchVehicleInsights['total_inactive_vehicles'] ?></h3>
+									<h3 class="mb-2"><?php echo isset($branchVehicleInsights['total_inactive_vehicles']) ? $branchVehicleInsights['total_inactive_vehicles'] : '0'; ?></h3>
 									<p class="mb-0">Inactive Vehicles</p>
 								</div>
 							</div>
@@ -69,12 +69,12 @@
 							<h5 class="text-blue mb-4">Active Promotions</h5>
 							<div class="row">
 								<div class="col-md-6">
-									<h3 class="mb-2"><?php echo isset($vehiclePromoteCount) ? $vehiclePromoteCount : 'N/A'; ?></h3>
+									<h3 class="mb-2"><?php echo isset($vehiclePromoteCount) ? $vehiclePromoteCount : '0'; ?></h3>
 									<p class="mb-0">Vehicle Promotions</p>
 								</div>
 
 								<div class="col-md-6">
-									<h3 class="mb-2"><?php echo isset($showroomPromoteCount) ? $showroomPromoteCount : 'N/A'; ?></h3>
+									<h3 class="mb-2"><?php echo isset($showroomPromoteCount) ? $showroomPromoteCount : '0'; ?></h3>
 									<p class="mb-0">Showroom Promotions</p>
 								</div>
 							</div>
@@ -89,7 +89,7 @@
 							<h5 class="text-blue mb-4">Pending Test Drive Request</h5>
 							<div class="row">
 								<div class="col-md-12">
-									<h3 class="mb-2"><?php echo isset($testDriveRequestsCount['pending_requests']) ? $testDriveRequestsCount['pending_requests']  : 'N/A'; ?></h3>
+									<h3 class="mb-2"><?php echo isset($testDriveRequestsCount['pending_requests']) ? $testDriveRequestsCount['pending_requests']  : '0'; ?></h3>
 									<p class="mb-0">Test Drive Requests in Pending</p>
 								</div>
 							</div>
@@ -297,26 +297,27 @@
 			<!-- Promoted showrooms section end-->
 
 			<!-- recent test drive requests table section start-->
-			<div class="pd-20 card-box mb-30">
-				<div class="clearfix mb-20">
-					<h2 class="h4 pd-20">Recent Test Drive Requests</h2>
-					<table class="table table-bordered">
-						<thead>
-							<tr>
-								<th scope="col">#</th>
-								<th scope="col">Customer Name</th>
-								<th scope="col">Branch Name</th>
-								<th scope="col">Vehicle Model</th>
-								<th scope="col">Date of Visit</th>
-								<th scope="col">Time of Visit</th>
-								<th scope="col">Status</th>
-								<th scope="col">License File</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
-							foreach ($testDriveRequests as $key => $data) {
-								echo "<tr>
+			<?php if (isset($testDriveRequests) && count($testDriveRequests) > 0): ?>
+				<div class="pd-20 card-box mb-30">
+					<div class="clearfix mb-20">
+						<h2 class="h4 pd-20">Recent Test Drive Requests</h2>
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th scope="col">#</th>
+									<th scope="col">Customer Name</th>
+									<th scope="col">Branch Name</th>
+									<th scope="col">Vehicle Model</th>
+									<th scope="col">Date of Visit</th>
+									<th scope="col">Time of Visit</th>
+									<th scope="col">Status</th>
+									<th scope="col">License File</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								foreach ($testDriveRequests as $key => $data) {
+									echo "<tr>
 								<th scope='row'>" . ($key + 1) . "</th>
 								<td>" . htmlspecialchars($data['customer_name']) . "</td>
 								<td>" . htmlspecialchars($data['branch_name']) . "</td>
@@ -326,12 +327,13 @@
 								<td>" . htmlspecialchars($data['status']) . "</td>
 								<td><a href='" . WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . "test_drive_data/license/" . $data['license_file_path'] . "' target='_blank'>View License</a></td>
 							</tr>";
-							}
-							?>
-						</tbody>
-					</table>
+								}
+								?>
+							</tbody>
+						</table>
+					</div>
 				</div>
-			</div>
+			<?php endif ?>
 			<!-- recent test drive requests table section end-->
 
 			<!-- footer -->

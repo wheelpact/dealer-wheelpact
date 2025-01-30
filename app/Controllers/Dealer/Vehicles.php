@@ -64,7 +64,7 @@ class Vehicles extends BaseController {
 		foreach ($branches as $branch) {
 
 			$vehicles = $this->vehicleModel->getAllVehiclesByBranch($branch['id'], $limit, $offset, $vehicleTypeId, $vehicleBrandId, $vehicleModelId, $vehicleVariantId);
-			//echo '<pre>'; print_r($vehicles); exit();
+
 			foreach ($vehicles['data'] as $vehicle) {
 				$dealerVehiclesHtml .= '
 				<div class="col-md-6 col-lg-4 vehicle-card-' . $vehicle['id'] . '">

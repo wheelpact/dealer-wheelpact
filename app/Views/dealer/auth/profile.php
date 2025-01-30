@@ -289,7 +289,7 @@ echo view('dealer/includes/_sidebar');
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Plan Valid till</th>
-                                                            <td scope="row"><?php echo $planData['end_dt'] ?></td>
+                                                            <td scope="row"><?php echo date('d-m-y', strtotime($planData['end_dt'])); ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Allowed Vehicle Listing</th>

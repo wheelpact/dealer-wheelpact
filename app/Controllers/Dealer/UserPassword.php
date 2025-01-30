@@ -32,8 +32,9 @@ class UserPassword extends BaseController {
 
 		$dealerDetails = $this->userModel->getDealerDetailsById($dealerId);
 		$planDetails = $this->userModel->getPlanDetailsBYId($dealerId);
-		$getDealerPromotedDetails = $this->userModel->getDealerPromotedDetails($dealerId);
 
+		//echo $this->userModel->db->getLastQuery(); exit;
+		$getDealerPromotedDetails = $this->userModel->getDealerPromotedDetails($dealerId);
 		if ($dealerDetails) {
 			$data['countryList'] = $this->commonModel->get_all_country_data();
 		} else {
@@ -142,7 +143,7 @@ class UserPassword extends BaseController {
 			$formattedDOB = (new \DateTime($this->request->getPost('date_of_birth')))->format('Y-m-d');
 			$formData = [
 				'name' => $this->request->getPost('dealerName'),
-				'whatsapp_no' => $this->request->getPost('whatsapp_no'),				
+				'whatsapp_no' => $this->request->getPost('whatsapp_no'),
 				'gender' => $this->request->getPost('gender'),
 				'date_of_birth' => $formattedDOB,
 				'addr_residential' => $this->request->getPost('addr_residential'),

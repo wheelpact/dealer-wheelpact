@@ -35,6 +35,7 @@ class Dashboard extends BaseController {
 	public function index() {
 
 		$data['userData'] = $this->userSesData;
+		$data['planData'] = $this->planDetails;
 
 		try {
 			$dealerId = session()->get('userId');
@@ -50,39 +51,35 @@ class Dashboard extends BaseController {
 				$data['mainBranch'] = $data['mainBranchData']['data'];
 			}
 
-			/* check for plan details if details to set allowed vehicle her can list for plan 1 & 2 i.e Free & Basic plan */
-			$planDetails = $this->userModel->getPlanDetailsBYId($dealerId);
-			$data['planData'] = $planDetails[0];
-			if ($data['planData']['allowedVehicleListing'] == "0" && ($data['planData']['activePlan'] == '1' || $data['planData']['activePlan'] == '2')) {
-				echo view('dealer/dashboard/updateDealerPlanDetails', $data);
-				exit;
-			}
-
 			/* // total promoted vehicles under showroom & vehicle */
 			$branchVehicleInsights = $this->vehicleModel->getVehicleInsights($dealerId);
-			$data['branchVehicleInsights'] = $branchVehicleInsights[0];
+			$data['branchVehicleInsights'] = !empty($branchVehicleInsights) ? $branchVehicleInsights[0] : '0';
 
 			/* // total active & in-active vehicles */
 			$PromotedInsight = $this->vehicleModel->getPromotedInsight($dealerId);
-			$data['vehiclePromoteCount'] = $PromotedInsight['promotionUnderVehicle'];
-			$data['showroomPromoteCount'] = $PromotedInsight['promotionUnderShowroom'];
+			$data['vehiclePromoteCount'] = !empty($PromotedInsight['promotionUnderVehicle']) ? $PromotedInsight['promotionUnderVehicle'] : '0';
+			$data['showroomPromoteCount'] = !empty($PromotedInsight['promotionUnderShowroom']) ? $PromotedInsight['promotionUnderShowroom'] : '0';
 
 			/* // total test drive requests in pending */
 			$testDriveRequestsCount = $this->vehicleModel->fetchTestDriveDataCount($dealerId);
-			$data['testDriveRequestsCount']  = $testDriveRequestsCount[0];
+			$data['testDriveRequestsCount']  = !empty($testDriveRequestsCount) ? $testDriveRequestsCount[0] : '0';
 
 			/*  get promoted vechiles start */
 			// Get branches for the dealer
 			$branches = $this->branchModel->where('dealer_id', $dealerId)->getAllBranchByDealerId($dealerId, NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
-			$promotedVehicles = []; // Initialize an empty array to store promoted vehicles
+			$promotedVehicles = [];
 
 			foreach ($branches['data'] as $branch) {
 				$branchPromotedVehicles = $this->vehicleModel->getAllVehiclesByBranch($branch['id'], NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
+
 				if (!empty($branchPromotedVehicles)) {
 					$promotedVehicles = array_merge($promotedVehicles, $branchPromotedVehicles['data']);
 				}
 			}
-			$data['dealerPromotedVehicles'] = $promotedVehicles;
+
+			// Remove duplicates by vehicle ID
+			$promotedVehicles = array_values(array_unique($promotedVehicles, SORT_REGULAR));
+			$data['dealerPromotedVehicles'] = !empty($promotedVehicles) ? $promotedVehicles : '0';
 			/*  get promoted vechiles end */
 
 			/* get promoted showrooms start */
@@ -90,12 +87,12 @@ class Dashboard extends BaseController {
 				return $record['is_promoted'] == 1;
 			});
 
-			$data['dealerPromotedShowrooms'] = $promotedShowrooms;
+			$data['dealerPromotedShowrooms'] = !empty($promotedShowrooms) ? $promotedShowrooms : '0';
 			/* get promoted showrooms end */
 
 			/* get all test drive requests */
 			$testDriveRequests = $this->vehicleModel->fetchTestDriveData($dealerId, '', '', 'desc', '', 5);
-					// Sort the array by 'formatted_created_at' in descending order
+			// Sort the array by 'formatted_created_at' in descending order
 			usort($testDriveRequests, function ($a, $b) {
 				return strtotime($b['formatted_created_at']) - strtotime($a['formatted_created_at']);
 			});

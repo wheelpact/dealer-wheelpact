@@ -69,10 +69,45 @@ class UserModel extends Model {
 
     public function getPlanDetailsBYId($dealerId) {
         $builder = $this->db->table('transactionsrazorpay as trp');
-        $builder->select('trp.id as transactionId, trp.planId as activePlan, trp.orderId, trp. dealerUserId, trp.amount, trp.currency, trp.receipt, trp.orderNotes, trp.payment_status, trp.razorpay_payment_id, trp.razorpay_order_id, trp.razorpay_signature, ds.vehicle_type as allowedVehicleListing, ds.start_dt, ds.end_dt, ds.type, pl.planName, pl.planDesc, pl.monthly_price, pl.vehicle_type as planVehicleType, pl.max_vehicle_listing_per_month, pl.free_inventory_promotions, pl.free_showroom_promotions,pl.max_showroom_branches');
+
+        // Select the required fields
+        $builder->select('
+            trp.id as transactionId,
+            trp.planId as activePlan,
+            trp.orderId,
+            trp.dealerUserId,
+            trp.amount,
+            trp.currency,
+            trp.receipt,
+            trp.orderNotes,
+            trp.payment_status,
+            trp.razorpay_payment_id,
+            trp.razorpay_order_id,
+            trp.razorpay_signature,
+            ds.vehicle_type as allowedVehicleListing,
+            ds.start_dt,
+            ds.end_dt,
+            ds.type,
+            pl.planName,
+            pl.planDesc,
+            pl.monthly_price,
+            pl.vehicle_type as planVehicleType,
+            pl.max_vehicle_listing_per_month,
+            pl.free_inventory_promotions,
+            pl.free_showroom_promotions,
+            pl.max_showroom_branches
+        ');
+
+        // Perform the joins
         $builder->join('plans as pl', 'pl.id = trp.planId', 'left');
-        $builder->join('dealer_subscription as ds', ' ds.transactionsrazorpay_id = trp.id', 'left');
+        $builder->join('dealer_subscription as ds', 'ds.transactionsrazorpay_id = trp.id', 'left');
+
+        // Add the where condition for dealer user id
         $builder->where('trp.dealerUserId', $dealerId);
+        $builder->where('ds.is_active', 1);
+        $builder->where('ds.end_dt >=', date('Y-m-d H:i:s')); // Current date check
+
+        // Execute the query and return the result
         $result = $builder->get()->getResultArray();
         return $result;
     }
