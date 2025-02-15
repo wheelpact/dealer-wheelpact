@@ -703,13 +703,18 @@ class Branches extends BaseController {
 								<a class="view-reviews-link" href="#" data-branch-id="' . encryptData($branch['id']) . '">(' . $branch['branch_review_count'] . ' Reviews)</a>
 							</div>
 							</div>';
-			if ($branch['is_active'] == 2) {
-				$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-secondary mt-3 btn-block disabled" aria-disabled="true">Branch Disabled</a>';
-			} else if ($branch['is_promoted'] == 1) {
-				$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-success mt-3 btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($branch['promotion_end_date'])) . '</a>';
-				$dealerBranchHtml .= '<a href="' . base_url() . 'dealer/showroom-promotion-details/' . encryptData($branch['id']) . '" target="_blank" class="btn btn-info btn-block">Promotion Details</a>';
+
+			if ($branch['is_admin_approved'] == '1') {
+				if ($branch['is_active'] == 2) {
+					$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-secondary mt-3 btn-block disabled" aria-disabled="true">Branch Disabled</a>';
+				} else if ($branch['is_promoted'] == 1) {
+					$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-success mt-3 btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($branch['promotion_end_date'])) . '</a>';
+					$dealerBranchHtml .= '<a href="' . base_url() . 'dealer/showroom-promotion-details/' . encryptData($branch['id']) . '" target="_blank" class="btn btn-info btn-block">Promotion Details</a>';
+				} else {
+					$dealerBranchHtml .= '<a href="' . base_url() . 'dealer/promote-showroom/' . encryptData($branch['id']) . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
+				}
 			} else {
-				$dealerBranchHtml .= '<a href="' . base_url() . 'dealer/promote-showroom/' . encryptData($branch['id']) . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
+				$dealerBranchHtml .= '<a href="javascript:void(0);" class="btn btn-info mt-3 btn-block" aria-disabled="true">Under Admin Approval</a>';
 			}
 
 			$dealerBranchHtml .= '<div class="option-btn">

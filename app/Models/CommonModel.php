@@ -50,7 +50,8 @@ class CommonModel extends Model {
     }
 
     public function get_all_country_data() {
-        $query = $this->db->query('select * from countries order by name asc');
+        /* India id in table =  101*/
+        $query = $this->db->query('select * from countries where id="101" order by name asc');
         return $query->getResultArray();
     }
 

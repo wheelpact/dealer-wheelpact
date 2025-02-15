@@ -245,12 +245,19 @@ $(document).ready(function () {
 	$(".custom-select.onsale_status").change(function () {
 		var onsaleStatusSelected = $(this).val();
 		if (onsaleStatusSelected == 1) {
+
+			$("#onsale_percentage_div").css("display", "block");
+			$("#onsale_percentage").addClass("formInput");		
+
 			$(".onsale_percentage_div").html('<div class="form-group">' +
 				'<label>On Sale Percentage<span class="required">*</span></label>' +
 				'<input type="text" maxlength="2" class="form-control formInput numbersOnlyCheck" name="onsale_percentage" id="onsale_percentage" placeholder="%">' +
 				'</div>');
 			$(".onsale_percentage_div").addClass("col-md-6 col-lg-3");
 		} else if (onsaleStatusSelected == 2) {
+			$("#onsale_percentage_div").css("display", "none");
+			$("#onsale_percentage").removeClass("formInput");
+
 			$(".onsale_percentage_div").html('');
 			$(".onsale_percentage_div").removeClass("col-md-6 col-lg-3");
 		}
@@ -377,6 +384,7 @@ $(document).ready(function () {
 			success: function (response) {
 				$("#vehicleFeaturesWrapper").html(response.vehicle_form_feilds);
 				$("#vehicleExteriorImagesWrapper").html(response.vehicle_image_fields);
+				/*//$("#add-vehicle-images-interior, #add-vehicle-images-others").removeClass("disabled");*/
 			}
 		});
 		/* Toggle display of tabs based on vehicle type seclection */
@@ -439,6 +447,7 @@ $(document).ready(function () {
 		const vehicleFlag = $(this).data('vehicle-flag'); // 1 for Activate, 2 for De-Activate
 		const actionText = vehicleFlag === 1 ? 'Activate' : 'De-Activate';
 
+
 		Swal.fire({
 			title: `Are you sure you want to ${actionText} this vehicle?`,
 			text: `This action will ${actionText.toLowerCase()} the vehicle.`,
@@ -460,10 +469,9 @@ $(document).ready(function () {
 					success: function (response) {
 						if (response.status === 'success') {
 							showSuccessAlert(response.message);
-
 							// Update the button text and data-vehicle-flag dynamically
-							const $button = $(`.enable-disable-vehicle[data-vehicle-id="${vehicleId}"]`);
-							const $statusBadge = $(`.card-status-badge[data-vehicle-id="${vehicleId}"] span`);
+							const $button = $('.enable-disable-vehicle[data-vehicle-id=' + vehicleId + ']');
+							const $statusBadge = $('.card-status-badge[data-vehicle-id=' + vehicleId + '] span');
 
 							if (vehicleFlag === 1) {
 								// Update to De-Activate button and badge to Active
@@ -480,6 +488,7 @@ $(document).ready(function () {
 									.addClass('badge-warning')
 									.text('Inactive');
 							}
+
 						} else {
 							showErrorAlert(response.message);
 						}
@@ -1321,7 +1330,7 @@ $(document).ready(function () {
 	});
 	/* review modal end */
 
-	/* promtion page */
+	/* promotion page */
 	$(".getPaymentmentAmt").click(function () {
 		var PlanChecked = $("input[name='promotion-amount-radio']:checked").val();
 		$('#promotionPlanValue').text(PlanChecked);
@@ -1386,8 +1395,9 @@ $(document).ready(function () {
 					if (typeof response.promotionType !== 'undefined' && response.promotionType !== null && response.promotionType === 'free') {
 						showSuccessAlert(response.message);
 						setTimeout(function () {
-							window.location.href = window.location.origin;
-						}, 4000);
+							//window.location.href = window.location.origin;
+							window.location.href = base_url + response.redirectURL;
+						}, 6000);
 					}
 
 					$('.promotionPayBtnScript').append(response.paymentForm);
@@ -1450,7 +1460,6 @@ $(document).ready(function () {
 	});
 
 });
-
 
 /*// check vehicle images fields empty or not loaded */
 function validateVehicleImagesFields(formId) {

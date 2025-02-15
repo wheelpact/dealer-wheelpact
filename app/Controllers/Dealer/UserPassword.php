@@ -32,8 +32,6 @@ class UserPassword extends BaseController {
 
 		$dealerDetails = $this->userModel->getDealerDetailsById($dealerId);
 		$planDetails = $this->userModel->getPlanDetailsBYId($dealerId);
-
-		//echo $this->userModel->db->getLastQuery(); exit;
 		$getDealerPromotedDetails = $this->userModel->getDealerPromotedDetails($dealerId);
 		if ($dealerDetails) {
 			$data['countryList'] = $this->commonModel->get_all_country_data();

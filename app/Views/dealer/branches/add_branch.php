@@ -32,13 +32,12 @@ echo view('dealer/includes/_sidebar');
                         <div class="col-md-12 col-sm-12 mb-30">
                             <div class="pd-20 card-box">
                                 <h4 class="mb-30 h4">
-                                    You have reached your branch limit (<?php echo $maxBranchesAllowed; ?>). <a href="<?php echo base_url('dealer/profile#plan-details'); ?>">Upgrade your plan</a> to add more branch.
+                                    You have reached your showroom limit (<?php echo $maxBranchesAllowed; ?>). <a href="<?php echo base_url('dealer/profile#plan-details'); ?>">Upgrade your plan</a> to add more branch.
                                 </h4>
                             </div>
                         </div>
                     </div>
                 <?php } else { ?>
-
                     <?= form_open('dealer/save-branch', ['id' => 'save_branch_form', 'method' => 'POST', 'enctype' => 'multipart/form-data']); ?>
                     <?= csrf_field(); ?>
                     <div class="clearfix">

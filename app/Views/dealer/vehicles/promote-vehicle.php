@@ -46,27 +46,22 @@ echo view('dealer/includes/_sidebar');
 					</div>
 
 					<!-- Promotion Plans Section -->
-					<?php if (isset($promotionPlans) && !empty($promotionPlans)) : ?>
-						<?php
-						$first = true; // To mark the first item for default selection
-						foreach ($promotionPlans as $plan) :
-							// Hide free promotion plan if the user exceeds the free inventory limit
-							$hidePlan = ($vehiclePromoteCount >= $planData['free_inventory_promotions'] && $plan['id'] === '1') ? 'd-none' : '';
-							$isFreePlan = ($plan['id'] === '1'); // Check if the current plan is the free plan
+					<?php
+					$first = true;
+					if (isset($promotionPlans) && !empty($promotionPlans)) : ?>
+						<?php foreach ($promotionPlans as $plan) :
+							// Hide the free plan if the remaining showroom promotions are exhausted
+							$hidePlan = ($remainingVehiclePromotions <= 0 && $plan['id'] === '1') ? 'd-none' : '';
+							$isFreePlan = ($plan['id'] === '1'); // Check if this is the free plan
 						?>
-							<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative <?= esc($hidePlan); ?>" id="promotionPlan<?= esc($plan['id']); ?>">
-								<!-- Plan Name -->
+							<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative <?= esc($hidePlan); ?>">
 								<h4 class="text-blue h4"><?= esc($plan['promotionName']); ?></h4>
-
-								<!-- Free Promotion Details -->
 								<?php if ($isFreePlan) : ?>
 									<p class="text-muted">
-										You have used <strong><?= esc($vehiclePromoteCount); ?></strong> out of
-										<strong><?= esc($planData['free_inventory_promotions']); ?></strong> free promotions.
+										Free promotions left: <strong><?= esc($remainingVehiclePromotions); ?></strong>
 									</p>
 								<?php endif; ?>
 
-								<!-- Radio Input for Selecting Plan -->
 								<div class="custom-control custom-radio mb-5">
 									<input
 										type="radio"
@@ -77,23 +72,22 @@ echo view('dealer/includes/_sidebar');
 										name="promotion-amount-radio"
 										class="custom-control-input getPaymentmentAmt"
 										value="<?= esc($plan['promotionAmount']); ?>"
-										<?= $first ? 'checked' : '' ?>>
+										<?= $first ? 'checked' : ''; ?>>
 									<label class="custom-control-label" for="promotionCustomRadio<?= esc($plan['id']); ?>">
 										Promotion Validity for <?= esc($plan['promotionDaysValidity']); ?> Days
 									</label>
 								</div>
 
-								<!-- Promotion Plan Price -->
 								<div class="promotion-plan-price">
 									<h4>₹<?= esc($plan['promotionAmount']); ?></h4>
 								</div>
 							</div>
 						<?php
-							$first = false; // Reset the first flag after rendering the first plan
-						endforeach;
-						?>
+							if ($hidePlan === '') { // Ensure the first valid plan is selected
+								$first = false;
+							}
+						endforeach; ?>
 					<?php endif; ?>
-
 				</div>
 
 				<div class="col-md-4">
@@ -136,7 +130,6 @@ echo view('dealer/includes/_sidebar');
 					</div>
 				</div>
 			</div>
-
 		</div>
 		<!-- footer -->
 		<?php echo view('dealer/includes/_footer'); ?>

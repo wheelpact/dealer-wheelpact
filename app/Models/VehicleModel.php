@@ -106,6 +106,7 @@ class VehicleModel extends Model {
         v.thumbnail_url, 
         v.manufacture_year, 
         v.is_active, 
+        v.is_admin_approved,
         dp.promotionUnder,
         CASE WHEN NOW() BETWEEN dp.start_dt AND dp.end_dt THEN 1 ELSE 0 END as is_promoted, 
         dp.start_dt as promotion_start_date,
@@ -131,7 +132,7 @@ class VehicleModel extends Model {
         );
 
         $builder->where('v.branch_id', $branchId);
-        $builder->where('v.is_admin_approved', '1');
+        /* $builder->where('v.is_admin_approved', '1'); */
 
         // Apply filters
         if (!empty($vehicleTypeId)) {
@@ -162,9 +163,9 @@ class VehicleModel extends Model {
         }
 
         // Sorting: prioritize promoted vehicles, then fallback to ID
-        $builder->orderBy('is_promoted', 'DESC');
+        $builder->orderBy('is_promoted, v.created_datetime, v.id', 'DESC');
+        $builder->orderBy('v.is_active');
         $builder->orderBy('dp.end_dt', 'DESC', false);
-        $builder->orderBy('v.id', 'DESC');
 
         $vehicles = $builder->get()->getResultArray();
 
@@ -187,15 +188,12 @@ class VehicleModel extends Model {
         $promotedVehiclesQuery->where('dp.end_dt >= NOW()');
         $promotedVehicles = $promotedVehiclesQuery->get()->getRowArray()['promoted_count'];
 
-       
-
         return [
             'data' => $vehicles,
             'total_vehicles' => $totalVehicles,
             'promoted_vehicles' => $promotedVehicles,
         ];
     }
-
 
     public function updateData($id, $data) {
         return $this->update($id, $data);

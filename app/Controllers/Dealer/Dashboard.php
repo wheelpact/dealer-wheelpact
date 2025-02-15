@@ -27,15 +27,21 @@ class Dashboard extends BaseController {
 		/* // Retrieve session */
 		$this->userSesData = session()->get();
 
-		/* // Retrieve plan details of logged user */
+		// /* // Retrieve plan details of logged user */
 		$planDetails = $this->userModel->getPlanDetailsBYId(session()->get('userId'));
-		$this->planDetails = $planDetails[0];
+		//echo '<pre>'; print_r($planDetails); die;
+		// Assign plan details if found, otherwise set to null
+		$this->planDetails = !empty($planDetails) ? $planDetails[0] : null;
+		
 	}
 
 	public function index() {
 
 		$data['userData'] = $this->userSesData;
-		$data['planData'] = $this->planDetails;
+		// Handle plan details
+		if (!empty($this->planDetails)) {
+			$data['planData'] = $this->planDetails;
+		}
 
 		try {
 			$dealerId = session()->get('userId');
@@ -79,7 +85,8 @@ class Dashboard extends BaseController {
 
 			// Remove duplicates by vehicle ID
 			$promotedVehicles = array_values(array_unique($promotedVehicles, SORT_REGULAR));
-			$data['dealerPromotedVehicles'] = !empty($promotedVehicles) ? $promotedVehicles : '0';
+			$data['dealerPromotedVehicles'] = !empty($promotedVehicles) ? $promotedVehicles : array();
+			//echo "<pre>"; print_r($data['dealerPromotedVehicles']); die;
 			/*  get promoted vechiles end */
 
 			/* get promoted showrooms start */
@@ -87,7 +94,7 @@ class Dashboard extends BaseController {
 				return $record['is_promoted'] == 1;
 			});
 
-			$data['dealerPromotedShowrooms'] = !empty($promotedShowrooms) ? $promotedShowrooms : '0';
+			$data['dealerPromotedShowrooms'] = !empty($promotedShowrooms) ? $promotedShowrooms : array();
 			/* get promoted showrooms end */
 
 			/* get all test drive requests */

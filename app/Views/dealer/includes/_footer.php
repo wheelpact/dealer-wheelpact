@@ -1,5 +1,5 @@
 <div class="footer-wrap pd-20 mb-20 card-box">
-    Copyright @2024 - All Rights Reserved by WheelPact | Product by <a href="https://www.parastoneglobal.com" target="_blank">Parastone Global</a>
+    Copyright @<?php echo date('Y'); ?> - All Rights Reserved by WheelPact | Product by <a href="https://www.parastoneglobal.com" target="_blank">Parastone Global</a>
 </div>
 <!-- js -->
 <script>

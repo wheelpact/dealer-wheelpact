@@ -80,7 +80,6 @@ class Login extends BaseController {
 			$password = $this->request->getPost('password');
 		}
 
-
 		try {
 			// Attempt to retrieve user data
 			$data = $model->chkUserCredentials($username, $password);
@@ -132,7 +131,6 @@ class Login extends BaseController {
 			return redirect()->to('./dealer/login');
 		}
 	}
-
 
 	private function logLoginAttempt() {
 		$UserModel = new \App\Models\UserModel();

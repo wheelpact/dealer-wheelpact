@@ -18,7 +18,7 @@
 				</li>
 				<?php
 				/* check if the user has is allowed to add vehicles, the dealer_subscription table column vehicle_type should not be 0 or null*/
-				if ($planData['allowedVehicleListing'] != "0") {
+				//if ($planData['allowedVehicleListing'] != "0") {
 				?>
 					<li class="dropdown">
 						<a href="javascript:;" class="dropdown-toggle">
@@ -66,7 +66,7 @@
 							<span class="micon dw dw-calendar-6"></span><span class="mtext">Reservations</span>
 						</a>
 					</li>
-				<?php } ?>
+				<?php //} ?>
 				<li class="dropdown d-none">
 					<a href="javascript:;" class="dropdown-toggle no-arrow">
 						<span class="micon dw dw-question-1"></span><span class="mtext">Enquires</span>

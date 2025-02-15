@@ -13,14 +13,15 @@ class BranchModel extends Model {
     protected $allowedFields = ['dealer_id', 'name', 'branch_banner1', 'branch_banner2', 'branch_banner3', 'branch_thumbnail', 'branch_logo', 'branch_type', 'branch_supported_vehicle_type', 'branch_services', 'country_id', 'state_id', 'city_id', 'address', 'contact_number', 'whatsapp_no', 'email', 'short_description', 'branch_map', 'map_latitude', 'map_longitude', 'map_city', 'map_district', 'map_state', 'is_active'];
 
     public function getAllBranchByDealerId(
-        $dealerId, 
-        $countryId = NULL, 
-        $stateId = NULL, 
-        $cityId = NULL, 
-        $branchType = NULL, 
-        $limit = NULL, 
-        $offset = NULL, 
-        $is_promoted = NULL) {
+        $dealerId,
+        $countryId = NULL,
+        $stateId = NULL,
+        $cityId = NULL,
+        $branchType = NULL,
+        $limit = NULL,
+        $offset = NULL,
+        $is_promoted = NULL
+    ) {
 
         $builder = $this->db->table('branches as b');
         $builder->select('b.*, s.name as state, c.name as city, 
@@ -40,7 +41,20 @@ class BranchModel extends Model {
             'rating_data.branch_id = b.id',
             'left'
         );
-        $builder->join('dealer_promotion as dp', 'dp.itemId = b.id AND dp.promotionUnder = "showroom" AND dp.is_active = 1', 'left');
+        //$builder->join('dealer_promotion as dp', 'dp.itemId = b.id AND dp.promotionUnder = "showroom" AND dp.is_active = 1', 'left');
+
+        $builder->join(
+            '(SELECT dp1.* FROM dealer_promotion dp1
+              WHERE dp1.is_active = 1 AND dp1.promotionUnder = "showroom"
+              AND dp1.id = (SELECT MAX(dp2.id) FROM dealer_promotion dp2 
+                            WHERE dp2.itemId = dp1.itemId 
+                            AND dp2.is_active = 1 
+                            AND dp2.promotionUnder = "showroom")
+            ) as dp',
+            'dp.itemId = b.id',
+            'left'
+        );
+
 
         // Conditions
         $builder->where('b.dealer_id', $dealerId);
@@ -68,7 +82,7 @@ class BranchModel extends Model {
         }
 
         // Sorting logic
-        $builder->orderBy('is_promoted', 'DESC'); // Prioritize promoted branches
+        $builder->orderBy('is_promoted, created_at', 'DESC'); // Prioritize promoted branches
         $builder->orderBy('CASE WHEN is_promoted = 1 THEN dp.end_dt ELSE NULL END', 'DESC', false); // Promotion end date (descending)
         $builder->orderBy('b.branch_type', 'DESC'); // Main branch first
         $builder->orderBy('b.id', 'DESC'); // Remaining by ID (descending)

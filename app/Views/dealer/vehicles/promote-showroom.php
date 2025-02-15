@@ -48,23 +48,51 @@ echo view('dealer/includes/_sidebar');
 						</div>
 					</div>
 
-					<?php $first = true;
+					<?php
+					$first = true;
 					if (isset($promotionPlans) && !empty($promotionPlans)) : ?>
-						<?php foreach ($promotionPlans as $plan) : ?>
-							<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative">
+						<?php foreach ($promotionPlans as $plan) :
+							// Hide the free plan if the remaining showroom promotions are exhausted
+							$hidePlan = ($remainingShowroomPromotions <= 0 && $plan['id'] === '1') ? 'd-none' : '';
+							$isFreePlan = ($plan['id'] === '1'); // Check if this is the free plan
+						?>
+							<div class="pd-20 bg-white border-radius-10 box-shadow mb-30 position-relative <?= esc($hidePlan); ?>">
 								<h4 class="text-blue h4"><?= esc($plan['promotionName']); ?></h4>
+
+								<?php if ($isFreePlan) : ?>
+									<p class="text-muted">
+										Free promotions left: <strong><?= esc($remainingShowroomPromotions); ?></strong>
+									</p>
+								<?php endif; ?>
+
 								<div class="custom-control custom-radio mb-5">
-									<input checked type="radio" data-itemid="<?= esc($showroomDetails['id']); ?>" data-promotionunder="showroom" data-promotionplanid="<?= esc($plan['id']); ?>" id="promotionCustomRadio<?= esc($plan['id']); ?>" name="promotion-amount-radio" class="custom-control-input getPaymentmentAmt" value="<?= esc($plan['promotionAmount']); ?>" <?= $first ? 'checked' : '' ?>>
-									<label class="custom-control-label" for="promotionCustomRadio<?= esc($plan['id']); ?>">Promotion Validity for <?= esc($plan['promotionDaysValidity']); ?> Days</label>
+									<input
+										type="radio"
+										data-itemid="<?= esc($showroomDetails['id']); ?>"
+										data-promotionunder="showroom"
+										data-promotionplanid="<?= esc($plan['id']); ?>"
+										id="promotionCustomRadio<?= esc($plan['id']); ?>"
+										name="promotion-amount-radio"
+										class="custom-control-input getPaymentmentAmt"
+										value="<?= esc($plan['promotionAmount']); ?>"
+										<?= $first ? 'checked' : ''; ?>>
+									<label class="custom-control-label" for="promotionCustomRadio<?= esc($plan['id']); ?>">
+										Promotion Validity for <?= esc($plan['promotionDaysValidity']); ?> Days
+									</label>
 								</div>
 
 								<div class="promotion-plan-price">
 									<h4>₹<?= esc($plan['promotionAmount']); ?></h4>
 								</div>
 							</div>
-						<?php endforeach; ?>
+						<?php
+							if ($hidePlan === '') { // Ensure the first valid plan is selected
+								$first = false;
+							}
+						endforeach; ?>
 					<?php endif; ?>
 				</div>
+
 				<div class="col-md-4">
 					<div class="card card-box mb-3 stick-promo">
 						<img class="card-img-top vehicle-image" src="<?php echo isset($showroomDetails['branch_thumbnail']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'branch_thumbnails/' . $showroomDetails['branch_thumbnail'] : WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'default-img.png'; ?>" alt="<?php echo $showroomDetails['name']; ?>" />

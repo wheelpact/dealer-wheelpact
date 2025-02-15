@@ -37,7 +37,7 @@ class RazorpayController extends BaseController {
         $this->RazorpayModel = new RazorpayModel();
         $this->PromotionPlanModel = new PromotionPlanModel();
         $this->vehicleModel = new vehicleModel();
-        
+
         /* // Retrieve session */
         $this->userSesData = session()->get();
 
@@ -59,7 +59,7 @@ class RazorpayController extends BaseController {
 
             /* // Check if vehicle / Showroom is already promoted within the current date range */
             $existingPromotion = $this->PromotionPlanModel->checkItemPromoted($promotedItemId, $promotionUnder);
-
+            //echo $this->PromotionPlanModel->db->getLastQuery(); exit;
             if ($existingPromotion) {
                 $response = array(
                     'status' => 'error',
@@ -128,12 +128,11 @@ class RazorpayController extends BaseController {
             $data['remainingShowroomPromotions'] = max(0, $data['freeShowroomPromotions'] - $data['showroomPromoteCount']);
 
             // Check if eligible for free promotion
-            if ($data['remainingVehiclePromotions'] > 0) {
+            if ($data['remainingVehiclePromotions'] > 0 || $data['remainingShowroomPromotions'] > 0) {
                 /* // Eligible for free vehicle promotion */
                 $isEligibleForFreePromotion = true;
                 $data['orderData'] = $orderData;
-                $this->saveFreePromotion($data);
-                exit;
+                return $this->saveFreePromotion($data);
             }
 
             /* End */
@@ -485,13 +484,12 @@ class RazorpayController extends BaseController {
 
 
     private function saveFreePromotion($freePromotionData) {
-        // echo 'saveFreePromotion<pre>';
-        // print_r($freePromotionData);
-        // exit;
+        log_message('info', 'saveFreePromotion function called with data: ' . json_encode($freePromotionData));
+
+        $this->RazorpayModel->db->transStart(); // Start transaction
 
         $orderDetailsId = 'order_fp_' . rand(100000, 999999);
 
-        /* order data insert for transactionsrazorpay table start */
         $orderInsertData = array(
             'orderId' => $orderDetailsId,
             'dealerUserId' => $freePromotionData['userData']['userId'],
@@ -501,103 +499,102 @@ class RazorpayController extends BaseController {
             'receipt' => $freePromotionData['orderData']['receipt'],
             'orderNotes' => serialize($freePromotionData['orderData']['notes']),
             'transactionFor' => 'promotion',
-            'payment_response' => '',
-            'razorpay_payment_id' => '',
-            'razorpay_order_id' => '',
-            'razorpay_signature' => '',
             'payment_status' => 'success',
             'updated_dt' => date("Y-m-d H:i:s")
         );
+
         $orderInsert = $this->RazorpayModel->save($orderInsertData);
-        /* order data insert for transactionsrazorpay table end */
 
-        if ($orderInsert) {
-            /* // Insert promotion data in dealer promtion table */
-            $promotion_plan_id = $freePromotionData['orderData']['notes']['PromotionPlanId'];
-            $promotion_under = $freePromotionData['orderData']['notes']['PromotionUnder'];
-            $dealer_id = $freePromotionData['orderData']['notes']['DealerID'];
-            $promoted_item_id = $freePromotionData['orderData']['notes']['promotedItemId'];
-            $promotion_duration = $freePromotionData['orderData']['notes']['PromotionDuration'];
-
-            /* // Get created order details from razorpay_order_id to verify signature */
-            $orderDetails = $this->RazorpayModel->where('orderId', $orderDetailsId)->first();
-
-            $promotionData = [
-                'transactionsrazorpay_id' => $orderDetails['id'],
-                'promotionPlanId' => $promotion_plan_id,
-                'promotionUnder' => $promotion_under,
-                'dealerId' => $dealer_id,
-                'itemId' => $promoted_item_id,
-                'start_dt' => date('Y-m-d H:i:s'),
-                'end_dt' => date('Y-m-d H:i:s', strtotime('+' . $promotion_duration . ' days')),
-                'old_current' => 1,
-                'is_active' => 1,
-                'auto_renew' => 1,
-                'payment_status' => 'success',
-                'created_dt' => date('Y-m-d H:i:s'),
-                'updated_by' => '',
-                'updated_dt' => date('Y-m-d H:i:s')
-            ];
-            $promotionDataInsert = $this->PromotionPlanModel->insertPromotionData($promotionData);
-
-            /* fecth Dealer Info */
-            $partnerInfo = $this->UserModel->where('id', $dealer_id)->first();
-            /* // Fetch all active plan by id */
-            $planDetails = $this->PromotionPlanModel->where('id', $promotion_plan_id)->first();
-            if ($promotion_under == 'vehicle') {
-                $itemDetails = $this->PromotionPlanModel->getVehicleDetails($promoted_item_id);
-            }
-
-            if ($promotion_under == 'showroom') {
-                $itemDetails = $this->PromotionPlanModel->getShowroomDetails($promoted_item_id);
-            }
-
-            /* Assigning logo path */
-            $orderDetails['logo'] = SERVER_ROOT_PATH_ASSETS . '/src/images/wheelpact-logo.png';
-
-            $viewData['orderDetails'] = $orderDetails;
-            $viewData['partnerInfo'] = $partnerInfo;
-            $viewData['planDetails'] = $planDetails;
-            $viewData['itemDetails'] = $itemDetails;
-            $viewData['promotionData'] = $promotionData;
-
-            if ($promotion_under == 'vehicle') {
-                $redirectUrl = 'dealer/list-vehicles';
-            } elseif ($promotion_under == 'showroom') {
-                $redirectUrl = 'dealer/list-branches';
-            }
-
-            /* email promtional details to dealer */
-            /* // Load the invoice view with the data */
-            $html = view('dealer/invoice/promotion_invoice_template', $viewData);
-            /* // Generate the PDF */
-            $filename = str_replace("/", "_", $orderDetails['receipt']) . '.pdf';
-            $pdfPath = generatePDF($html, $filename, false);
-
-            $to = $partnerInfo['email'];
-            $subject = ucfirst($promotion_under) . ' Promotion Details - Wheelpact';
-            $toName = $partnerInfo['name'];
-            $body = view('dealer/email_templates/partner_promotion_mail', $viewData);
-
-            $mailResult = sendEmail($to, $toName, $subject, $body, $pdfPath);
-
-            if (!$mailResult) {
-                $response = array(
-                    'code'   => 500,
-                    'status' => 'error',
-                    'message' => $mailResult,
-                    'redirectURL' => base_url($redirectUrl)
-                );
-                return $this->response->setJSON($response);
-            }
-            $response = array(
-                'code' => 200,
-                'status' => 'success',
-                'message' => 'Promotion Successful',
-                'promotionType' => 'free',
-                'redirectURL' => base_url($redirectUrl)
-            );
-            return $this->response->setJSON($response);
+        if (!$orderInsert) {
+            log_message('error', 'Order insertion failed for: ' . json_encode($orderInsertData));
+            $this->RazorpayModel->db->transRollback(); // Rollback transaction
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Failed to insert order data',
+            ]);
         }
+
+        $orderDetails = $this->RazorpayModel->where('orderId', $orderDetailsId)->first();
+
+        if (!$orderDetails) {
+            log_message('error', 'Failed to fetch order details for orderId: ' . $orderDetailsId);
+            $this->RazorpayModel->db->transRollback(); // Rollback transaction
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Promotion did not go through, please try again later',
+            ]);
+        }
+
+        $promotionData = [
+            'transactionsrazorpay_id' => $orderDetails['id'],
+            'promotionPlanId' => $freePromotionData['orderData']['notes']['PromotionPlanId'],
+            'promotionUnder' => $freePromotionData['orderData']['notes']['PromotionUnder'],
+            'dealerId' => $freePromotionData['orderData']['notes']['DealerID'],
+            'itemId' => $freePromotionData['orderData']['notes']['promotedItemId'],
+            'start_dt' => date('Y-m-d H:i:s'),
+            'end_dt' => date('Y-m-d H:i:s', strtotime('+' . $freePromotionData['orderData']['notes']['PromotionDuration'] . ' days')),
+            'is_active' => 1,
+            'auto_renew' => 1,
+            'payment_status' => 'success',
+            'created_dt' => date('Y-m-d H:i:s'),
+            'updated_dt' => date('Y-m-d H:i:s')
+        ];
+
+        $promotionDataInsert = $this->PromotionPlanModel->insertPromotionData($promotionData);
+
+        if (!$promotionDataInsert) {
+            log_message('error', 'Failed to insert promotion data: ' . json_encode($promotionData));
+            $this->RazorpayModel->db->transRollback(); // Rollback transaction
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Promotion did not go through, please try again later',
+            ]);
+        }
+
+        // Fetch dealer and plan details
+        $partnerInfo = $this->UserModel->where('id', $promotionData['dealerId'])->first();
+        $planDetails = $this->PromotionPlanModel->where('id', $promotionData['promotionPlanId'])->first();
+        $itemDetails = ($promotionData['promotionUnder'] == 'vehicle')
+            ? $this->PromotionPlanModel->getVehicleDetails($promotionData['itemId'])
+            : $this->PromotionPlanModel->getShowroomDetails($promotionData['itemId']);
+
+        // Prepare email details
+        $orderDetails['logo'] = SERVER_ROOT_PATH_ASSETS . '/src/images/wheelpact-logo.png';
+
+        $viewData = compact('orderDetails', 'partnerInfo', 'planDetails', 'itemDetails', 'promotionData');
+        $html = view('dealer/invoice/promotion_invoice_template', $viewData);
+        $filename = str_replace("/", "_", $orderDetails['receipt']) . '.pdf';
+        $pdfPath = generatePDF($html, $filename, false);
+
+        $mailResult = sendEmail($partnerInfo['email'], $partnerInfo['name'], ucfirst($promotionData['promotionUnder']) . ' Promotion Details - Wheelpact', view('dealer/email_templates/partner_promotion_mail', $viewData), $pdfPath);
+
+        if (!$mailResult) {
+            log_message('error', 'Error sending email to ' . $partnerInfo['email']);
+        }
+
+        $this->RazorpayModel->db->transComplete(); // Commit transaction if everything is successful
+
+        if ($this->RazorpayModel->db->transStatus() === false) {
+            log_message('error', 'Transaction failed, rolling back.');
+            $this->RazorpayModel->db->transRollback();
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'An error occurred while processing the promotion',
+            ]);
+        }
+
+        $redirectUrl = isset($promotionData['promotionUnder']) && $promotionData['promotionUnder'] == 'vehicle'
+            ? 'dealer/list-vehicles'
+            : 'dealer/list-branches';
+
+        log_message('info', 'Redirecting to: ' . $redirectUrl);
+
+        return $this->response->setJSON([
+            'code' => 200,
+            'status' => 'success',
+            'message' => 'Promotion Successful',
+            'promotionType' => 'free',
+            'redirectURL' => $redirectUrl
+        ]);
     }
 }

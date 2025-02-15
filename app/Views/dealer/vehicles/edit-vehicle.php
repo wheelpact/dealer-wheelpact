@@ -200,10 +200,10 @@ echo view('dealer/includes/_sidebar');
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-lg-4">
+                            <div class="col-md-6 col-lg-4 d-none">
                                 <div class="form-group">
                                     <label>Colour<span class="required">*</span></label>
-                                    <select class="custom-select formInput" name="color_id" id="color_id">
+                                    <select class="custom-select formInputremove" name="color_id" id="color_id">
                                         <option value="">Choose...</option>
                                         <?php if (isset($colorList) && !empty($colorList)) {
                                             foreach ($colorList as $value) { ?>
@@ -414,7 +414,7 @@ echo view('dealer/includes/_sidebar');
                             <div class="col-md-6 col-lg-3">
                                 <div class="form-group">
                                     <label>On Sale Status<span class="required">*</span></label>
-                                    <select class="custom-select formInput" name="onsale_status" id="onsale_status" data-toggle="tooltip" title="Vehicle will be displayed on Showroom pages On-Sale Section">
+                                    <select class="custom-select onsale_status formInput" name="onsale_status" id="onsale_status" data-toggle="tooltip" title="Vehicle will be displayed on Showroom pages On-Sale Section">
                                         <option value="">Choose...</option>
                                         <?php foreach (YES_NO_OPTIONS as $id => $type) : ?>
                                             <option value="<?= $id ?>" <?php if ($vehicleDetails['onsale_status'] == $id) {
@@ -429,7 +429,7 @@ echo view('dealer/includes/_sidebar');
                                                                                                 } ?>">
                                 <div class="form-group">
                                     <label>On Sale Percentage<span class="required">*</span></label>
-                                    <input type="text" maxlength="2" value="<?php echo isset($vehicleDetails['onsale_percentage']) ? $vehicleDetails['onsale_percentage'] : ''; ?>" class="form-control formInput numbersOnlyCheck" name="onsale_percentage" id="onsale_percentage">
+                                    <input type="text" maxlength="2" value="<?php echo isset($vehicleDetails['onsale_percentage']) ? $vehicleDetails['onsale_percentage'] : ''; ?>" class="form-control numbersOnlyCheck" name="onsale_percentage" id="onsale_percentage">
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-3">
@@ -485,10 +485,10 @@ echo view('dealer/includes/_sidebar');
                                     <input type="text" placeholder="0" min="0" maxlength="2" value="<?php echo isset($vehicleDetails['tenure_months']) ? $vehicleDetails['tenure_months'] : ''; ?>" class="form-control formInput numbersOnlyCheck" name="tenure_months" id="tenure_months">
                                 </div>
                             </div>
-                            <div class="col-md-6 col-lg-3">
+                            <div class="col-md-6 col-lg-3 d-none">
                                 <div class="form-group">
                                     <label>Reservation Amount<span class="required">*</span></label>
-                                    <input type="text" placeholder="0" min="0" maxlength="5" value="<?php echo isset($vehicleDetails['reservation_amt']) ? $vehicleDetails['reservation_amt'] : ''; ?>" class="form-control formInput numbersOnlyCheck" name="reservation_amt" id="reservation_amt" data-toggle="tooltip" title="Vehicle reservation/test drive booking amount">
+                                    <input type="text" placeholder="0" min="0" maxlength="5" value="<?php echo isset($vehicleDetails['reservation_amt']) ? $vehicleDetails['reservation_amt'] : ''; ?>" class="form-control formInputremove numbersOnlyCheck" name="reservation_amt" id="reservation_amt" data-toggle="tooltip" title="Vehicle reservation/test drive booking amount">
                                 </div>
                             </div>
                         </div>

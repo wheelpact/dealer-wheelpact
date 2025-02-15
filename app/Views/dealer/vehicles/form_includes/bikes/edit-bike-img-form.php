@@ -41,7 +41,7 @@
                                                         </p>
                                                         <div class="form-group">
                                                             <div class="input-group mb-3">
-                                                                <input type="file" name="<?php echo $key; ?>" id="<?php echo $key; ?>" class="form-control-file form-control height-auto onlyImageInput">
+                                                                <input type="file" name="<?php echo $key; ?>" id="<?php echo $key; ?>" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                                 <div class="input-group-append">
                                                                     <button class="btn btn-primary btn-sm updateVehiceImg" data-pickFormfield="<?php echo $key; ?>">Update</button>
                                                                 </div>
@@ -94,7 +94,7 @@
                                                         </p>
                                                         <div class="form-group">
                                                             <div class="input-group mb-3">
-                                                                <input type="file" name="<?php echo $key; ?>" id="<?php echo $key; ?>" class="form-control-file form-control height-auto onlyImageInput">
+                                                                <input type="file" name="<?php echo $key; ?>" id="<?php echo $key; ?>" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                                 <div class="input-group-append">
                                                                     <button class="btn btn-primary btn-sm updateVehiceImg" data-pickFormfield="<?php echo $key; ?>">Update</button>
                                                                 </div>
@@ -147,7 +147,7 @@
                                                         </p>
                                                         <div class="form-group">
                                                             <div class="input-group mb-3">
-                                                                <input type="file" name="<?php echo $key; ?>" id="<?php echo $key; ?>" class="form-control-file form-control height-auto onlyImageInput">
+                                                                <input type="file" name="<?php echo $key; ?>" id="<?php echo $key; ?>" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                                 <div class="input-group-append">
                                                                     <button class="btn btn-primary btn-sm updateVehiceImg" data-pickFormfield="<?php echo $key; ?>">Update</button>
                                                                 </div>
@@ -201,7 +201,7 @@
                                                         </p>
                                                         <div class="form-group">
                                                             <div class="input-group mb-3">
-                                                                <input type="file" name="<?php echo $key; ?>" id="<?php echo $key; ?>" class="form-control-file form-control height-auto onlyImageInput">
+                                                                <input type="file" name="<?php echo $key; ?>" id="<?php echo $key; ?>" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                                 <div class="input-group-append">
                                                                     <button class="btn btn-primary btn-sm updateVehiceImg" data-pickFormfield="<?php echo $key; ?>">Update</button>
                                                                 </div>
@@ -254,7 +254,7 @@
                                                         </p>
                                                         <div class="form-group">
                                                             <div class="input-group mb-3">
-                                                                <input type="file" name="<?php echo $key; ?>" id="<?php echo $key; ?>" class="form-control-file form-control height-auto onlyImageInput" required>
+                                                                <input type="file" name="<?php echo $key; ?>" id="<?php echo $key; ?>" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                                 <div class="input-group-append">
                                                                     <button class="btn btn-primary btn-sm updateVehiceImg" data-pickFormfield="<?php echo $key; ?>">Update</button>
                                                                 </div>

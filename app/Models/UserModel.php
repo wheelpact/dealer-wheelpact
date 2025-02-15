@@ -21,6 +21,7 @@ class UserModel extends Model {
             ->where('u.email', $email)
             ->where('u.role_id', '2')
             ->where('u.is_active', '1')
+            ->orderBy('uc.id', 'DESC')
             ->first();
 
         if ($user && password_verify($password, $user['password'])) {
@@ -105,10 +106,15 @@ class UserModel extends Model {
         // Add the where condition for dealer user id
         $builder->where('trp.dealerUserId', $dealerId);
         $builder->where('ds.is_active', 1);
-        $builder->where('ds.end_dt >=', date('Y-m-d H:i:s')); // Current date check
+        $builder->where('ds.end_dt >=', date('Y-m-d')); // Current date check
 
         // Execute the query and return the result
         $result = $builder->get()->getResultArray();
+        // Check if the result is empty
+        if (empty($result)) {
+            return false;
+        }
+
         return $result;
     }
 

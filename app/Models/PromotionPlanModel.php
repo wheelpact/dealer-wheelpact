@@ -40,17 +40,26 @@ class PromotionPlanModel extends Model {
             ->table('dealer_promotion')
             ->insert($promtionData);
     }
-
+    
     public function getVehicleDetails($vehicleId) {
         $builder = $this->db->table('vehicles as v');
-        $builder->select('v.*, vc.cmp_name as cmp_name, vcm.model_name as cmp_model_name, vcmv.name as variantName');
+        $builder->select('v.*, b.name as branchName, vc.cmp_name as cmp_name, vcm.model_name as cmp_model_name, vcmv.name as variantName');
+        $builder->join('branches as b', 'b.id = v.branch_id', 'left');
         $builder->join('vehiclecompanies as vc', 'vc.id = v.cmp_id', 'left');
         $builder->join('vehiclecompaniesmodels as vcm', 'vcm.id = v.model_id', 'left');
         $builder->join('vehiclecompaniesmodelvariants as vcmv', 'vcmv.id = v.variant_id', 'left');
         $builder->where('v.id', $vehicleId);
-        $result = $builder->get()->getRowArray();
-        return $result;
+
+        $query = $builder->get();
+
+        if (!$query) {
+            log_message('error', 'Query failed: ' . $this->db->error());
+            return false; // Return false instead of calling getRowArray on a boolean
+        }
+
+        return $query->getRowArray();
     }
+
 
     public function getShowroomDetails($showroomId) {
         $builder = $this->db->table('branches');

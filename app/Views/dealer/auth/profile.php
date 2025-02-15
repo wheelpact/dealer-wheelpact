@@ -316,14 +316,23 @@ echo view('dealer/includes/_sidebar');
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Free Inventory Promotions</th>
-                                                            <td scope="row"><?php echo $dealerPromotedDetails['vehicle_count'] . ' utilized / out of ' . $planData['free_inventory_promotions'] ?></td>
+                                                            <td scope="row">
+                                                                <?php echo (isset($dealerPromotedDetails['vehicle_count']) && !empty($dealerPromotedDetails['vehicle_count']) ? $dealerPromotedDetails['vehicle_count'] : '0') .
+                                                                    ' utilized / out of ' .
+                                                                    (isset($planData['free_inventory_promotions']) && !empty($planData['free_inventory_promotions']) ? $planData['free_inventory_promotions'] : '0'); ?>
+                                                            </td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Free Showroom Promotions</th>
-                                                            <td scope="row"><?php echo  $dealerPromotedDetails['showroom_count'] . ' utilized / out of ' . $planData['free_showroom_promotions'] ?></td>
+                                                            <td scope="row">
+                                                                <?php echo (isset($dealerPromotedDetails['showroom_count']) && !empty($dealerPromotedDetails['showroom_count']) ? $dealerPromotedDetails['showroom_count'] : '0') .
+                                                                    ' utilized / out of ' .
+                                                                    (isset($planData['free_showroom_promotions']) && !empty($planData['free_showroom_promotions']) ? $planData['free_showroom_promotions'] : '0');
+                                                                ?>
+                                                            </td>
                                                         </tr>
                                                         <tr>
-                                                            <th scope="row">Showroom Branch Listing</th>
+                                                            <th scope="row">Showroom Branch Listing Allowed</th>
                                                             <td scope="row"><?php echo $planData['max_showroom_branches'] ?></td>
                                                         </tr>
                                                     </tbody>

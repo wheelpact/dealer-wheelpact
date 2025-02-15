@@ -124,7 +124,7 @@
 						</div>
 					</div>
 				</div>
-				<?php if (isset($dealerPromotedVehicles) && count($dealerPromotedVehicles) > 0): ?>
+				<?php //if (isset($dealerPromotedVehicles) && count($dealerPromotedVehicles) > '0'): ?>
 					<div class="row">
 						<?php foreach ($dealerPromotedVehicles as $vehicle): ?>
 							<div class="col-md-6 col-lg-4 vehicle-card-<?= $vehicle['id'] ?>">
@@ -213,8 +213,7 @@
 							</div>
 						<?php endforeach; ?>
 					</div>
-				<?php endif; ?>
-
+				<?php //endif; ?>
 			</div>
 			<!-- Promoted vehicles section start-->
 

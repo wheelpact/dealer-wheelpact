@@ -72,98 +72,66 @@ class Vehicles extends BaseController {
 						<img class="card-img-top vehicle-image" src="' . WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'vehicle_thumbnails/' . $vehicle['thumbnail_url'] . '" alt="' . $vehicle['unique_id'] . '" />
 						<div class="card-body">
 							<h5 class="card-title weight-500 text-blue">' . $vehicle['cmp_name'] . ' ' . $vehicle['model_name'] . ' ' . $vehicle['variantName'] . '</h5>
-								<div class="d-flex vehicle-overview">
-								<div class="overview-badge">
-									<h6>Year</h6>
-									<h5>' . $vehicle['manufacture_year'] . '</h5>
-								</div>
-								<div class="overview-badge">
-									<h6>Driven</h6>
-									<h5>' . number_format($vehicle['kms_driven'], 0, '.', ',') . ' km</h5>
-								</div>
-								<div class="overview-badge">
-									<h6>Fuel Type</h6>
-									<h5>' . $vehicle['fuel_type'] . '</h5>
-								</div>
-								<div class="overview-badge">
-									<h6>Owner</h6>
-									<h5>' . ordinal($vehicle['owner']) . '</h5>
-								</div>
+							<div class="d-flex vehicle-overview">
+								<div class="overview-badge"><h6>Year</h6><h5>' . $vehicle['manufacture_year'] . '</h5></div>
+								<div class="overview-badge"><h6>Driven</h6><h5>' . number_format($vehicle['kms_driven'], 0, '.', ',') . ' km</h5></div>
+								<div class="overview-badge"><h6>Fuel Type</h6><h5>' . $vehicle['fuel_type'] . '</h5></div>
+								<div class="overview-badge"><h6>Owner</h6><h5>' . ordinal($vehicle['owner']) . '</h5></div>
 							</div>
 							<h5 class="card-title mt-3">' . $branch['name'] . ' - ' . VEHICLE_TYPE[$vehicle['vehicle_type']] . '</h5>';
 
-				if ($vehicle['is_active'] != 3) {
-					if ($vehicle['is_promoted'] == 1 && $vehicle['is_active'] == 4) {
-						// Show both Promotion and Sold buttons
-						$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-success btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($vehicle['promotion_end_date'])) . '</a>';
-						$dealerVehiclesHtml .= '<a href="' . base_url() . 'dealer/vehicle-promotion-details/' . encryptData($vehicle['id']) . '" target="_blank" class="btn btn-info btn-block">Promotion Details</a>';
-						$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-secondary btn-block">Sold</a>';
-					} elseif ($vehicle['is_promoted'] == 1) {
-						// Show promotion details if the vehicle is promoted
-						$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-success btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($vehicle['promotion_end_date'])) . '</a>';
-						$dealerVehiclesHtml .= '<a href="' . base_url() . 'dealer/vehicle-promotion-details/' . encryptData($vehicle['id']) . '" target="_blank" class="btn btn-info btn-block">Promotion Details</a>';
-					} elseif ($vehicle['is_active'] == 4) {
-						// Show as Sold and make it non-clickable
-						$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-secondary mt-3 btn-block" disabled>Sold</a>';
-					} elseif ($vehicle['is_active'] != 2) {
-						// Show Promote button
-						$dealerVehiclesHtml .= '<a href="' . base_url() . 'dealer/promote-vehicle/' . encryptData($vehicle['id']) . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
-					}
+				// Always show the dropdown for "view", "edit", and "disable/enable"
+				$dealerVehiclesHtml .= '<div class="option-btn"><div class="dropdown">
+							<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" data-toggle="dropdown">
+								<i class="dw dw-more"></i></a>
+							<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">';
 
-					// Show "Mark as Sold" button if the vehicle is not already sold
-					if ($vehicle['is_active'] != 4 && $vehicle['is_active'] != 2) {
-						$dealerVehiclesHtml .= '<a href="#" class="btn btn-success mt-1 btn-block vehicleMarkSoldModal" data-vehicle-id=' . encryptData($vehicle['id']) . ' data-toggle="modal" data-target="#markSoldModal">Mark as Sold</a>';
-					}
+				if (($vehicle['is_active'] == 1 || $vehicle['is_active'] == 2)) {
+					$dealerVehiclesHtml .= '<a class="dropdown-item" href="' . base_url() . 'dealer/single-vehicle-info/' . encryptData($vehicle['id']) . '"><i class="dw dw-eye"></i> View</a>';
+					$dealerVehiclesHtml .= '<a class="dropdown-item" href="' . base_url() . 'dealer/edit-vehicle/' . encryptData($vehicle['id']) . '"><i class="dw dw-edit2"></i> Edit</a>';
+				}
 
-					// Option button dropdown
-					$dealerVehiclesHtml .= '
-				<div class="option-btn">
-					<div class="dropdown">
-						<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-							<i class="dw dw-more"></i>
-						</a>
-						<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-							<a class="dropdown-item" href="' . base_url() . 'dealer/single-vehicle-info/' . encryptData($vehicle['id']) . '"><i class="dw dw-eye"></i> View</a>
-							<a class="dropdown-item" href="' . base_url() . 'dealer/edit-vehicle/' . encryptData($vehicle['id']) . '"><i class="dw dw-edit2"></i> Edit</a>';
+				// Enable/Disable options based on vehicle's active status
+				if ($vehicle['is_promoted'] != 1 && $vehicle['is_active'] != 4) {
+					$dealerVehiclesHtml .= ($vehicle['is_active'] == 1)
+						? '<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" data-vehicle-flag="2" href="#"><i class="dw dw-delete-3"></i> Disable</a>'
+						: '<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" data-vehicle-flag="1" href="#"><i class="dw dw-delete-3"></i> Enable</a>';
+				}
 
-					if ($vehicle['is_promoted'] != 1 && $vehicle['is_active'] != 4) {
-						//$dealerVehiclesHtml .= '<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" href="#"><i class="dw dw-delete-3"></i> Enable </a>';
-						if ($vehicle['is_active'] == 1) {
-							// Active: Displayed on site
-							$dealerVehiclesHtml .= '
-							<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" data-vehicle-flag="2" href="#">
-							   <i class="dw dw-delete-3"></i> Disable
-							</a>';
-						} elseif ($vehicle['is_active'] == 2) {
-							// Inactive: Hidden on site
-							$dealerVehiclesHtml .= '
-							<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" data-vehicle-flag="1" href="#">
-							   <i class="dw dw-delete-3"></i> Enable
-							</a>';
+				$dealerVehiclesHtml .= '</div></div></div>';
+
+				// Only show specific buttons if the vehicle is approved
+				if ($vehicle['is_admin_approved'] === '1') {
+					if ($vehicle['is_active'] != 3) {
+						if ($vehicle['is_promoted'] == 1) {
+							$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-success btn-block">Promotion ends on: ' . date('Y-m-d', strtotime($vehicle['promotion_end_date'])) . '</a>';
+							$dealerVehiclesHtml .= '<a href="' . base_url() . 'dealer/vehicle-promotion-details/' . encryptData($vehicle['id']) . '" target="_blank" class="btn btn-info btn-block">Promotion Details</a>';
+						} else {
+							if ($vehicle['is_active'] == 4) {
+								$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-secondary btn-block" disabled>Sold</a>';
+							} elseif ($vehicle['is_active'] != 2) {
+								$dealerVehiclesHtml .= '<a href="' . base_url() . 'dealer/promote-vehicle/' . encryptData($vehicle['id']) . '" class="btn btn-primary mt-3 btn-block">Promote</a>';
+							}
+							if ($vehicle['is_active'] != 4 && $vehicle['is_active'] != 2) {
+								$dealerVehiclesHtml .= '<a href="#" class="btn btn-success mt-1 btn-block vehicleMarkSoldModal" data-vehicle-id=' . encryptData($vehicle['id']) . ' data-toggle="modal" data-target="#markSoldModal">Mark as Sold</a>';
+							}
 						}
 					}
-					$dealerVehiclesHtml .= '</div></div></div>';
+				} else {
+					// If not approved, show under admin approval message
+					$dealerVehiclesHtml .= '<a href="javascript:void(0);" class="btn btn-info mt-3 btn-block" disabled>Under Admin Approval</a>';
 				}
 
-				if ($vehicle['is_active'] === '1' || $vehicle['is_active'] === '4') {
-					// Active: Displayed on site
-					$dealerVehiclesHtml .= '
-						<div class="card-status-badge">
-							<span class="badge badge-success">Active</span>
-						</div>';
-				} elseif ($vehicle['is_active'] === '3') {
-					// Deleted: Hidden on site, shown on dealer panel & superadmin
-					$dealerVehiclesHtml .= '
-						<div class="card-status-badge">
-							<span class="badge badge-danger">Deleted</span>
-						</div>';
-				} elseif ($vehicle['is_active'] === '2') {
-					// Inactive: Hidden on site, shown on dealer panel & superadmin
-					$dealerVehiclesHtml .= '
-						<div class="card-status-badge">
-							<span class="badge badge-warning">Inactive</span>
-						</div>';
+				// Show the status badge regardless of admin approval status
+				$statusClass = ['1' => 'success', '2' => 'warning', '3' => 'danger'];
+				$statusText = ['1' => 'Active', '2' => 'In-Active', '3' => 'Deleted'];
+
+				if (isset($statusClass[$vehicle['is_active']])) {
+					$dealerVehiclesHtml .= '<div class="card-status-badge" data-vehicle-id="' . $vehicle['id'] . '">
+        <span class="badge badge-' . $statusClass[$vehicle['is_active']] . '">' . $statusText[$vehicle['is_active']] . '</span>
+    </div>';
 				}
+
 
 				$dealerVehiclesHtml .= '</div></div></div>';
 			}
@@ -228,7 +196,7 @@ class Vehicles extends BaseController {
 				'kms_driven'        => 'required',
 				'owner'             => 'required',
 				'transmission_id'   => 'required',
-				'color_id'          => 'required',
+				//'color_id'          => 'required',
 
 				'manufacture_year'      => 'required',
 				'registration_year'     => 'required',
@@ -246,7 +214,7 @@ class Vehicles extends BaseController {
 				'regular_price'  => 'required',
 				'selling_price'  => 'required',
 				'pricing_type'   => 'required',
-				'reservation_amt' => 'required'
+				//'reservation_amt' => 'required'
 			]);
 
 			// Run the validation
@@ -347,7 +315,7 @@ class Vehicles extends BaseController {
 				'kms_driven'        => $kms_driven,
 				'owner'             => $owner,
 				'transmission_id'   => $transmission_id,
-				'color_id'          => $color_id,
+				'color_id'          => isset($color_id) ? $color_id : '',
 				'featured_status'   => $featured_status,
 				'search_keywords'   => $search_keywords,
 				'onsale_status'     => $onsale_status,
@@ -401,7 +369,7 @@ class Vehicles extends BaseController {
 				'emi_option' => $emi_option,
 				'avg_interest_rate' => $avg_interest_rate,
 				'tenure_months' => $tenure_months,
-				'reservation_amt' => $reservation_amt,
+				'reservation_amt' => isset($reservation_amt) ? $reservation_amt : '',
 				'is_active' => 1,
 				'created_by'    => $created_by,
 				'created_datetime' => $created_datetime
@@ -447,7 +415,8 @@ class Vehicles extends BaseController {
 
 		$vehicle_type = $data['vehicleDetails']['vehicle_type'];
 
-		if ($vehicle_type == '1') {
+		$imageFields = [];
+		if ($vehicle_type === '1') {
 			/* cars */
 			$imageFields = [
 				/* car exterior maim images + */
@@ -509,7 +478,7 @@ class Vehicles extends BaseController {
 				'others_keys_img',
 				/* car other images - */
 			];
-		} elseif ($vehicle_type == '2') {
+		} elseif ($vehicle_type === '2') {
 			/* bikes */
 			$imageFields = [
 				/* bike exterior main images + */
@@ -551,14 +520,18 @@ class Vehicles extends BaseController {
 
 			];
 		}
-		/* // Initialize the vehicleImagesDetailsArray with null values for all imageFields */
+		// Initialize only allowed image fields with null values
 		$initializedImagesDetails = array_fill_keys($imageFields, null);
 
-		/* // Merge with the existing images details from the database */
-		if (!empty($data['vehicleImagesDetailsArray'])) {
-			$data['vehicleImagesDetailsArray'] = array_merge($initializedImagesDetails, $data['vehicleImagesDetailsArray']);
+		// Ensure vehicleImagesDetailsArray exists
+		if (!empty($data['vehicleImagesDetailsArray'][0])) {
+			// Filter out unwanted keys from the existing data
+			$filteredExistingData = array_intersect_key($data['vehicleImagesDetailsArray'][0], $initializedImagesDetails);
+
+			// Merge to retain only allowed fields
+			$data['vehicleImagesDetailsArray'][0] = array_replace($initializedImagesDetails, $filteredExistingData);
 		} else {
-			$data['vehicleImagesDetailsArray'] = $initializedImagesDetails;
+			$data['vehicleImagesDetailsArray'][0] = $initializedImagesDetails;
 		}
 
 		$exterior_main = [];
@@ -571,7 +544,7 @@ class Vehicles extends BaseController {
 		$meta = [];
 
 		if (!empty($data['vehicleImagesDetailsArray'])) {
-			foreach ($data['vehicleImagesDetailsArray'] as $key => $value) {
+			foreach ($data['vehicleImagesDetailsArray'][0] as $key => $value) {
 				if (strpos($key, 'exterior_main') !== false) {
 					$exterior_main[$key] = $value;
 				} elseif (strpos($key, 'exterior_diagnoal') !== false) {
@@ -838,6 +811,7 @@ class Vehicles extends BaseController {
 	}
 
 	public function single_vehicle_info($vehicle_Id) {
+
 		$vehicleId = decryptData($vehicle_Id);
 		$dealerId = session()->get('userId');
 		/* // Fetch user session data and plan details */
@@ -846,7 +820,130 @@ class Vehicles extends BaseController {
 
 		$data['vehicleDetails'] =  $this->vehicleModel->getVehicleDetails($vehicleId);
 
-		$data['vehicleImagesDetailsArray'] = array_filter($this->vehicleModel->getVehicleImagesDetails($vehicleId));
+			/*//$data['vehicleImagesDetailsArray'] = array_filter($this->vehicleModel->getVehicleImagesDetails($vehicleId))*/;
+
+		$data['vehicleImagesDetailsArray'] = $this->vehicleModel->getVehicleImagesDetails($vehicleId);
+
+		$vehicle_type = $data['vehicleDetails']['vehicle_type'];
+
+		$imageFields = [];
+		if ($vehicle_type === '1') {
+			/* cars */
+			$imageFields = [
+				/* car exterior maim images + */
+				'exterior_main_front_img',
+				'exterior_main_right_img',
+				'exterior_main_back_img',
+				'exterior_main_left_img',
+				'exterior_main_roof_img',
+				'exterior_main_bonetopen_img',
+				'exterior_main_engine_img',
+				/* car exterior maim images - */
+
+				/* car exterior diagonal image + */
+				'exterior_diagnoal_right_front_img',
+				'exterior_diagnoal_right_back_img',
+				'exterior_diagnoal_left_back_img',
+				'exterior_diagnoal_left_front_img',
+				/* car exterior diagonal image + */
+
+				/*car exterior wheel images + */
+				'exterior_wheel_right_front_img',
+				'exterior_wheel_right_back_img',
+				'exterior_wheel_left_back_img',
+				'exterior_wheel_left_front_img',
+				'exterior_wheel_spare_img',
+				/*car exterior wheel images - */
+
+				/* car exterior tyre thred images + */
+				'exterior_tyrethread_right_front_img',
+				'exterior_tyrethread_right_back_img',
+				'exterior_tyrethread_left_back_img',
+				'exterior_tyrethread_left_front_img',
+				/* car exterior tyre thred images - */
+
+				/* car exterior underbody images + */
+				'exterior_underbody_front_img',
+				'exterior_underbody_rear_img',
+				'exterior_underbody_right_img',
+				'exterior_underbody_left_img',
+				/* car exterior underbody images - */
+
+				/* car interior images + */
+				'interior_dashboard_img',
+				'interior_infotainment_system_img',
+				'interior_steering_wheel_img',
+				'interior_odometer_img',
+				'interior_gear_lever_img',
+				'interior_pedals_img',
+				'interior_front_cabin_img',
+				'interior_mid_cabin_img',
+				'interior_rear_cabin_img',
+				'interior_driver_side_door_panel_img',
+				'interior_driver_side_adjustment_img',
+				'interior_boot_inside_img',
+				'interior_boot_door_open_img',
+				/* car interior images - */
+
+				/* car other images + */
+				'others_keys_img',
+				/* car other images - */
+			];
+		} elseif ($vehicle_type === '2') {
+			/* bikes */
+			$imageFields = [
+				/* bike exterior main images + */
+				'exterior_main_front_img',
+				'exterior_main_right_img',
+				'exterior_main_back_img',
+				'exterior_main_left_img',
+				'exterior_main_tank_img',
+				'exterior_main_handlebar_img',
+				'exterior_main_headlight_img',
+				'exterior_main_tail_light_img',
+				'exterior_main_speedometer_img',
+				'exterior_main_exhaust_img',
+				'exterior_main_seat_img',
+				'exterior_main_engine_img',
+				/* bike exterior main images - */
+
+				/* bike exterior Diagonal images + */
+				'exterior_diagnoal_right_front_img',
+				'exterior_diagnoal_right_back_img',
+				'exterior_diagnoal_left_back_img',
+				'exterior_diagnoal_left_front_img',
+				/* bike exterior Diagonal images - */
+
+				/* bike exterior wheel images - */
+				'exterior_wheel_front_img',
+				'exterior_wheel_rear_img',
+				/* bike exterior wheel images - */
+
+				/* bike tyre thred images - */
+				'exterior_tyrethread_front_img',
+				'exterior_tyrethread_back_img',
+				/* bike tyre thred images - */
+
+				/* bike exterior underbody images + */
+				'exterior_underbody_front_img',
+				'exterior_underbody_rear_img',
+				/* bike exterior underbody images - */
+
+			];
+		}
+		// Initialize only allowed image fields with null values
+		$initializedImagesDetails = array_fill_keys($imageFields, null);
+
+		// Ensure vehicleImagesDetailsArray exists
+		if (!empty($data['vehicleImagesDetailsArray'][0])) {
+			// Filter out unwanted keys from the existing data
+			$filteredExistingData = array_intersect_key($data['vehicleImagesDetailsArray'][0], $initializedImagesDetails);
+
+			// Merge to retain only allowed fields
+			$data['vehicleImagesDetailsArray'][0] = array_replace($initializedImagesDetails, $filteredExistingData);
+		} else {
+			$data['vehicleImagesDetailsArray'][0] = $initializedImagesDetails;
+		}
 
 		$exterior_main = [];
 		$exterior_diagnoal = [];
@@ -858,7 +955,7 @@ class Vehicles extends BaseController {
 		$meta = [];
 
 		if (!empty($data['vehicleImagesDetailsArray'])) {
-			foreach ($data['vehicleImagesDetailsArray'] as $key => $value) {
+			foreach ($data['vehicleImagesDetailsArray']['0'] as $key => $value) {
 				if (strpos($key, 'exterior_main') !== false) {
 					$exterior_main[$key] = $value;
 				} elseif (strpos($key, 'exterior_diagnoal') !== false) {

@@ -21,7 +21,7 @@ echo view('dealer/includes/_sidebar');
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
                         <div class="">
-                            <a class="btn btn-primary" href="<?php echo base_url('dealer/edit-vehicle/' . $vehicleDetails['id']); ?>" role="button">
+                            <a class="btn btn-primary" href="<?php echo base_url('dealer/edit-vehicle/' . encryptData($vehicleDetails['id'])); ?>" role="button">
                                 Edit This Vehicle
                             </a>
                             <a class="btn btn-primary" href="<?php echo base_url('dealer/list-vehicles'); ?>" role="button">
@@ -370,25 +370,8 @@ echo view('dealer/includes/_sidebar');
                                                 <p>Number of Airbags</p>
                                                 <h6>
                                                     <?php
-                                                    if ($vehicleDetails['car_no_of_airbags'] == 1) {
-                                                        echo 'None';
-                                                    } elseif ($vehicleDetails['car_no_of_airbags'] == 2) {
-                                                        echo '1 Airbag';
-                                                    } elseif ($vehicleDetails['car_no_of_airbags'] == 3) {
-                                                        echo '2 Airbag';
-                                                    } elseif ($vehicleDetails['car_no_of_airbags'] == 4) {
-                                                        echo '3 Airbag';
-                                                    } elseif ($vehicleDetails['car_no_of_airbags'] == 5) {
-                                                        echo '4 Airbag';
-                                                    } elseif ($vehicleDetails['car_no_of_airbags'] == 6) {
-                                                        echo '5 Airbag';
-                                                    } elseif ($vehicleDetails['car_no_of_airbags'] == 7) {
-                                                        echo '6 Airbag';
-                                                    } elseif ($vehicleDetails['car_no_of_airbags'] == 8) {
-                                                        echo '7 Airbag';
-                                                    } elseif ($vehicleDetails['car_no_of_airbags'] == 9) {
-                                                        echo '7+ Airbag';
-                                                    }
+                                                    echo (!empty($vehicleDetails['car_no_of_airbags']) && isset(CAR_AIRBAGS[$vehicleDetails['car_no_of_airbags']]))
+                                                        ? CAR_AIRBAGS[$vehicleDetails['car_no_of_airbags']] . ' Airbags' : "0";
                                                     ?>
                                                 </h6>
                                             </div>

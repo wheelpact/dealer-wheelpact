@@ -51,12 +51,24 @@ echo view('dealer/includes/_sidebar');
                     </div>
                     <div class="wizard-content" id="vehicleBasicInformationMultipartFormWrapper">
                         <ul class="step-indicators">
-                            <li><span class="indicator active" data-step="1">1</span><h6>Vehicle Info</h6></li>
-                            <li><span class="indicator" data-step="2">2</span><h6>Registration Details</h6></li>
-                            <li><span class="indicator" data-step="3">3</span><h6>Insurance Details</h6></li>
-                            <li><span class="indicator" data-step="4">4</span><h6>Overview</h6></li>
-                            <li><span class="indicator" data-step="5">5</span><h6>Features</h6></li>
-                            <li><span class="indicator" data-step="6">6</span><h6>Pricing</h6></li>
+                            <li><span class="indicator active" data-step="1">1</span>
+                                <h6>Vehicle Info</h6>
+                            </li>
+                            <li><span class="indicator" data-step="2">2</span>
+                                <h6>Registration Details</h6>
+                            </li>
+                            <li><span class="indicator" data-step="3">3</span>
+                                <h6>Insurance Details</h6>
+                            </li>
+                            <li><span class="indicator" data-step="4">4</span>
+                                <h6>Overview</h6>
+                            </li>
+                            <li><span class="indicator" data-step="5">5</span>
+                                <h6>Features</h6>
+                            </li>
+                            <li><span class="indicator" data-step="6">6</span>
+                                <h6>Pricing</h6>
+                            </li>
                         </ul>
 
                         <?= form_open('dealer/save-new-vehicle', 'id="save_new_vehicle" class="custom-tab-wizard-add wizard-circle wizard"') ?>
@@ -207,10 +219,10 @@ echo view('dealer/includes/_sidebar');
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-lg-4">
+                                <div class="col-md-6 col-lg-4 d-none">
                                     <div class="form-group">
                                         <label>Colour<span class="required">*</span></label>
-                                        <select class="custom-select formInput" name="color_id" id="color_id">
+                                        <select class="custom-select formInputremove" name="color_id" id="color_id">
                                             <option value="">Choose...</option>
                                             <?php if (isset($colorList) && !empty($colorList)) {
                                                 foreach ($colorList as $value) { ?>
@@ -460,12 +472,12 @@ echo view('dealer/includes/_sidebar');
                                         <input type="text" placeholder="0" min="0" maxlength="2" class="form-control formInput numbersOnlyCheck" name="tenure_months" id="tenure_months">
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-lg-3">
-                                <div class="form-group">
-                                    <label>Reservation Amount<span class="required">*</span></label>
-                                    <input type="text" placeholder="0" min="0" maxlength="5" class="form-control formInput numbersOnlyCheck" name="reservation_amt" id="reservation_amt" data-toggle="tooltip" title="Vehicle reservation/test drive booking amount">
+                                <div class="col-md-6 col-lg-3 d-none">
+                                    <div class="form-group">
+                                        <label>Reservation Amount<span class="required">*</span></label>
+                                        <input type="text" placeholder="0" min="0" maxlength="5" class="form-control formInputremove numbersOnlyCheck" name="reservation_amt" id="reservation_amt" data-toggle="tooltip" title="Vehicle reservation/test drive booking amount">
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                             <!-- Add more fields for Step 6 here -->
                             <div class="pull-right">
@@ -509,10 +521,10 @@ echo view('dealer/includes/_sidebar');
                                 <a class="nav-link active" data-toggle="tab" href="#exterior" role="tab" aria-selected="true">Exterior</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#interior" role="tab" aria-selected="false">Interior</a>
+                                <a class="nav-link" id="add-vehicle-images-interior" data-toggle="tab" href="#interior" role="tab" aria-selected="false">Interior</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#others" role="tab" aria-selected="false">Others</a>
+                                <a class="nav-link" id="add-vehicle-images-others" data-toggle="tab" href="#others" role="tab" aria-selected="false">Others</a>
                             </li>
                         </ul>
                         <div class="tab-content">

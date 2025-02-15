@@ -91,6 +91,21 @@ class PromotionController extends BaseController {
 
         $data['showroomDetails'] =   $this->branchModel->getStoreDetails($showroomId);
 
+        // Check if the user is eligible for free promotion
+        $PromotedInsight = $this->vehicleModel->getPromotedInsight($data['userData']['userId']);
+
+        // Count promoted vehicles and showrooms
+        $data['vehiclePromoteCount'] = $PromotedInsight['promotionUnderVehicle'];
+        $data['showroomPromoteCount'] = $PromotedInsight['promotionUnderShowroom'];
+
+        // Retrieve the free promotion limits from the user's plan
+        $data['freeInventoryPromotions'] = $data['planData']['free_inventory_promotions'];
+        $data['freeShowroomPromotions'] = $data['planData']['free_showroom_promotions'];
+
+        // Calculate remaining free promotions for vehicles and showrooms
+        $data['remainingVehiclePromotions'] = max(0, $data['freeInventoryPromotions'] - $data['vehiclePromoteCount']);
+        $data['remainingShowroomPromotions'] = max(0, $data['freeShowroomPromotions'] - $data['showroomPromoteCount']);
+
         echo view('dealer/vehicles/promote-showroom', $data);
     }
 
