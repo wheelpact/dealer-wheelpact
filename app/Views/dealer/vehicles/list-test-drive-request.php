@@ -10,7 +10,7 @@
 					<div class="row">
 						<div class="col-md-6 col-sm-12">
 							<div class="title">
-								<h4>Vehicles</h4>
+								<h4>Test Drive Requests</h4>
 							</div>
 							<nav aria-label="breadcrumb" role="navigation">
 								<ol class="breadcrumb">
@@ -21,7 +21,7 @@
 						</div>
 						<div class="col-md-6 col-sm-12 text-right">
 							<div class="dropdown">
-								<a class="btn btn-primary" href="<?php echo base_url('dealer/add-vehicle'); ?>">Add Vehckes</a>
+								<a class="btn btn-primary" href="<?php echo base_url('dealer/add-vehicle'); ?>">Add Vehicles</a>
 							</div>
 						</div>
 					</div>

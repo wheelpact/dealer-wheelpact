@@ -20,68 +20,68 @@
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Right Image<span class="required">*</span></label>
+                        <label>Right Image<span class="required d-none">*</span></label>
                         <input type="file" name="exterior_main_right_img" id="exterior_main_right_img" class="form-control-file form-control height-auto formInpu onlyImageInputt" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Back Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_main_back_img" id="exterior_main_back_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Back Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_main_back_img" id="exterior_main_back_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Left Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_main_left_img" id="exterior_main_left_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Left Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_main_left_img" id="exterior_main_left_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Tank Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_main_tank_img" id="exterior_main_tank_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Tank Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_main_tank_img" id="exterior_main_tank_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Handlebar Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_main_handlebar_img" id="exterior_main_handlebar_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Handlebar Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_main_handlebar_img" id="exterior_main_handlebar_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Headlight Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_main_headlight_img" id="exterior_main_headlight_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Headlight Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_main_headlight_img" id="exterior_main_headlight_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Tail Light Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_main_tail_light_img" id="exterior_main_tail_light_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Tail Light Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_main_tail_light_img" id="exterior_main_tail_light_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Speedometer Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_main_speedometer_img" id="exterior_main_speedometer_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Speedometer Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_main_speedometer_img" id="exterior_main_speedometer_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Exhaust Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_main_exhaust_img" id="exterior_main_exhaust_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Exhaust Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_main_exhaust_img" id="exterior_main_exhaust_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Seat Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_main_seat_img" id="exterior_main_seat_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Seat Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_main_seat_img" id="exterior_main_seat_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Engine Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_main_engine_img" id="exterior_main_engine_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Engine Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_main_engine_img" id="exterior_main_engine_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
 
@@ -113,26 +113,26 @@
             <div class="row">
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Right Front Diagonal Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_diagnoal_right_front_img" id="exterior_diagnoal_right_front_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Right Front Diagonal Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_diagnoal_right_front_img" id="exterior_diagnoal_right_front_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Right Back Diagonal Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_diagnoal_right_back_img" id="exterior_diagnoal_right_back_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Right Back Diagonal Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_diagnoal_right_back_img" id="exterior_diagnoal_right_back_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Left Back Diagonal Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_diagnoal_left_back_img" id="exterior_diagnoal_left_back_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Left Back Diagonal Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_diagnoal_left_back_img" id="exterior_diagnoal_left_back_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Left Front Diagonal Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_diagnoal_left_front_img" id="exterior_diagnoal_left_front_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Left Front Diagonal Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_diagnoal_left_front_img" id="exterior_diagnoal_left_front_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
             </div>
@@ -164,13 +164,13 @@
             <div class="row">
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Front Wheel Image<span class="required">*</span></label>
+                        <label>Front Wheel Image<span class="required d-none">*</span></label>
                         <input type="file" name="exterior_wheel_front_img" id="exterior_wheel_front_img" class="form-control-file form-control height-auto ">
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Rear Wheel Image<span class="required">*</span></label>
+                        <label>Rear Wheel Image<span class="required d-none">*</span></label>
                         <input type="file" name="exterior_wheel_rear_img" id="exterior_wheel_rear_img" class="form-control-file form-control height-auto ">
                     </div>
                 </div>
@@ -203,13 +203,13 @@
             <div class="row">
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Front Tyre Tread Image<span class="required">*</span></label>
+                        <label>Front Tyre Tread Image<span class="required d-none">*</span></label>
                         <input type="file" name="exterior_tyrethread_front_img" id="exterior_tyrethread_front_img" class="form-control-file form-control height-auto ">
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Back Tyre Tread Image<span class="required">*</span></label>
+                        <label>Back Tyre Tread Image<span class="required d-none">*</span></label>
                         <input type="file" name="exterior_tyrethread_back_img" id="exterior_tyrethread_back_img" class="form-control-file form-control height-auto ">
                     </div>
                 </div>
@@ -242,14 +242,14 @@
             <div class="row">
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Front Underbody Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_underbody_front_img" id="exterior_underbody_front_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Front Underbody Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_underbody_front_img" id="exterior_underbody_front_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="form-group">
-                        <label>Rear Underbody Image<span class="required">*</span></label>
-                        <input type="file" name="exterior_underbody_rear_img" id="exterior_underbody_rear_img" class="form-control-file form-control height-auto formInput onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
+                        <label>Rear Underbody Image<span class="required d-none">*</span></label>
+                        <input type="file" name="exterior_underbody_rear_img" id="exterior_underbody_rear_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                     </div>
                 </div>
             </div>

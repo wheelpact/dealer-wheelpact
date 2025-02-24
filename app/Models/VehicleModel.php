@@ -305,6 +305,7 @@ class VehicleModel extends Model {
         if (!empty($request_id)) {
             $builder->where('test_drive_request.id', $request_id);
         }
+        $builder->where('test_drive_request.is_active', '1');
 
         // Order by the formatted date and the column passed
         $builder->orderBy($columnName, $order);

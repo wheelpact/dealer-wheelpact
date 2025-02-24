@@ -48,7 +48,7 @@
     // Get the current URL path and split it into segments
     var pathArray = window.location.pathname.split('/').filter(segment => segment !== '');
 
-    if (pathArray[0] === 'edit-branch' || 'add-branch') {
+    if (pathArray[1] === 'edit-branch' || pathArray[1] === 'add-branch') {
 
         let map;
         let marker;
@@ -88,34 +88,42 @@
             map.addListener("click", (event) => {
                 const lat = event.latLng.lat();
                 const lng = event.latLng.lng();
-                geocodeLatLng(lat, lng, true); // Show address after click
+                geocodeLatLng(lat, lng, true);
             });
 
             // Set an initial marker
-            geocodeLatLng(lat, lng, false); // Fetch the initial address without showing it immediately
-        }
-
-        // Function to update the marker position and map center
-        function updateMarkerAndMap(lat, lng, address) {
-            // Clear existing marker
-            if (marker) marker.setMap(null);
-
-            // Add a new marker
             marker = new google.maps.Marker({
                 position: {
                     lat: lat,
                     lng: lng
                 },
                 map: map,
+                draggable: true, // Enable marker dragging
             });
 
-            // Update map center
+            // Update location when marker is dragged
+            marker.addListener("dragend", () => {
+                const newLat = marker.getPosition().lat();
+                const newLng = marker.getPosition().lng();
+                geocodeLatLng(newLat, newLng, true);
+            });
+
+            // Fetch the initial address without showing it immediately
+            geocodeLatLng(lat, lng, false);
+        }
+
+        // Function to update the marker position and map center
+        function updateMarkerAndMap(lat, lng, address) {
+            marker.setPosition({
+                lat: lat,
+                lng: lng
+            });
             map.setCenter({
                 lat: lat,
                 lng: lng
             });
 
-            // Add event listeners for click and hover to show the address
+            // Show address on click and hover
             marker.addListener("click", () => {
                 infoWindow.setContent(address);
                 infoWindow.open(map, marker);
@@ -184,12 +192,9 @@
                 }
             });
         }
-
-
     }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDB9PZ68Q3UoU3Fc1qzyfLnXB3kFFMU9U&v=beta&callback=initMap&libraries=places&v=weekly" async defer></script>
 
 </body>
-
 </html>

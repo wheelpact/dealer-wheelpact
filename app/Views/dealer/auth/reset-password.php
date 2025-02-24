@@ -32,7 +32,7 @@
 			</div>
 			<div class="login-menu">
 				<ul>
-					<li><a href="<?php echo base_url('deskapp/login') ?>">Login</a></li>
+					<li><a href="<?php echo base_url('dealer/login') ?>">Login</a></li>
 				</ul>
 			</div>
 		</div>

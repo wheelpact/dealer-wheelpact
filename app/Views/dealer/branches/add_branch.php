@@ -32,7 +32,7 @@ echo view('dealer/includes/_sidebar');
                         <div class="col-md-12 col-sm-12 mb-30">
                             <div class="pd-20 card-box">
                                 <h4 class="mb-30 h4">
-                                    You have reached your showroom limit (<?php echo $maxBranchesAllowed; ?>). <a href="<?php echo base_url('dealer/profile#plan-details'); ?>">Upgrade your plan</a> to add more branch.
+                                    You have reached your showroom limit (<?php echo $maxBranchesAllowed; ?>). <a class="text-blue" href="<?php echo '#';//echo base_url('dealer/profile#plan-details'); ?>">Plans coming soon</a> to add more branch.
                                 </h4>
                             </div>
                         </div>
@@ -77,13 +77,13 @@ echo view('dealer/includes/_sidebar');
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="branchName">Showroom Thumbnail</label>
-                                <input type="file" class="form-control" id="branchThumbnail" name="branchThumbnail">
+                                <input type="file" class="form-control" id="branchThumbnail" name="branchThumbnail" accept="image/png, image/jpeg, image/jpg" required>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="branchName">Showroom Logo</label>
-                                <input type="file" class="form-control" id="branchLogo" name="branchLogo">
+                                <input type="file" class="form-control" id="branchLogo" name="branchLogo" accept="image/png, image/jpeg, image/jpg" required>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -119,19 +119,19 @@ echo view('dealer/includes/_sidebar');
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="branchBanner">Showroom Banner 1</label>
-                                <input type="file" class="form-control" id="branchBanner1" name="branchBanner1">
+                                <input type="file" class="form-control" id="branchBanner1" name="branchBanner1" accept="image/png, image/jpeg, image/jpg">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="branchBanner">Showroom Banner 2</label>
-                                <input type="file" class="form-control" id="branchBanner2" name="branchBanner2">
+                                <input type="file" class="form-control" id="branchBanner2" name="branchBanner2" accept="image/png, image/jpeg, image/jpg">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="branchBanner">Showroom Banner 3</label>
-                                <input type="file" class="form-control" id="branchBanner3" name="branchBanner3">
+                                <input type="file" class="form-control" id="branchBanner3" name="branchBanner3" accept="image/png, image/jpeg, image/jpg">
                             </div>
                         </div>
                     </div>
@@ -233,14 +233,17 @@ echo view('dealer/includes/_sidebar');
                         <div class="col-md-6 col-sm-12 mb-30">
                             <div class="form-group">
                                 <label for="address">Deliverable Images</label>
-
-                                
-                                    <div id="extend-deliverable-img-field">
-                                        <div class="form-group">
-                                            <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected"><input type="file" placeholder="Choose Image" name="deliverableImg[]" class="form-control deliverableImg" accept="image/png, image/jpeg"><span class="input-group-btn input-group-append"><button class="btn btn-primary bootstrap-touchspin-up remove-deliverable-img-field" type="button">-</button></span></div>
+                                <div id="extend-deliverable-img-field">
+                                    <div class="form-group">
+                                        <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                            <input type="file" placeholder="Choose Image" name="deliverableImg[]" class="form-control deliverableImg" accept="image/png, image/jpeg, image/jpg">
+                                            <span class="input-group-btn input-group-append">
+                                                <button class="btn btn-primary bootstrap-touchspin-up remove-deliverable-img-field" type="button">-</button>
+                                            </span>
                                         </div>
                                     </div>
-                               
+                                </div>
+
                                 <div class="text-right">
                                     <a href="#input-validation-form" id="extend-deliverable-img" class="btn btn-primary btn-sm scroll-click collapsed" rel="content-y" data-toggle="collapse" role="button" aria-expanded="false"><i class="fa fa-plus"></i> Add More Delivery Images</a>
                                 </div>

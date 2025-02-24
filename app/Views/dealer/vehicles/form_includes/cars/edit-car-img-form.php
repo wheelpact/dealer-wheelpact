@@ -19,7 +19,7 @@
                         <div class="card-header" id="headingOne">
                             <h5 class="text-blue">
                                 <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    Main Images<span class="required">*</span>
+                                    Main Images<span class="required d-none">*</span>
                                 </button>
                             </h5>
                         </div>
@@ -45,7 +45,7 @@
                                                     </div>
                                                     <div class="da-card-content">
                                                         <p class="mb-2">
-                                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 2, 2))); ?> <span class="required">*</span>
+                                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 2, 2))); ?> <span class="required d-none">*</span>
                                                         </p>
                                                         <div class="form-group">
                                                             <div class="input-group mb-3">
@@ -73,7 +73,7 @@
                         <div class="card-header" id="headingTwo">
                             <h2 class="mb-0">
                                 <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Diagonal Images<span class="required">*</span>
+                                    Diagonal Images<span class="required d-none">*</span>
                                 </button>
                             </h2>
                         </div>
@@ -99,7 +99,7 @@
                                                     </div>
                                                     <div class="da-card-content">
                                                         <p class="mb-0">
-                                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 2, 2))); ?> <span class="required">*</span>
+                                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 2, 2))); ?> <span class="required d-none">*</span>
                                                         </p>
                                                         <div class="form-group">
                                                             <div class="input-group mb-3">
@@ -127,7 +127,7 @@
                         <div class="card-header" id="headingThree">
                             <h2 class="mb-0">
                                 <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    Wheel Images<span class="required">*</span>
+                                    Wheel Images<span class="required d-none">*</span>
                                 </button>
                             </h2>
                         </div>
@@ -153,7 +153,7 @@
                                                     </div>
                                                     <div class="da-card-content">
                                                         <p class="mb-0">
-                                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 2, 2))); ?> <span class="required">*</span>
+                                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 2, 2))); ?> <span class="required d-none">*</span>
                                                         </p>
                                                         <div class="form-group">
                                                             <div class="input-group mb-3">
@@ -181,7 +181,7 @@
                         <div class="card-header" id="headingFour">
                             <h2 class="mb-0">
                                 <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                    Tyre Tread Images<span class="required">*</span>
+                                    Tyre Tread Images<span class="required d-none">*</span>
                                 </button>
                             </h2>
                         </div>
@@ -207,7 +207,7 @@
                                                     </div>
                                                     <div class="da-card-content">
                                                         <p class="mb-0">
-                                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 2, 2))); ?> <span class="required">*</span>
+                                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 2, 2))); ?> <span class="required d-none">*</span>
                                                         </p>
                                                         <div class="form-group">
                                                             <div class="input-group mb-3">
@@ -235,7 +235,7 @@
                         <div class="card-header" id="headingFive">
                             <h2 class="mb-0">
                                 <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                    Underbody Images<span class="required">*</span>
+                                    Underbody Images<span class="required d-none">*</span>
                                 </button>
                             </h2>
                         </div>
@@ -261,7 +261,7 @@
                                                     </div>
                                                     <div class="da-card-content">
                                                         <p class="mb-0">
-                                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 2, 2))); ?> <span class="required">*</span>
+                                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 2, 2))); ?> <span class="required d-none">*</span>
                                                         </p>
                                                         <div class="form-group">
                                                             <div class="input-group mb-3">
@@ -314,7 +314,7 @@
                                     </div>
                                     <div class="da-card-content">
                                         <p class="mb-0">
-                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 1, 2))); ?> <span class="required">*</span>
+                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 1, 3))); ?> <span class="required d-none">*</span>
                                         </p>
                                         <div class="form-group">
                                             <div class="input-group mb-3">
@@ -358,7 +358,7 @@
                                     </div>
                                     <div class="da-card-content">
                                         <p class="mb-0">
-                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 1, 2))); ?> <span class="required">*</span>
+                                            <?php echo ucwords(implode(' ', array_slice(explode('_', $key), 1, 2))); ?> <span class="required d-none">*</span>
                                         </p>
                                         <div class="form-group">
                                             <div class="input-group mb-3">

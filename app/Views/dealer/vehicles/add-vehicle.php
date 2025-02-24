@@ -36,7 +36,8 @@ echo view('dealer/includes/_sidebar');
                             <div class="col-md-12 col-sm-12 mb-30">
                                 <div class="pd-20 card-box">
                                     <h4 class="mb-30 h4">
-                                        You have reached your vehicle limit (<?php echo $totalVehicleCountForCurrentMonth; ?>) For current Month. <a href="<?php echo base_url('dealer/profile#plan-details'); ?>">Upgrade your plan</a> to add more vehicles.
+                                        You have reached your vehicle limit (<?php echo $totalVehicleCountForCurrentMonth; ?>) For current Month. <a class="text-blue" href="<?php echo '#'; //echo base_url('dealer/profile#plan-details');                                                                                                                                         
+                                                                                                                                                                                ?>">Plans coming soon</a> to add more vehicles.
                                     </h4>
                                 </div>
                             </div>
@@ -500,7 +501,7 @@ echo view('dealer/includes/_sidebar');
                                 <div class="input-group mb-3">
                                     <input type="hidden" name="vehicleId" id="vehicleId" class="vehicleId" value="">
                                     <input type="hidden" name="vehicle_type" id="vehicle_type" class="vehicle_type" value="">
-                                    <input type="file" class="form-control formInput onlyImageInput" id="thumbnailImage" accept="image/*">
+                                    <input type="file" class="form-control formInput onlyImageInput" id="thumbnailImage" accept="image/png, image/jpeg, image/jpg">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" id="uploadThumbnail">Upload</button>
                                     </div>
@@ -543,8 +544,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Dashboard Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_dashboard_img" id="interior_dashboard_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Dashboard Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_dashboard_img" id="interior_dashboard_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -554,8 +555,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Infotainment System Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_infotainment_system_img" id="interior_infotainment_system_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Infotainment System Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_infotainment_system_img" id="interior_infotainment_system_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -565,8 +566,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Steering Wheel Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_steering_wheel_img" id="interior_steering_wheel_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Steering Wheel Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_steering_wheel_img" id="interior_steering_wheel_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -576,8 +577,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Odometer Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_odometer_img" id="interior_odometer_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Odometer Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_odometer_img" id="interior_odometer_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -587,8 +588,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Gear Lever Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_gear_lever_img" id="interior_gear_lever_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Gear Lever Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_gear_lever_img" id="interior_gear_lever_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -598,8 +599,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Pedals Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_pedals_img" id="interior_pedals_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Pedals Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_pedals_img" id="interior_pedals_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -609,8 +610,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Front Cabin Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_front_cabin_img" id="interior_front_cabin_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Front Cabin Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_front_cabin_img" id="interior_front_cabin_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -621,7 +622,7 @@ echo view('dealer/includes/_sidebar');
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label>Mid Cabin Image <small>(Optional)</small></label>
-                                                        <input type="file" name="interior_mid_cabin_img" id="interior_mid_cabin_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <input type="file" name="interior_mid_cabin_img" id="interior_mid_cabin_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -631,8 +632,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Rear Cabin Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_rear_cabin_img" id="interior_rear_cabin_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Rear Cabin Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_rear_cabin_img" id="interior_rear_cabin_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -642,8 +643,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Driver Side Door Panel Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_driver_side_door_panel_img" id="interior_driver_side_door_panel_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Driver Side Door Panel Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_driver_side_door_panel_img" id="interior_driver_side_door_panel_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -653,8 +654,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Driver Side Adjustment Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_driver_side_adjustment_img" id="interior_driver_side_adjustment_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Driver Side Adjustment Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_driver_side_adjustment_img" id="interior_driver_side_adjustment_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -664,8 +665,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Boot Inside Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_boot_inside_img" id="interior_boot_inside_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Boot Inside Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_boot_inside_img" id="interior_boot_inside_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -675,8 +676,8 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Boot Door Open Image<span class="required">*</span></label>
-                                                        <input type="file" name="interior_boot_door_open_img" id="interior_boot_door_open_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Boot Door Open Image<span class="required d-none">*</span></label>
+                                                        <input type="file" name="interior_boot_door_open_img" id="interior_boot_door_open_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
 
@@ -700,11 +701,10 @@ echo view('dealer/includes/_sidebar');
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label>Keys<span class="required">*</span></label>
-                                                        <input type="file" name="others_keys_img" id="others_keys_img" class="form-control-file formInput form-control height-auto onlyImageInput" required>
+                                                        <label>Keys<span class="required d-none">*</span></label>
+                                                        <input type="file" name="others_keys_img" id="others_keys_img" class="form-control-file form-control height-auto onlyImageInput" accept="image/png, image/jpeg, image/jpg" required>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>

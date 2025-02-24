@@ -72,7 +72,7 @@
 						<span class="micon dw dw-question-1"></span><span class="mtext">Enquires</span>
 					</a>
 				</li>
-				<li class="dropdown">
+				<li class="dropdown d-none">
 					<a href="javascript:;" class="dropdown-toggle no-arrow">
 						<span class="micon dw dw-help"></span><span class="mtext">Admin Help</span>
 					</a>

@@ -820,8 +820,6 @@ class Vehicles extends BaseController {
 
 		$data['vehicleDetails'] =  $this->vehicleModel->getVehicleDetails($vehicleId);
 
-			/*//$data['vehicleImagesDetailsArray'] = array_filter($this->vehicleModel->getVehicleImagesDetails($vehicleId))*/;
-
 		$data['vehicleImagesDetailsArray'] = $this->vehicleModel->getVehicleImagesDetails($vehicleId);
 
 		$vehicle_type = $data['vehicleDetails']['vehicle_type'];
@@ -1121,6 +1119,15 @@ class Vehicles extends BaseController {
 		$vehicle_type = $this->request->getPost('vehicle_type');
 		$formId = $this->request->getPost('formId');
 
+		// Validate vehicle_id
+		if (empty($vehicleId)) {
+			return $this->response->setJSON([
+				'status' => 'error',
+				'message' => 'Invalid request',
+				'statusCode' => 400
+			])->setStatusCode(400); // 400 Bad Request
+		}
+
 		$inputFields = $this->request->getFiles();
 
 		$uploadedFiles = [];
@@ -1135,7 +1142,7 @@ class Vehicles extends BaseController {
 					$uploadedFiles[$fieldId] = 'default-img.png';
 				}
 			} else {
-				$uploadedFiles[$fieldId] = 'No file uploaded';
+				$uploadedFiles[$fieldId] = '';
 			}
 		}
 

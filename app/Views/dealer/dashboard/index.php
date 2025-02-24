@@ -124,7 +124,7 @@
 						</div>
 					</div>
 				</div>
-				<?php //if (isset($dealerPromotedVehicles) && count($dealerPromotedVehicles) > '0'): ?>
+				<?php if (isset($dealerPromotedVehicles) && count($dealerPromotedVehicles) > '0'): ?>
 					<div class="row">
 						<?php foreach ($dealerPromotedVehicles as $vehicle): ?>
 							<div class="col-md-6 col-lg-4 vehicle-card-<?= $vehicle['id'] ?>">
@@ -213,7 +213,13 @@
 							</div>
 						<?php endforeach; ?>
 					</div>
-				<?php //endif; ?>
+				<?php else: ?>
+					<div class="row">
+						<div class="col-12 text-center">
+							<p class="alert alert-warning">No Data Available</p>
+						</div>
+					</div>
+				<?php endif; ?>
 			</div>
 			<!-- Promoted vehicles section start-->
 
@@ -291,6 +297,12 @@
 							</div>
 						<?php endforeach; ?>
 					</div>
+				<?php else: ?>
+					<div class="row">
+						<div class="col-12 text-center">
+							<p class="alert alert-warning">No Data Available</p>
+						</div>
+					</div>
 				<?php endif; ?>
 			</div>
 			<!-- Promoted showrooms section end-->
@@ -342,10 +354,8 @@
 	<script>
 		$(document).ready(function() {
 			function loadTestDriveStats() {
-
 				const chartContainer = $("#testDriveInsightsChart");
 				chartContainer.addClass("content-placeholder");
-
 
 				$.ajax({
 					url: "<?= base_url('dealer/load-test-drive-chart-data') ?>",
@@ -355,8 +365,8 @@
 						// Remove the placeholder class once the response is received
 						chartContainer.removeClass("content-placeholder");
 
-						const vehicles = response.vehicles; // Vehicle names for the x-axis
-						const seriesData = response.series; // Series data for statuses
+						const vehicles = response.vehicles || []; // Vehicle names for the x-axis
+						const seriesData = response.series || []; // Series data for statuses
 
 						const options = {
 							chart: {
@@ -411,6 +421,16 @@
 										return val + " requests";
 									}
 								}
+							},
+							noData: {
+								text: 'No data available', // Show this when no data is present
+								align: 'center',
+								verticalAlign: 'middle',
+								style: {
+									color: '#999',
+									fontSize: '16px',
+									fontWeight: 'bold',
+								}
 							}
 						};
 
@@ -420,10 +440,31 @@
 					error: function() {
 						// Remove the placeholder class in case of an error
 						chartContainer.removeClass("content-placeholder");
-						console.log('Error loading test drive stats. Please try again.');
+
+						// Show "No data available" in the chart itself
+						const options = {
+							chart: {
+								type: 'bar',
+								height: 350,
+							},
+							noData: {
+								text: 'Error loading test drive stats. Please try again.',
+								align: 'center',
+								verticalAlign: 'middle',
+								style: {
+									color: '#dc3545',
+									fontSize: '16px',
+									fontWeight: 'bold',
+								}
+							}
+						};
+
+						const chart = new ApexCharts(document.querySelector("#testDriveInsightsChart"), options);
+						chart.render();
 					},
 				});
 			}
+
 			loadTestDriveStats();
 		});
 	</script>

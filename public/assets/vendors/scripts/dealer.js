@@ -247,7 +247,7 @@ $(document).ready(function () {
 		if (onsaleStatusSelected == 1) {
 
 			$("#onsale_percentage_div").css("display", "block");
-			$("#onsale_percentage").addClass("formInput");		
+			$("#onsale_percentage").addClass("formInput");
 
 			$(".onsale_percentage_div").html('<div class="form-group">' +
 				'<label>On Sale Percentage<span class="required">*</span></label>' +
@@ -762,7 +762,7 @@ $(document).ready(function () {
 		e.preventDefault();
 		if (currentFields < maxFields) {
 			$('#extend-deliverable-img-field').append(
-				'<div class="form-group"><div class="input-group bootstrap-touchspin bootstrap-touchspin-injected"><input type="file" placeholder="Choose image" name="deliverableImg[]" class="form-control deliverableImg" required accept="image/png, image/jpeg"><span class="input-group-btn input-group-append"><button class="btn btn-primary bootstrap-touchspin-up remove-deliverable-img-field" type="button">-</button></span></div></div>'
+				'<div class="form-group"><div class="input-group bootstrap-touchspin bootstrap-touchspin-injected"><input type="file" placeholder="Choose image" name="deliverableImg[]" class="form-control deliverableImg" accept="image/png, image/jpeg, image/jpg"><span class="input-group-btn input-group-append"><button class="btn btn-primary bootstrap-touchspin-up remove-deliverable-img-field" type="button">-</button></span></div></div>'
 			);
 			currentFields++;
 		} else {
@@ -1169,6 +1169,7 @@ $(document).ready(function () {
 				}, 1000);
 			},
 			success: function (response) {
+
 				/* form reset */
 				$('#' + formId)[0].reset();
 				/* minimize the accordian based on the form submitted  */
@@ -1191,7 +1192,12 @@ $(document).ready(function () {
 				showSuccessAlert(response.message);
 			},
 			error: function (xhr, status, error) {
-				showErrorAlert('Upload failed:', error);
+				$(".vehicleUploadProgressBar").addClass("d-none");
+				if (xhr.status === 400 && xhr.responseJSON) {
+					showErrorAlert(xhr.responseJSON.message);
+				} else {
+					showErrorAlert('Upload failed: ' + error);
+				}
 			}
 		});
 

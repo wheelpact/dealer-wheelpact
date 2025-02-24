@@ -43,7 +43,7 @@
 	</div>
 	<div class="header">
 		<div class="header-left">
-			<div class="menu-icon bi bi-list"></div>
+			<div class="menu-icon dw dw-menu"></div>
 			<div class="search-toggle-icon bi bi-search" data-toggle="header_search"></div>
 		</div>
 		<div class="header-right">
@@ -69,7 +69,7 @@
 					</a>
 					<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
 						<a class="dropdown-item" href="<?php echo base_url('dealer/profile'); ?>"><i class="dw dw-user1"></i> Profile</a>
-						<a class="dropdown-item" href="<?php echo base_url('dealer/faq'); ?>"><i class="dw dw-help"></i> Help</a>
+						<a class="dropdown-item d-none" href="<?php echo base_url('dealer/faq'); ?>"><i class="dw dw-help"></i> Help</a>
 						<a class="dropdown-item" href="<?php echo base_url('dealer/logout'); ?>"><i class="dw dw-logout"></i> Log Out</a>
 					</div>
 				</div>

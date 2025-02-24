@@ -173,11 +173,12 @@ define('GENDER', [
     4 => 'Choose Not To Tell',
 ]);
 
-
+/* Test mode details start */
 define('RAZP_TOKEN', [
     'key_id' => 'rzp_test_KH6djyMTqNWc5b',
     'key_secret' => '7LYkGl4uz16cUmQQG8qpAFix'
 ]);
+/* Test mode details start */
 
 define('UPLOAD_IMG_WIDTH', '1024');
 define('UPLOAD_IMG_HEIGHT', '800');

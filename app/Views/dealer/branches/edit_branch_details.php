@@ -76,7 +76,7 @@ echo view('dealer/includes/_sidebar');
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="branchName">Showroom Thumbnail</label>
-                            <input type="file" class="form-control" id="branchThumbnail" name="branchThumbnail">
+                            <input type="file" class="form-control" id="branchThumbnail" name="branchThumbnail" accept="image/png, image/jpeg, image/jpg">
                             <div class="da-card box-shadow mt-3">
                                 <div class="da-card-photo">
                                     <img src="<?php echo !empty($branchDetails['branch_thumbnail']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . "branch_thumbnails/" . $branchDetails['branch_thumbnail'] : NO_IMAGE_AVAILABLE; ?>" alt="">
@@ -100,7 +100,7 @@ echo view('dealer/includes/_sidebar');
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="branchName">Showroom Logo</label>
-                            <input type="file" class="form-control" id="branchLogo" name="branchLogo">
+                            <input type="file" class="form-control" id="branchLogo" name="branchLogo" accept="image/png, image/jpeg, image/jpg">
                             <div class="da-card box-shadow mt-3">
                                 <div class="da-card-photo">
                                     <img src="<?php echo !empty($branchDetails['branch_logo']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . "branch_logos/" . $branchDetails['branch_logo'] : NO_IMAGE_AVAILABLE; ?>" alt="">
@@ -154,7 +154,7 @@ echo view('dealer/includes/_sidebar');
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="branchBanner">Showroom Banner 1</label>
-                            <input type="file" class="form-control" id="branchBanner1" name="branchBanner1">
+                            <input type="file" class="form-control" id="branchBanner1" name="branchBanner1" accept="image/png, image/jpeg, image/jpg">
                             <div class="da-card box-shadow mt-3">
                                 <div class="da-card-photo">
                                     <img src="<?php echo !empty($branchDetails['branch_banner1']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . "branch_banners/" . $branchDetails['branch_banner1'] : NO_IMAGE_AVAILABLE; ?>" alt="">
@@ -179,7 +179,7 @@ echo view('dealer/includes/_sidebar');
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="branchBanner">Showroom Banner 2</label>
-                            <input type="file" class="form-control" id="branchBanner2" name="branchBanner2">
+                            <input type="file" class="form-control" id="branchBanner2" name="branchBanner2" accept="image/png, image/jpeg, image/jpg">
                             <div class="da-card box-shadow mt-3">
                                 <div class="da-card-photo">
                                     <img src="<?php echo !empty($branchDetails['branch_banner2']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . "branch_banners/" . $branchDetails['branch_banner2'] : NO_IMAGE_AVAILABLE; ?>" alt="">
@@ -342,7 +342,12 @@ echo view('dealer/includes/_sidebar');
                             <label for="address">Edit Deliverable Images</label>
                             <div id="extend-deliverable-img-field">
                                 <div class="form-group">
-                                    <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected"><input type="file" placeholder="Choose Image" name="deliverableImg[]" class="form-control deliverableImg" accept="image/png, image/jpeg"><span class="input-group-btn input-group-append"><button class="btn btn-primary bootstrap-touchspin-up remove-deliverable-img-field" type="button">-</button></span></div>
+                                    <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                        <input type="file" placeholder="Choose Image" name="deliverableImg[]" class="form-control deliverableImg" accept="image/png, image/jpeg, image/jpg">
+                                        <span class="input-group-btn input-group-append">
+                                            <button class="btn btn-primary bootstrap-touchspin-up remove-deliverable-img-field" type="button">-</button>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="text-right">

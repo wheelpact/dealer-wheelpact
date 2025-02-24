@@ -510,7 +510,7 @@ echo view('dealer/includes/_sidebar');
                 <div class="row">
                     <div class="col-lg-2 col-md-2 col-sm-12 mb-30">
                         <label>Thumbnail Image</label><br>
-                        <div class="card card-box">
+                        <div class="card card-box thumbnailImgDIv">
                             <?php
                             $thumbnailUrl = isset($vehicleDetails['thumbnail_url']) ? WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'vehicle_thumbnails/' . $vehicleDetails['thumbnail_url'] : WHEELPACT_VEHICLE_UPLOAD_IMG_PATH . 'default-img.png';
                             echo '<img class="card-img replaceThumbnailImg" src="' . $thumbnailUrl . '" class="img img-responsive vehicleImg" alt="' . $vehicleDetails['cmp_name'] . ' ' . $vehicleDetails['cmp_model_name'] . '">';
@@ -518,7 +518,7 @@ echo view('dealer/includes/_sidebar');
                         </div>
 
                         <div class="input-group mt-2 mb-3">
-                            <input type="file" class="form-control onlyImageInput" id="thumbnailImage" accept="image/*">
+                            <input type="file" class="form-control onlyImageInput" id="thumbnailImage" accept="image/*" accept="image/png, image/jpeg, image/jpg">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" id="uploadThumbnail">Update</button>
                             </div>

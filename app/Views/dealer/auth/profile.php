@@ -110,7 +110,7 @@ echo view('dealer/includes/_sidebar');
                                                     </h4>
                                                     <div class="form-group">
                                                         <label>Change Profile Image</label>
-                                                        <input type="file" name="profile_image" id="profile_image" class="form-control-lg form-control-file height-auto">
+                                                        <input type="file" name="profile_image" id="profile_image" class="form-control-lg form-control-file height-auto" accept="image/png, image/jpeg, image/jpg">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Full Name</label>

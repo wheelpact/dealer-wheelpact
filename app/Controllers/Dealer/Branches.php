@@ -161,12 +161,12 @@ class Branches extends BaseController {
 						'valid_email' => 'Please enter a valid email address.',
 					],
 				],
-				'shortDescription' => [
-					'rules' => 'required',
-					'errors' => [
-						'required' => 'Please enter Short Description.'
-					],
-				],
+				// 'shortDescription' => [
+				// 	'rules' => 'required',
+				// 	'errors' => [
+				// 		'required' => 'Please enter Short Description.'
+				// 	],
+				// ],
 				'map_latitude' => [
 					'rules' => 'required',
 					'errors' => [
@@ -219,123 +219,65 @@ class Branches extends BaseController {
 
 			/* validate contact number, email exist end */
 
-
-			// Get the form input values
 			$dealerId = session()->get('userId');
 			$branchName = $this->request->getPost('branchName', FILTER_UNSAFE_RAW);
 
 			$uploadFolderPath = realpath($_SERVER['DOCUMENT_ROOT'] . '/../../production/');
 			$destinationPath = $uploadFolderPath . '/public/uploads/';
 
-			$branchBanner1newName = '';
-			$branchBanner2newName = '';
-			$branchBanner3newName = '';
-			$branchThumbnailnewName = '';
-			$branchLogonewName = '';
+			// Define file fields and their respective directories
+			$fileFields = [
+				'branchBanner1' => 'branch_banners/',
+				'branchBanner2' => 'branch_banners/',
+				'branchBanner3' => 'branch_banners/',
+				'branchThumbnail' => 'branch_thumbnails/',
+				'branchLogo' => 'branch_logos/'
+			];
 
-			if ($branchBanner1 = $this->request->getFile('branchBanner1')) {
-				// Generate a new name for the thumbnail image to prevent name conflicts
-				$branchBanner1newName = $branchBanner1->getRandomName();
+			$fileNames = [];
 
-				try {
-					$branchBanner1->move($destinationPath . 'branch_banners/', $branchBanner1newName);
-				} catch (\Exception $e) {
-					throw new \RuntimeException('Error moving branch Banner1 file: ' . $e->getMessage());
-				}
-			}
-			if ($branchBanner2 = $this->request->getFile('branchBanner2')) {
-				// Generate a new name for the thumbnail image to prevent name conflicts
-				$branchBanner2newName = $branchBanner2->getRandomName();
-
-				try {
-					$branchBanner2->move($destinationPath . 'branch_banners/', $branchBanner2newName);
-				} catch (\Exception $e) {
-					throw new \RuntimeException('Error moving branch Banner2 file: ' . $e->getMessage());
-				}
-			}
-			if ($branchBanner3 = $this->request->getFile('branchBanner3')) {
-				// Generate a new name for the thumbnail image to prevent name conflicts
-				$branchBanner3newName = $branchBanner3->getRandomName();
-
-				try {
-					$branchBanner3->move($destinationPath . 'branch_banners/', $branchBanner3newName);
-				} catch (\Exception $e) {
-					throw new \RuntimeException('Error moving branch Banner3 file: ' . $e->getMessage());
+			// Process file uploads dynamically
+			foreach ($fileFields as $field => $subFolder) {
+				$file = $this->request->getFile($field);
+				if ($file && $file->isValid() && !$file->hasMoved()) {
+					try {
+						$newFileName = $file->getRandomName();
+						$file->move($destinationPath . $subFolder, $newFileName);
+						$fileNames[$field] = $newFileName; // Store for DB insertion
+					} catch (\Exception $e) {
+						throw new \RuntimeException("Error moving $field file: " . $e->getMessage());
+					}
 				}
 			}
 
-			if ($branchThumbnail = $this->request->getFile('branchThumbnail')) {
-				// Generate a new name for the thumbnail image to prevent name conflicts
-				$branchThumbnailnewName = $branchThumbnail->getRandomName();
-
-				try {
-					$branchThumbnail->move($destinationPath . 'branch_thumbnails/', $branchThumbnailnewName);
-				} catch (\Exception $e) {
-					throw new \RuntimeException('Error moving branch Thumbnail file: ' . $e->getMessage());
-				}
-			}
-
-			if ($branchLogo = $this->request->getFile('branchLogo')) {
-				// Generate a new name for the thumbnail image to prevent name conflicts
-				$branchLogonewName = $branchLogo->getRandomName();
-
-				try {
-					$branchLogo->move($destinationPath . 'branch_logos/', $branchLogonewName);
-				} catch (\Exception $e) {
-					throw new \RuntimeException('Error moving branch Logo file: ' . $e->getMessage());
-				}
-			}
-
-			$branchType = $this->request->getPost('branchType');
-			$branchSupportedVehicleType = $this->request->getPost('branchSupportedVehicleType');
-			$countryId = $this->request->getPost('chooseCountry');
-			$stateId = $this->request->getPost('chooseState');
-			$cityId = $this->request->getPost('chooseCity');
-			$address = $this->request->getPost('address', FILTER_UNSAFE_RAW);
-			$contactNumber = $this->request->getPost('contactNumber');
-			$whatsapp_no = $this->request->getPost('whatsapp_no');
-			$email = $this->request->getPost('email');
-			$shortDescription = $this->request->getPost('shortDescription', FILTER_UNSAFE_RAW);
-			//$branch_map = $this->request->getPost('branch_map');
-			$map_latitude = $this->request->getPost('map_latitude');
-			$map_longitude = $this->request->getPost('map_longitude');
-			$map_city = $this->request->getPost('map_city');
-			$map_district = $this->request->getPost('map_district');
-			$map_state = $this->request->getPost('map_state');
-
-			$branch_services = implode(', ', $this->request->getPost('branchServices'));
-
-			// Prepare the data to be inserted
+			// Get form inputs
 			$data = [
 				'dealer_id' => $dealerId,
 				'name' => $branchName,
-				'branch_banner1' => $branchBanner1newName,
-				'branch_banner2' => $branchBanner2newName,
-				'branch_banner3' => $branchBanner3newName,
-				'branch_thumbnail' => $branchThumbnailnewName,
-				'branch_logo' => $branchLogonewName,
-				'branch_type' => $branchType,
-				'branch_supported_vehicle_type' => $branchSupportedVehicleType,
-				'branch_services' => $branch_services,
-				'country_id' => $countryId,
-				'state_id' => $stateId,
-				'city_id' => $cityId,
-				'address' => $address,
-				'contact_number' => $contactNumber,
-				'whatsapp_no' => $whatsapp_no,
-				'email' => $email,
-				'short_description' => $shortDescription,
-				//'branch_map' => $branch_map,
-				'map_latitude' => $map_latitude,
-				'map_longitude' => $map_longitude,
-				'map_city' => $map_city,
-				'map_district' => $map_district,
-				'map_state' => $map_state,
+				'branch_type' => $this->request->getPost('branchType'),
+				'branch_supported_vehicle_type' => $this->request->getPost('branchSupportedVehicleType'),
+				'branch_services' => implode(', ', $this->request->getPost('branchServices')),
+				'country_id' => $this->request->getPost('chooseCountry'),
+				'state_id' => $this->request->getPost('chooseState'),
+				'city_id' => $this->request->getPost('chooseCity'),
+				'address' => $this->request->getPost('address', FILTER_UNSAFE_RAW),
+				'contact_number' => $this->request->getPost('contactNumber'),
+				'whatsapp_no' => $this->request->getPost('whatsapp_no'),
+				'email' => $this->request->getPost('email'),
+				'short_description' => $this->request->getPost('shortDescription', FILTER_UNSAFE_RAW),
+				'map_latitude' => $this->request->getPost('map_latitude'),
+				'map_longitude' => $this->request->getPost('map_longitude'),
+				'map_city' => $this->request->getPost('map_city'),
+				'map_district' => $this->request->getPost('map_district'),
+				'map_state' => $this->request->getPost('map_state'),
 				'is_active' => 1,
-				'created_at' => ''
+				'created_at' => date('Y-m-d H:i:s')
 			];
 
-			// Insert the data into the database table
+			// Merge uploaded file names dynamically into $data
+			$data = array_merge($data, $fileNames);
+
+			// Insert data into the database
 			$result = $this->branchModel->insert($data);
 
 			// Get the last inserted ID
@@ -344,38 +286,33 @@ class Branches extends BaseController {
 			if (!$result) {
 				throw new \RuntimeException('Failed to save branch.');
 			}
-
-			/* inserting deliverableImg + */
-
-			if (isset($_FILES['deliverableImg']['name']) && !empty($_FILES['deliverableImg']['name'])) {
+			/* Inserting deliverableImg */
+			if (!empty($_FILES['deliverableImg']['name'][0])) { // Ensure at least one file is chosen
 				$totalFiles = count($_FILES['deliverableImg']['name']); // Get the total number of files
-				for ($i = 0; $i < $totalFiles; $i++) { // Loop through each file
+
+				for ($i = 0; $i < $totalFiles; $i++) {
 					$fileName = $_FILES['deliverableImg']['name'][$i];
 					$fileTmpName = $_FILES['deliverableImg']['tmp_name'][$i];
 					$fileType = $_FILES['deliverableImg']['type'][$i];
 					$fileSize = $_FILES['deliverableImg']['size'][$i];
 					$fileError = $_FILES['deliverableImg']['error'][$i];
 
-					// Create a unique name for the file to avoid overwriting
-					$newName = uniqid() . '_' . $fileName;
+					// Check if the file was uploaded successfully
+					if ($fileError === UPLOAD_ERR_OK) {
+						$newName = uniqid() . '_' . $fileName; // Generate a unique filename
+						$filePath = $destinationPath . 'branch_deliverables/' . $newName;
 
-					// Full path to the file on the server
-					$filePath = $destinationPath . 'branch_deliverables/' . $newName;
-
-					// Check if the file was uploaded without errors
-					if ($fileError === 0) {
 						try {
 							move_uploaded_file($fileTmpName, $filePath);
+							$data = [
+								'branch_id' => $branchLastInsertedId,
+								'img_name' => $newName,
+								'type' => $fileType
+							];
+							$this->branchModel->insert_deliverablesImg($data);
 						} catch (\Exception $e) {
 							throw new \RuntimeException('Error moving deliverableImg file: ' . $e->getMessage());
 						}
-
-						$data = [
-							'branch_id' => $branchLastInsertedId,
-							'img_name' =>  $newName,
-							'type'  => $fileType
-						];
-						$this->branchModel->insert_deliverablesImg($data);
 					} else {
 						throw new \RuntimeException("Error uploading file: $fileName (Error code: $fileError)");
 					}
@@ -613,7 +550,7 @@ class Branches extends BaseController {
 			}
 
 			// Update the data into the database table
-			$result = $this->branchModel->updateData($branchId, $formData);
+			$result = $this->branchModel->updateData(decryptData($branchId), $formData);
 
 			if (!$result) {
 				// Return a JSON response
@@ -640,13 +577,13 @@ class Branches extends BaseController {
 					if ($fileError === 0) {
 						try {
 							move_uploaded_file($fileTmpName, $filePath);
-							echo '<br/> deliverableImg - ' . $i . ' File moved successfully.';
+							log_message('info', 'deliverableImg - ' . $i . ' File moved successfully.');
 						} catch (\Exception $e) {
-							echo '<br/> deliverableImg Error moving file: ' . $e->getMessage();
+							log_message('error', 'deliverableImg Error moving file: ' . $e->getMessage());
 						}
 
 						$data = [
-							'branch_id' => $branchId,
+							'branch_id' => decryptData($branchId),
 							'img_name' =>  $newName,
 							'type'  => $fileType
 						];

@@ -52,14 +52,14 @@
 
 						<form method="post" id="loginForm" action="<?php echo base_url() ?>dealer/login/auth">
 							<div class="input-group custom">
-								<input name="username" type="text" id="username" class="form-control form-control-lg" placeholder="Username" value="<?= isset($username) ? esc($username) : '' ?>" required>
+								<input name="username" type="email" id="username" class="form-control form-control-lg" placeholder="Email" value="<?= isset($username) ? esc($username) : '' ?>" required>
 								<div class="input-group-append custom">
 									<span class="input-group-text"><i class="icon-copy dw dw-user1"></i></span>
 								</div>
 							</div>
 
 							<div class="input-group custom">
-								<input name="password" type="password" minlength="8" maxlength="12" id="password" class="form-control form-control-lg" placeholder="**********" value="<?= isset($password) ? esc($password) : '' ?>" required>
+								<input name="password" type="password" minlength="8" maxlength="16" id="password" class="form-control form-control-lg" placeholder="**********" value="<?= isset($password) ? esc($password) : '' ?>" required>
 								<div class="input-group-append custom">
 									<span class="input-group-text"><i class="dw dw-eye togglePassword" id="togglePassword"></i></span>
 								</div>
