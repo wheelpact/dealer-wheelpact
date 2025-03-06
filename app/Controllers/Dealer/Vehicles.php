@@ -84,20 +84,23 @@ class Vehicles extends BaseController {
 				$dealerVehiclesHtml .= '<div class="option-btn"><div class="dropdown">
 							<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" data-toggle="dropdown">
 								<i class="dw dw-more"></i></a>
-							<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">';
+						<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">';
 
-				if (($vehicle['is_active'] == 1 || $vehicle['is_active'] == 2)) {
+				if (in_array($vehicle['is_active'], [1, 2, 3])) {
 					$dealerVehiclesHtml .= '<a class="dropdown-item" href="' . base_url() . 'dealer/single-vehicle-info/' . encryptData($vehicle['id']) . '"><i class="dw dw-eye"></i> View</a>';
+				}
+
+				if (in_array($vehicle['is_active'], [1, 2])) {
 					$dealerVehiclesHtml .= '<a class="dropdown-item" href="' . base_url() . 'dealer/edit-vehicle/' . encryptData($vehicle['id']) . '"><i class="dw dw-edit2"></i> Edit</a>';
 				}
 
 				// Enable/Disable options based on vehicle's active status
-				if ($vehicle['is_promoted'] != 1 && $vehicle['is_active'] != 4) {
+				if ($vehicle['is_promoted'] != 1 && !in_array($vehicle['is_active'], [3, 4])) {
 					$dealerVehiclesHtml .= ($vehicle['is_active'] == 1)
 						? '<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" data-vehicle-flag="2" href="#"><i class="dw dw-delete-3"></i> Disable</a>'
 						: '<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" data-vehicle-flag="1" href="#"><i class="dw dw-delete-3"></i> Enable</a>';
 				}
-
+				
 				$dealerVehiclesHtml .= '</div></div></div>';
 
 				// Only show specific buttons if the vehicle is approved
@@ -1074,7 +1077,6 @@ class Vehicles extends BaseController {
 
 			$uploadFolderPath = realpath($_SERVER['DOCUMENT_ROOT'] . '/../../production/');
 			$destinationPath = $uploadFolderPath . '/public/uploads/vehicle_thumbnails/';
-			$newName = $thumbnailImage->getRandomName();
 
 			try {
 				$thumbnailImage->move($destinationPath, $newName);

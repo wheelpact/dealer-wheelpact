@@ -21,9 +21,11 @@ echo view('dealer/includes/_sidebar');
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
                         <div class="">
-                            <a class="btn btn-primary" href="<?php echo base_url('dealer/edit-vehicle/' . encryptData($vehicleDetails['id'])); ?>" role="button">
-                                Edit This Vehicle
-                            </a>
+                            <?php if ($vehicleDetails['is_active'] != 3): ?>
+                                <a class="btn btn-primary" href="<?php echo base_url('dealer/edit-vehicle/' . encryptData($vehicleDetails['id'])); ?>" role="button">
+                                    Edit This Vehicle
+                                </a>
+                            <?php endif; ?>
                             <a class="btn btn-primary" href="<?php echo base_url('dealer/list-vehicles'); ?>" role="button">
                                 List Vehicles
                             </a>

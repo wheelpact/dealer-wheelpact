@@ -950,7 +950,7 @@ $(document).ready(function () {
 			formData.append('thumbnailImage', fileInput.files[0]);
 			formData.append('vehicleId', $(".vehicleId").val());
 
-			let base_url = window.location.origin;
+			/*let base_url = window.location.origin;*/
 
 			$.ajax({
 				type: 'POST',
