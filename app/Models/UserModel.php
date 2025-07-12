@@ -71,7 +71,6 @@ class UserModel extends Model {
     public function getPlanDetailsBYId($dealerId) {
         $builder = $this->db->table('transactionsrazorpay as trp');
 
-        // Select the required fields
         $builder->select('
             trp.id as transactionId,
             trp.planId as activePlan,
@@ -99,23 +98,27 @@ class UserModel extends Model {
             pl.max_showroom_branches
         ');
 
-        // Perform the joins
         $builder->join('plans as pl', 'pl.id = trp.planId', 'left');
         $builder->join('dealer_subscription as ds', 'ds.transactionsrazorpay_id = trp.id', 'left');
 
-        // Add the where condition for dealer user id
         $builder->where('trp.dealerUserId', $dealerId);
         $builder->where('ds.is_active', 1);
-        $builder->where('ds.end_dt >=', date('Y-m-d')); // Current date check
 
-        // Execute the query and return the result
+        // Add condition to check planId is not 1 before checking end_dt
+        $builder->groupStart()
+            ->where('trp.planId', 1)
+            ->orGroupStart()
+            ->where('trp.planId !=', 1)
+            //->where('ds.end_dt >=', date('Y-m-d'))
+            ->groupEnd()
+            ->groupEnd();
+
+        // Order by transaction ID descending
+        $builder->orderBy('trp.id', 'DESC');
+
         $result = $builder->get()->getResultArray();
-        // Check if the result is empty
-        if (empty($result)) {
-            return false;
-        }
 
-        return $result;
+        return !empty($result) ? $result : false;
     }
 
     public function getDealerPromotedDetails(int $dealerId): array {

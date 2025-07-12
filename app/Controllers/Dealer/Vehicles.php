@@ -100,7 +100,7 @@ class Vehicles extends BaseController {
 						? '<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" data-vehicle-flag="2" href="#"><i class="dw dw-delete-3"></i> Disable</a>'
 						: '<a class="dropdown-item sa-params enable-disable-vehicle" data-vehicle-id="' . $vehicle['id'] . '" data-vehicle-flag="1" href="#"><i class="dw dw-delete-3"></i> Enable</a>';
 				}
-				
+
 				$dealerVehiclesHtml .= '</div></div></div>';
 
 				// Only show specific buttons if the vehicle is approved

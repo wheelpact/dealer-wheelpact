@@ -277,71 +277,73 @@ echo view('dealer/includes/_sidebar');
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row">Plan Name</th>
-                                                            <td scope="row"><?php echo $planData['planName'] ?></td>
+                                                            <td scope="row"><?php echo $planData['planName'] ?? '-' ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Plan Desc</th>
-                                                            <td scope="row"><?php echo $planData['planDesc'] ?></td>
+                                                            <td scope="row"><?php echo $planData['planDesc'] ?? '-' ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Order Receipt</th>
-                                                            <td scope="row"><?php echo $planData['receipt'] ?></td>
+                                                            <td scope="row"><?php echo $planData['receipt'] ?? '-' ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Plan Valid till</th>
-                                                            <td scope="row"><?php echo date('d-m-y', strtotime($planData['end_dt'])); ?></td>
+                                                            <td scope="row">
+                                                                <?php echo !empty($planData['end_dt']) ? date('d-m-y', strtotime($planData['end_dt'])) : '-' ?>
+                                                            </td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Allowed Vehicle Listing</th>
-                                                            <!-- if planId 1=>Free Or planId 2=> basic-->
-                                                            <?php if ($planData['activePlan'] == '1' || $planData['activePlan'] == '2') { ?>
-                                                                <td scope="row">
-                                                                    <?php
-                                                                    if ($planData['allowedVehicleListing'] == 0) {
-                                                                        echo '<a href=' . base_url('/dealer/dashboard') . '>Click Here</a>';
+                                                            <td scope="row">
+                                                                <?php
+                                                                if (!empty($planData) && isset($planData['activePlan']) && ($planData['activePlan'] == '1' || $planData['activePlan'] == '2')) {
+                                                                    if (isset($planData['allowedVehicleListing']) && $planData['allowedVehicleListing'] == 0) {
+                                                                        echo '<a href="' . base_url('/dealer/dashboard') . '">Click Here</a>';
                                                                     } else {
-                                                                        echo isset(VEHICLE_TYPE[$planData['allowedVehicleListing']]) ? VEHICLE_TYPE[$planData['allowedVehicleListing']] : '';
+                                                                        echo VEHICLE_TYPE[$planData['allowedVehicleListing']] ?? '-';
                                                                     }
-                                                                    ?>
-                                                                </td>
-                                                            <?php } else { ?>
-                                                                <td scope="row">
-                                                                    <?php echo VEHICLE_TYPE['3']; ?>
-                                                                </td>
-                                                            <?php } ?>
+                                                                } else {
+                                                                    echo VEHICLE_TYPE['3'] ?? '-';
+                                                                }
+                                                                ?>
+                                                            </td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Maximum Vehicle Listing</th>
-                                                            <td scope="row"><?php echo $planData['max_vehicle_listing_per_month'] ?></td>
+                                                            <td scope="row"><?php echo $planData['max_vehicle_listing_per_month'] ?? '-' ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Free Inventory Promotions</th>
                                                             <td scope="row">
-                                                                <?php echo (isset($dealerPromotedDetails['vehicle_count']) && !empty($dealerPromotedDetails['vehicle_count']) ? $dealerPromotedDetails['vehicle_count'] : '0') .
-                                                                    ' utilized / out of ' .
-                                                                    (isset($planData['free_inventory_promotions']) && !empty($planData['free_inventory_promotions']) ? $planData['free_inventory_promotions'] : '0'); ?>
+                                                                <?php
+                                                                $used = $dealerPromotedDetails['vehicle_count'] ?? '0';
+                                                                $allowed = $planData['free_inventory_promotions'] ?? '0';
+                                                                echo "$used utilized / out of $allowed";
+                                                                ?>
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Free Showroom Promotions</th>
                                                             <td scope="row">
-                                                                <?php echo (isset($dealerPromotedDetails['showroom_count']) && !empty($dealerPromotedDetails['showroom_count']) ? $dealerPromotedDetails['showroom_count'] : '0') .
-                                                                    ' utilized / out of ' .
-                                                                    (isset($planData['free_showroom_promotions']) && !empty($planData['free_showroom_promotions']) ? $planData['free_showroom_promotions'] : '0');
+                                                                <?php
+                                                                $usedShowroom = $dealerPromotedDetails['showroom_count'] ?? '0';
+                                                                $allowedShowroom = $planData['free_showroom_promotions'] ?? '0';
+                                                                echo "$usedShowroom utilized / out of $allowedShowroom";
                                                                 ?>
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Showroom Branch Listing Allowed</th>
-                                                            <td scope="row"><?php echo $planData['max_showroom_branches'] ?></td>
+                                                            <td scope="row"><?php echo $planData['max_showroom_branches'] ?? '-' ?></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
-
                                             </div>
                                         </div>
                                     </div>
                                     <!-- Active Plan Tab End -->
+
                                 </div>
                             </div>
                         </div>

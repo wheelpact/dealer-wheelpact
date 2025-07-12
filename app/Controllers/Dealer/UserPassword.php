@@ -14,13 +14,18 @@ class UserPassword extends BaseController {
 	protected $userModel;
 	protected $commonModel;
 
-	protected $userSesData;
+	protected $userSesData, $planDetails;
 
 	public function __construct() {
 		$this->userModel = new UserModel();
 		$this->commonModel = new CommonModel();
 
+		/* // Retrieve session */
 		$this->userSesData = session()->get();
+
+		/* // Retrieve plan details of logged user */
+		$planDetails = $this->userModel->getPlanDetailsBYId(session()->get('userId'));
+		$this->planDetails = $planDetails[0] ?? null;
 	}
 
 	public function index() {
@@ -41,7 +46,7 @@ class UserPassword extends BaseController {
 
 		$data['userData'] = $this->userSesData;
 		$data['dealerData'] = $dealerDetails;
-		$data['planData'] = $planDetails[0];
+		$data['planData'] = isset($planDetails[0]) ? $planDetails[0] : null;
 		$data['dealerPromotedDetails'] = $getDealerPromotedDetails;
 
 		echo view('dealer/auth/profile.php', $data);
@@ -209,6 +214,7 @@ class UserPassword extends BaseController {
 
 		/* Check if the email exists in the users table */
 		$user = $this->userModel->where('email', $email)->where('role_id', '2')->first();
+
 		/* Get the last executed query */
 		if ($user) {
 

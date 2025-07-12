@@ -5,6 +5,8 @@ use Config\Encryption;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 if (!function_exists('ordinal')) {
     function ordinal($number) {
@@ -19,28 +21,65 @@ if (!function_exists('ordinal')) {
 }
 
 if (!function_exists('sendEmail')) {
+    /**
+     * Send an email using PHPMailer.
+     *
+     * @param string $to Recipient email address.
+     * @param string $toName Recipient name.
+     * @param string $subject Email subject.
+     * @param string $message Email body content.
+     * @param string|null $attachmentPath Path to the attachment file (optional).
+     * @param string|null $fromEmail Sender email address (optional).
+     * @param string|null $fromName Sender name (optional).
+     * @return bool|string True on success, error message on failure.
+     */
+
     function sendEmail($to, $toName, $subject, $message, $attachmentPath = null, $fromEmail = null, $fromName = null) {
-        $email = \Config\Services::email();
-
-        if ($fromEmail && $fromName) {
-            $email->setFrom($fromEmail, $fromName);
-        } else {
-            $email->setFrom(FROM_EMAIL, FROME_NAME);
+        // Ensure Composer autoload is available
+        if (!class_exists(PHPMailer::class)) {
+            require_once FCPATH . 'vendor/autoload.php';
         }
 
-        if ($attachmentPath) {
-            $email->attach($attachmentPath);
-        }
+        // Environment values (or fallback)
+        $mailHost       = getenv('SMTP_HOST') ?: 'smtp.hostinger.com';
+        $mailUsername   = getenv('SMTP_USER') ?: 'no-reply@wheelpact.com';
+        $mailPassword   = getenv('SMTP_PASS') ?: 'no-Reply@321$';
+        $mailPort       = getenv('SMTP_PORT') ?: 465;
+        $mailEncryption = getenv('SMTP_ENCRYPTION') ?: 'ssl';
 
-        $email->setTo($to, $toName);
-        $email->setSubject($subject);
-        $email->setMessage($message);
-        $email->setMailType('html');
+        $fromEmail = $fromEmail ?: FROM_EMAIL;
+        $fromName  = $fromName  ?: FROME_NAME;
 
-        if ($email->send()) {
+        $mail = new PHPMailer(true);
+
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host       = $mailHost;
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $mailUsername;
+            $mail->Password   = $mailPassword;
+            $mail->SMTPSecure = $mailEncryption;
+            $mail->Port       = $mailPort;
+
+            // Recipients
+            $mail->setFrom($fromEmail, $fromName);
+            $mail->addAddress($to, $toName);
+
+            // Attachments
+            if ($attachmentPath) {
+                $mail->addAttachment($attachmentPath);
+            }
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body    = $message;
+
+            $mail->send();
             return true;
-        } else {
-            return $email->printDebugger(['headers']);
+        } catch (Exception $e) {
+            return 'Mailer Error: ' . $mail->ErrorInfo;
         }
     }
 }
